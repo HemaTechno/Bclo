@@ -11,219 +11,77 @@
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      /* خلفية متدرجة مع حركة خفيفة */
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      animation: bgAnimation 15s ease infinite alternate;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
+      background-color: #f9fafb;
     }
-    @keyframes bgAnimation {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+    /* انيميشن بسيط للأزرار */
+    .btn-animate {
+      transition: all 0.3s ease;
     }
-
-    .profile-card {
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      border-radius: 30px;
-      padding: 3rem 2.5rem;
-      max-width: 480px;
-      width: 100%;
-      text-align: center;
-      animation: fadeInUp 0.7s ease forwards;
-      position: relative;
-      overflow: hidden;
+    .btn-animate:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
+      background-color: #2563eb; /* لون أزرق أغمق عند الهور */
+      color: white;
     }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h1 {
-      color: #3b82f6;
-      font-weight: 900;
-      font-size: 2.8rem;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 0 8px #3b82f6aa;
-    }
-
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 0.8rem;
-      color: #374151;
-      font-weight: 600;
-    }
-
-    span.font-semibold {
-      color: #1e293b;
-    }
-
-    /* تصميم إطار QR كدائرة بظل متوهج */
-    .qr-wrapper {
-      margin: 1.5rem auto 2rem;
-      width: 180px;
-      height: 180px;
-      padding: 15px;
-      background: linear-gradient(145deg, #6366f1, #4f46e5);
-      border-radius: 50%;
-      box-shadow:
-        0 0 20px #6366f1,
-        0 0 40px #4f46e5,
-        inset 0 0 20px #a5b4fc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    /* صندوق QR مع ظل */
+    .qr-box {
+      width: 160px;
+      height: 160px;
+      padding: 12px;
+      background-color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      margin: 20px auto 30px auto;
+      cursor: pointer;
       transition: transform 0.3s ease;
     }
-    .qr-wrapper:hover {
-      transform: scale(1.08) rotate(5deg);
-      box-shadow:
-        0 0 30px #818cf8,
-        0 0 60px #6366f1,
-        inset 0 0 30px #a5b4fc;
-      cursor: pointer;
-    }
-    #qrcode canvas {
-      border-radius: 25px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.15);
-    }
-
-    /* تصميم الأزرار الفخمة */
-    .btn-fancy {
-      background: linear-gradient(90deg, #4f46e5, #6366f1);
-      color: white;
-      font-weight: 700;
-      font-size: 1.15rem;
-      padding: 0.9rem 0;
-      border-radius: 15px;
-      box-shadow: 0 6px 15px rgba(99, 102, 241, 0.5);
-      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-      user-select: none;
-      outline: none;
-      border: none;
-      width: 100%;
-      margin-bottom: 1rem;
-      letter-spacing: 0.03em;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-fancy::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      pointer-events: none;
-      border-radius: 15px;
-      transform: rotate(45deg);
-    }
-    .btn-fancy:hover {
-      box-shadow:
-        0 10px 20px rgba(99, 102, 241, 0.8),
-        0 0 40px rgba(99, 102, 241, 0.7);
-      transform: scale(1.06);
-      z-index: 10;
-    }
-    .btn-fancy:hover::before {
-      opacity: 1;
-      animation: shine 1s ease forwards;
-    }
-    @keyframes shine {
-      0% {
-        transform: translateX(-100%) rotate(45deg);
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(100%) rotate(45deg);
-        opacity: 0;
-      }
-    }
-
-    /* ألوان أزرار مختلفة */
-    .btn-yellow {
-      background: linear-gradient(90deg, #facc15, #eab308);
-      box-shadow: 0 6px 15px rgba(234, 179, 8, 0.5);
-      color: #1f2937;
-    }
-    .btn-yellow:hover {
-      box-shadow: 0 10px 20px rgba(234, 179, 8, 0.8), 0 0 40px rgba(202, 143, 11, 0.7);
-      color: #1e293b;
-    }
-
-    .btn-red {
-      background: linear-gradient(90deg, #ef4444, #b91c1c);
-      box-shadow: 0 6px 15px rgba(220, 38, 38, 0.5);
-      color: white;
-    }
-    .btn-red:hover {
-      box-shadow: 0 10px 20px rgba(220, 38, 38, 0.8), 0 0 40px rgba(185, 28, 28, 0.7);
-    }
-
-    .btn-gray {
-      background: linear-gradient(90deg, #374151, #1f2937);
-      box-shadow: 0 6px 15px rgba(55, 65, 81, 0.5);
-      color: white;
-    }
-    .btn-gray:hover {
-      box-shadow: 0 10px 20px rgba(55, 65, 81, 0.8), 0 0 40px rgba(31, 41, 55, 0.7);
+    .qr-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
     }
   </style>
   <script>
     (function(){
-      emailjs.init("YOUR_EMAILJS_USER_ID"); // استبدل هنا
+      emailjs.init("YOUR_EMAILJS_USER_ID"); // عدل هنا
     })();
   </script>
 </head>
 <body>
 
-  <div class="profile-card">
+  <div class="max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-8 mt-12">
 
-    <h1>الملف الشخصي</h1>
+    <h1 class="text-3xl font-bold mb-6 text-blue-600 text-center">الملف الشخصي</h1>
 
-    <p><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
-    <p><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
-    <p><span class="font-semibold">ديسكورد:</span> <span id="discordInfo" class="text-gray-600">غير مربوط</span></p>
+    <p class="mb-2 text-gray-700"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
+    <p class="mb-2 text-gray-700"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
+    <p class="mb-6 text-gray-600"><span class="font-semibold">ديسكورد:</span> <span id="discordInfo">غير مربوط</span></p>
 
     <a href="https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify" 
        target="_blank"
-       class="btn-fancy">
-      🔗 ربط مع حساب ديسكورد
+       class="block text-center bg-blue-500 text-white py-3 rounded-lg font-semibold mb-6 btn-animate transition-colors duration-300">
+      ربط مع حساب ديسكورد
     </a>
 
-    <div class="qr-wrapper" title="امسح رمز QR لربط حسابك بالديسكورد">
-      <div id="qrcode"></div>
-    </div>
+    <div class="qr-box" title="امسح رمز QR لربط حسابك بالديسكورد" id="qrCodeContainer"></div>
 
-    <button id="dashboardBtn" class="btn-fancy" style="background: linear-gradient(90deg, #10b981, #059669); box-shadow: 0 6px 15px rgba(16,185,129,0.5);">
-      🛠️ لوحة التحكم
+    <button id="dashboardBtn" 
+            class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold mb-4 btn-animate">
+      لوحة التحكم
     </button>
 
-    <button id="changePassword" class="btn-fancy btn-yellow">
-      🔑 تغيير كلمة المرور
+    <button id="changePassword" 
+            class="w-full bg-yellow-400 text-gray-900 py-3 rounded-lg font-semibold mb-4 btn-animate">
+      تغيير كلمة المرور
     </button>
-    <button id="resetPassword" class="btn-fancy btn-red">
-      📧 نسيت كلمة المرور؟
+
+    <button id="resetPassword" 
+            class="w-full bg-red-500 text-white py-3 rounded-lg font-semibold mb-4 btn-animate">
+      نسيت كلمة المرور؟
     </button>
-    <button id="logoutBtn" class="btn-fancy btn-gray">
-      🚪 تسجيل الخروج
+
+    <button id="logoutBtn" 
+            class="w-full bg-gray-700 text-white py-3 rounded-lg font-semibold btn-animate">
+      تسجيل الخروج
     </button>
   </div>
 
@@ -247,13 +105,13 @@
 
       const discordOauthUrl = "https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify";
 
-      // انشاء QR Code
-      new QRCode(document.getElementById("qrcode"), {
+      // إنشاء QR Code
+      new QRCode(document.getElementById("qrCodeContainer"), {
         text: discordOauthUrl,
-        width: 150,
-        height: 150,
-        colorDark : "#059669",
-        colorLight : "#f3f4f6",
+        width: 140,
+        height: 140,
+        colorDark : "#2563eb",
+        colorLight : "#f9fafb",
         correctLevel : QRCode.CorrectLevel.H
       });
 
@@ -292,12 +150,12 @@
             to_email: user.email,
             message: `رابط إعادة تعيين كلمة المرور: https://yourdomain.com/reset-password?email=${user.email}`
           }).then(() => {
-            alert("📧 تم إرسال رابط إعادة التعيين إلى بريدك.");
+            alert("تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.");
           }, (error) => {
-            alert("❌ خطأ في إرسال البريد: " + error.text);
+            alert("حدث خطأ أثناء إرسال البريد: " + error.text);
           });
         } else {
-          alert("⚠️ لم يتم العثور على بريد إلكتروني.");
+          alert("لم يتم العثور على بريد إلكتروني للمستخدم.");
         }
       });
 
@@ -305,9 +163,9 @@
         const newPass = prompt("أدخل كلمة المرور الجديدة:");
         if (newPass) {
           updatePassword(auth.currentUser, newPass).then(() => {
-            alert("✅ تم تغيير كلمة المرور بنجاح.");
+            alert("تم تغيير كلمة المرور بنجاح.");
           }).catch((error) => {
-            alert("❌ خطأ: " + error.message);
+            alert("خطأ: " + error.message);
           });
         }
       });
