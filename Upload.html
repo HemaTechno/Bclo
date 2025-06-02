@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>رفع الملفات</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>رفع سكربتات</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
@@ -11,77 +11,65 @@
       font-family: 'Cairo', sans-serif;
     }
     .fade-in {
-      animation: fadeIn 0.7s ease-in-out;
+      animation: fadeIn 1s ease-in-out;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #2d3748;
-      color: white;
-      padding: 16px;
-      border-radius: 12px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      z-index: 9999;
-      animation: fadeIn 0.5s ease-in-out;
     }
   </style>
 </head>
 <body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen flex items-center justify-center px-4">
 
   <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-xl fade-in">
-    <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">📤 رفع الملفات</h2>
+    <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">📥 رفع سكربت جديد</h2>
 
-    <div id="uploadContainer" class="border-2 border-dashed border-blue-400 p-6 rounded-xl text-center cursor-pointer transition hover:bg-blue-50">
-      <input type="file" id="fileInput" class="hidden" />
-      <p class="text-gray-600 mb-2">اسحب الملف هنا أو اضغط لاختيار ملف</p>
-      <p class="text-sm text-blue-600">الحد الأقصى: 10MB</p>
-    </div>
+    <form id="scriptForm" class="space-y-5">
+      <div>
+        <label for="scriptName" class="block font-semibold mb-1">اسم السكربت</label>
+        <input type="text" id="scriptName" required placeholder="اكتب اسم السكربت" 
+          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
 
-    <div class="mt-6">
-      <button id="uploadBtn" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105">
-        رفع الملف
+      <div>
+        <label for="scriptDescription" class="block font-semibold mb-1">وصف السكربت</label>
+        <textarea id="scriptDescription" required placeholder="اكتب وصف السكربت" rows="4"
+          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
+      </div>
+
+      <div>
+        <label for="scriptFile" class="block font-semibold mb-1">ملف السكربت (نص أو ملف)</label>
+        <input type="file" id="scriptFile" accept=".txt,.js,.json,.ts,.py,.lua,.zip" required
+          class="w-full" />
+      </div>
+
+      <div>
+        <label for="scriptImage" class="block font-semibold mb-1">صورة السكربت (اختياري)</label>
+        <input type="file" id="scriptImage" accept="image/*"
+          class="w-full" />
+      </div>
+
+      <button type="submit" 
+        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105">
+        رفع السكربت
       </button>
-    </div>
 
-    <div id="status" class="mt-4 text-center text-sm text-gray-600"></div>
+      <p id="status" class="text-center text-sm text-gray-600"></p>
+    </form>
   </div>
-
-  <div id="toastContainer" class="fixed bottom-6 right-6"></div>
 
   <script type="module">
     import { auth, db, storage } from './db/firebase-config.js';
-    import {
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import {
-      ref,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
-    import {
-      doc,
-      setDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    const fileInput = document.getElementById("fileInput");
-    const uploadContainer = document.getElementById("uploadContainer");
-    const uploadBtn = document.getElementById("uploadBtn");
+    const scriptForm = document.getElementById("scriptForm");
     const status = document.getElementById("status");
-    const toastContainer = document.getElementById("toastContainer");
 
-    let selectedFile = null;
     let currentUser = null;
 
-    // تأكد من تسجيل الدخول
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, user => {
       if (!user) {
         window.location.href = "login.html";
       } else {
@@ -89,59 +77,61 @@
       }
     });
 
-    uploadContainer.addEventListener("click", () => {
-      fileInput.click();
-    });
+    scriptForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "";
 
-    fileInput.addEventListener("change", () => {
-      selectedFile = fileInput.files[0];
-      status.textContent = selectedFile ? `✅ تم اختيار: ${selectedFile.name}` : "";
-    });
-
-    uploadBtn.addEventListener("click", async () => {
-      if (!selectedFile || !currentUser) {
-        status.textContent = "❌ يرجى اختيار ملف أولاً.";
+      if (!currentUser) {
+        status.textContent = "يجب تسجيل الدخول أولاً.";
         return;
       }
 
-      const uniqueId = `${selectedFile.name.replace(/\s+/g, "-")}_${Math.floor(Math.random() * 100000)}`;
-      const fileRef = ref(storage, `uploads/${currentUser.uid}/${uniqueId}`);
-      status.textContent = "⏳ جاري رفع الملف...";
+      const name = document.getElementById("scriptName").value.trim();
+      const description = document.getElementById("scriptDescription").value.trim();
+      const scriptFileInput = document.getElementById("scriptFile");
+      const imageFileInput = document.getElementById("scriptImage");
+
+      if (!name || !description || scriptFileInput.files.length === 0) {
+        status.textContent = "يرجى ملء كل الحقول المطلوبة.";
+        return;
+      }
+
+      status.textContent = "جاري رفع السكربت...";
 
       try {
-        await uploadBytes(fileRef, selectedFile);
-        const downloadURL = await getDownloadURL(fileRef);
+        // رفع ملف السكربت
+        const scriptFile = scriptFileInput.files[0];
+        const scriptFileRef = ref(storage, `scripts/${currentUser.uid}/${Date.now()}_${scriptFile.name}`);
+        await uploadBytes(scriptFileRef, scriptFile);
+        const scriptURL = await getDownloadURL(scriptFileRef);
 
-        await setDoc(doc(db, "files", uniqueId), {
-          name: selectedFile.name,
-          url: downloadURL,
-          uploadedAt: serverTimestamp(),
-          user: currentUser.uid
+        // رفع الصورة (اختياري)
+        let imageURL = "";
+        if (imageFileInput.files.length > 0) {
+          const imageFile = imageFileInput.files[0];
+          const imageFileRef = ref(storage, `script-images/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
+          await uploadBytes(imageFileRef, imageFile);
+          imageURL = await getDownloadURL(imageFileRef);
+        }
+
+        // حفظ البيانات في Firestore
+        await addDoc(collection(db, "scripts"), {
+          userId: currentUser.uid,
+          name,
+          description,
+          scriptURL,
+          imageURL,
+          createdAt: serverTimestamp()
         });
 
-        status.textContent = "✅ تم رفع الملف بنجاح!";
-        showToast(downloadURL);
-        setTimeout(() => {
-          window.location.href = `download.html?id=${uniqueId}`;
-        }, 2500);
+        status.textContent = "✅ تم رفع السكربت بنجاح!";
+        scriptForm.reset();
       } catch (error) {
         console.error(error);
-        status.textContent = "❌ فشل في رفع الملف.";
+        status.textContent = "❌ حدث خطأ أثناء الرفع.";
       }
     });
-
-    function showToast(url) {
-      const toast = document.createElement("div");
-      toast.className = "toast shadow-lg";
-
-      toast.innerHTML = `
-        <span>📎 رابط الملف جاهز</span>
-        <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded" onclick="navigator.clipboard.writeText('${url}')">نسخ الرابط</button>
-        <button class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-1 rounded" onclick="this.parentElement.remove()">تخطي</button>
-      `;
-
-      toastContainer.appendChild(toast);
-    }
   </script>
+
 </body>
 </html>
