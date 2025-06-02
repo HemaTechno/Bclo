@@ -2,41 +2,82 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>الملف الشخصي - مركز الملفات</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    (function(){
-      emailjs.init("YOUR_EMAILJS_USER_ID"); // ضع هنا EmailJS user ID الحقيقية
-    })();
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #ffffff);
+    }
+    /* تأثير ظهور تدريجي للبطاقات */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s forwards ease-out;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* تأثير هبوط وتوهج للزر عند التحويم */
+    .btn-glow:hover {
+      box-shadow:
+        0 0 8px #6366f1,
+        0 0 15px #4f46e5,
+        0 0 20px #4338ca;
+      transform: translateY(-2px);
+      transition: all 0.3s ease;
     }
   </style>
+  <script>
+    (function(){
+      emailjs.init("YOUR_EMAILJS_USER_ID"); // استبدل برقم معرف EmailJS الحقيقي
+    })();
+  </script>
 </head>
-<body class="bg-gray-50 min-h-screen py-10">
+<body class="min-h-screen flex items-center justify-center py-10">
 
-  <div class="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-8">
-    <h1 class="text-2xl font-bold mb-4 text-blue-700">الملف الشخصي</h1>
-    <p class="mb-2"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
-    <p class="mb-2"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
-    <p class="mb-6"><span class="font-semibold">ديسكورد:</span> <span id="discordInfo">غير مربوط</span></p>
+  <div class="max-w-xl w-full bg-white shadow-lg rounded-3xl p-8 fade-in-up">
+    <h1 class="text-3xl font-extrabold mb-6 text-indigo-600">الملف الشخصي</h1>
+    
+    <p class="mb-3 text-lg"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
+    <p class="mb-3 text-lg"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
+    <p class="mb-6 text-lg"><span class="font-semibold">ديسكورد:</span> <span id="discordInfo" class="text-gray-600">غير مربوط</span></p>
 
-    <div class="space-y-3">
+    <div class="space-y-4">
       <a href="https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify" 
-         class="block text-center bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">ربط مع حساب ديسكورد</a>
+         target="_blank"
+         class="block text-center bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition btn-glow">
+        🔗 ربط مع حساب ديسكورد
+      </a>
 
-      <button id="changePassword" class="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600">تغيير كلمة المرور</button>
-      <button id="resetPassword" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600">نسيت كلمة المرور؟</button>
-      <button id="logoutBtn" class="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-900">تسجيل الخروج</button>
+      <div class="text-center mt-2">
+        <p class="mb-2 font-semibold text-gray-700">📱 امسح رمز QR لربط حسابك مباشرة:</p>
+        <div id="qrcode" class="mx-auto"></div>
+      </div>
+
+      <button id="dashboardBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold btn-glow transition">
+        🛠️ لوحة التحكم
+      </button>
+
+      <button id="changePassword" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-xl font-bold transition">
+        🔑 تغيير كلمة المرور
+      </button>
+      <button id="resetPassword" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold transition">
+        📧 نسيت كلمة المرور؟
+      </button>
+      <button id="logoutBtn" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-3 rounded-xl font-bold transition">
+        🚪 تسجيل الخروج
+      </button>
     </div>
   </div>
 
-  <!-- هنا ننقل السكربتات بعد DOM لتحميل العناصر أولاً -->
   <script type="module">
     import { auth, db } from './db/firebase-config.js';
     import {
@@ -49,11 +90,23 @@
       getDoc
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    // بعد تحميل الصفحة
     window.addEventListener('DOMContentLoaded', () => {
       const userName = document.getElementById("userName");
       const userEmail = document.getElementById("userEmail");
       const discordInfo = document.getElementById("discordInfo");
+      const dashboardBtn = document.getElementById("dashboardBtn");
+
+      const discordOauthUrl = "https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify";
+
+      // إنشاء QR Code
+      new QRCode(document.getElementById("qrcode"), {
+        text: discordOauthUrl,
+        width: 160,
+        height: 160,
+        colorDark : "#4F46E5",  // لون أزرق بنفسجي متناسق مع التصميم
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
 
       onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -73,6 +126,11 @@
         }
       });
 
+      // عند الضغط على زر لوحة التحكم يوجه للموقع
+      dashboardBtn.addEventListener("click", () => {
+        window.open("https://scriptbot.cloud/dashboard", "_blank");
+      });
+
       document.getElementById("logoutBtn").addEventListener("click", () => {
         signOut(auth).then(() => {
           window.location.href = "login.html";
@@ -86,12 +144,12 @@
             to_email: user.email,
             message: `رابط إعادة تعيين كلمة المرور: https://yourdomain.com/reset-password?email=${user.email}`
           }).then(() => {
-            alert("تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.");
+            alert("📧 تم إرسال رابط إعادة التعيين إلى بريدك.");
           }, (error) => {
-            alert("حدث خطأ أثناء إرسال البريد: " + error.text);
+            alert("❌ خطأ في إرسال البريد: " + error.text);
           });
         } else {
-          alert("لم يتم العثور على بريد إلكتروني للمستخدم.");
+          alert("⚠️ لم يتم العثور على بريد إلكتروني.");
         }
       });
 
@@ -99,9 +157,9 @@
         const newPass = prompt("أدخل كلمة المرور الجديدة:");
         if (newPass) {
           updatePassword(auth.currentUser, newPass).then(() => {
-            alert("تم تغيير كلمة المرور بنجاح.");
+            alert("✅ تم تغيير كلمة المرور بنجاح.");
           }).catch((error) => {
-            alert("خطأ: " + error.message);
+            alert("❌ خطأ: " + error.message);
           });
         }
       });
