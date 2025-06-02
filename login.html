@@ -9,16 +9,29 @@
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script type="module" src="./db/firebase-config.js"></script>
   <script type="module">
-    import { auth, provider } from './db/firebase-config.js';
+    import { auth, db, provider } from './db/firebase-config.js';
     import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     document.getElementById('googleLogin').addEventListener('click', () => {
       signInWithPopup(auth, provider)
-        .then((result) => {
-          alert("تم تسجيل الدخول عبر Google: " + result.user.email);
+        .then(async (result) => {
+          const user = result.user;
+          const email = user.email;
+          const name = user.displayName;
+          const uid = user.uid;
+
+          // حفظ الإيميل والاسم في قاعدة البيانات
+          await setDoc(doc(db, "users", uid), {
+            email: email,
+            name: name
+          }, { merge: true });
+
+          alert(`✅ تم تسجيل الدخول عبر Google:\n📧 ${email}\n👤 ${name}`);
+          window.location.href = "/profile.html";
         })
         .catch((error) => {
-          alert("خطأ في تسجيل الدخول عبر Google: " + error.message);
+          alert("❌ خطأ في تسجيل الدخول عبر Google: " + error.message);
         });
     });
 
@@ -29,10 +42,11 @@
 
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          alert("تم تسجيل الدخول بنجاح: " + userCredential.user.email);
+          alert("✅ تم تسجيل الدخول بنجاح: " + userCredential.user.email);
+          window.location.href = "/profile.html";
         })
         .catch((error) => {
-          alert("خطأ: " + error.message);
+          alert("❌ خطأ: " + error.message);
         });
     });
   </script>
