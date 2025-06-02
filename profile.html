@@ -6,80 +6,11 @@
   <title>الملف الشخصي - مركز الملفات</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <script type="module" src="./db/firebase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function(){
-      emailjs.init("your_emailjs_user_id"); // ضع هنا EmailJS user ID
+      emailjs.init("YOUR_EMAILJS_USER_ID"); // ضع هنا EmailJS user ID الحقيقية
     })();
-  </script>
-  <script type="module">
-    import { auth, db} from './db/firebase-config.js';
-    import {
-      onAuthStateChanged,
-      signOut,
-      updatePassword,
-      GoogleAuthProvider,
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import {
-      doc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const userName = document.getElementById("userName");
-    const userEmail = document.getElementById("userEmail");
-    const discordInfo = document.getElementById("discordInfo");
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        userName.textContent = user.displayName || "اسم غير محدد";
-        userEmail.textContent = user.email;
-
-        const userRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-          const discord = docSnap.data().discord;
-          if (discord) {
-            discordInfo.textContent = `${discord.username} (ID: ${discord.id})`;
-          }
-        }
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
-    });
-
-    document.getElementById("resetPassword").addEventListener("click", () => {
-      const user = auth.currentUser;
-      if (user && user.email) {
-        emailjs.send("default_service", "template_password_reset", {
-          to_email: user.email,
-          message: `رابط إعادة تعيين كلمة المرور: https://yourdomain.com/reset-password?email=${user.email}`
-        }).then(() => {
-          alert("تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.");
-        }, (error) => {
-          alert("حدث خطأ أثناء إرسال البريد: " + error.text);
-        });
-      } else {
-        alert("لم يتم العثور على بريد إلكتروني للمستخدم.");
-      }
-    });
-
-    document.getElementById("changePassword").addEventListener("click", () => {
-      const newPass = prompt("أدخل كلمة المرور الجديدة:");
-      if (newPass) {
-        updatePassword(auth.currentUser, newPass).then(() => {
-          alert("تم تغيير كلمة المرور بنجاح.");
-        }).catch((error) => {
-          alert("خطأ: " + error.message);
-        });
-      }
-    });
   </script>
   <style>
     body {
@@ -88,6 +19,7 @@
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen py-10">
+
   <div class="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-8">
     <h1 class="text-2xl font-bold mb-4 text-blue-700">الملف الشخصي</h1>
     <p class="mb-2"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
@@ -95,12 +27,85 @@
     <p class="mb-6"><span class="font-semibold">ديسكورد:</span> <span id="discordInfo">غير مربوط</span></p>
 
     <div class="space-y-3">
-      <a href="https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify" class="...">ربط مع حساب ديسكورد</a>
+      <a href="https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify" 
+         class="block text-center bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition">ربط مع حساب ديسكورد</a>
 
-  <button id="changePassword" class="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600">تغيير كلمة المرور</button>
+      <button id="changePassword" class="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600">تغيير كلمة المرور</button>
       <button id="resetPassword" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600">نسيت كلمة المرور؟</button>
       <button id="logoutBtn" class="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-900">تسجيل الخروج</button>
     </div>
   </div>
+
+  <!-- هنا ننقل السكربتات بعد DOM لتحميل العناصر أولاً -->
+  <script type="module">
+    import { auth, db } from './db/firebase-config.js';
+    import {
+      onAuthStateChanged,
+      signOut,
+      updatePassword
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    // بعد تحميل الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+      const userName = document.getElementById("userName");
+      const userEmail = document.getElementById("userEmail");
+      const discordInfo = document.getElementById("discordInfo");
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          userName.textContent = user.displayName || "اسم غير محدد";
+          userEmail.textContent = user.email;
+
+          const userRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userRef);
+          if (docSnap.exists()) {
+            const discord = docSnap.data().discord;
+            if (discord) {
+              discordInfo.textContent = `${discord.username} (ID: ${discord.id})`;
+            }
+          }
+        } else {
+          window.location.href = "login.html";
+        }
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        signOut(auth).then(() => {
+          window.location.href = "login.html";
+        });
+      });
+
+      document.getElementById("resetPassword").addEventListener("click", () => {
+        const user = auth.currentUser;
+        if (user && user.email) {
+          emailjs.send("default_service", "template_password_reset", {
+            to_email: user.email,
+            message: `رابط إعادة تعيين كلمة المرور: https://yourdomain.com/reset-password?email=${user.email}`
+          }).then(() => {
+            alert("تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.");
+          }, (error) => {
+            alert("حدث خطأ أثناء إرسال البريد: " + error.text);
+          });
+        } else {
+          alert("لم يتم العثور على بريد إلكتروني للمستخدم.");
+        }
+      });
+
+      document.getElementById("changePassword").addEventListener("click", () => {
+        const newPass = prompt("أدخل كلمة المرور الجديدة:");
+        if (newPass) {
+          updatePassword(auth.currentUser, newPass).then(() => {
+            alert("تم تغيير كلمة المرور بنجاح.");
+          }).catch((error) => {
+            alert("خطأ: " + error.message);
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
