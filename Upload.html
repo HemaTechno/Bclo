@@ -3,16 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>رفع سكربتات</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"/>
+  <title>رفع سكربتات مع اختيار الماب</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-    }
-    .fade-in {
-      animation: fadeIn 1s ease-in-out;
-    }
+    body { font-family: 'Cairo', sans-serif; }
+    .fade-in { animation: fadeIn 1s ease-in-out; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -24,10 +20,10 @@
   <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-xl fade-in">
     <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">📥 رفع سكربت جديد</h2>
 
-    <form id="scriptForm" class="space-y-5">
+    <form id="scriptForm" class="space-y-5" autocomplete="off">
       <div>
         <label for="scriptName" class="block font-semibold mb-1">اسم السكربت</label>
-        <input type="text" id="scriptName" required placeholder="اكتب اسم السكربت" 
+        <input type="text" id="scriptName" required placeholder="اكتب اسم السكربت"
           class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
       </div>
 
@@ -38,48 +34,134 @@
       </div>
 
       <div>
-        <label for="scriptFile" class="block font-semibold mb-1">ملف السكربت (نص أو ملف)</label>
-        <input type="file" id="scriptFile" accept=".txt,.js,.json,.ts,.py,.lua,.zip" required
-          class="w-full" />
+        <label for="mapSelect" class="block font-semibold mb-1">اختر الماب</label>
+        <select id="mapSelect" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="" disabled selected>اختر خريطة أو أضف جديدة</option>
+        </select>
+        <button type="button" id="addMapBtn" class="mt-2 text-blue-600 hover:underline">+ أضف خريطة جديدة</button>
+      </div>
+
+      <div id="newMapContainer" class="hidden mt-2">
+        <input type="text" id="newMapName" placeholder="اسم الخريطة الجديدة"
+          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
+        <button type="button" id="saveNewMapBtn"
+          class="mt-2 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-all transform hover:scale-105">حفظ الخريطة</button>
       </div>
 
       <div>
-        <label for="scriptImage" class="block font-semibold mb-1">صورة السكربت (اختياري)</label>
-        <input type="file" id="scriptImage" accept="image/*"
-          class="w-full" />
+        <label for="scriptFile" class="block font-semibold mb-1">ملف السكربت (نص أو ملف)</label>
+        <input type="file" id="scriptFile" accept=".png,.js,.json,.ts,.py,.lua,.zip" required class="w-full" />
       </div>
 
-      <button type="submit" 
-        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105">
-        رفع السكربت
-      </button>
+      <div>
+        <label for="scriptImage" class="block font-semibold mb-1">صورة السكربت (مطلوب)</label>
+        <input type="file" id="scriptImage" accept="image/*" required class="w-full" />
+      </div>
 
-      <p id="status" class="text-center text-sm text-gray-600"></p>
+      <div class="relative">
+        <button type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105">
+          رفع السكربت
+        </button>
+        <div id="progressBarContainer" class="absolute bottom-0 left-0 right-0 h-1 bg-gray-300 rounded-b-lg overflow-hidden mt-1 hidden">
+          <div id="progressBar" class="h-1 bg-blue-500 w-0 transition-all"></div>
+        </div>
+      </div>
+
+      <p id="status" class="text-center text-sm text-gray-600 mt-2"></p>
     </form>
   </div>
 
   <script type="module">
     import { auth, db, storage } from './db/firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
-    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+    import { collection, addDoc, getDoc, setDoc, doc, query, where, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const scriptForm = document.getElementById("scriptForm");
     const status = document.getElementById("status");
+    const progressBarContainer = document.getElementById("progressBarContainer");
+    const progressBar = document.getElementById("progressBar");
+    const mapSelect = document.getElementById("mapSelect");
+    const addMapBtn = document.getElementById("addMapBtn");
+    const newMapContainer = document.getElementById("newMapContainer");
+    const newMapName = document.getElementById("newMapName");
+    const saveNewMapBtn = document.getElementById("saveNewMapBtn");
 
     let currentUser = null;
 
+    // تحقق تسجيل الدخول
     onAuthStateChanged(auth, user => {
       if (!user) {
         window.location.href = "login.html";
       } else {
         currentUser = user;
+        loadMaps();
       }
     });
+
+    // تحميل الخرائط للـ select
+    async function loadMaps() {
+      mapSelect.innerHTML = '<option value="" disabled selected>اختر خريطة أو أضف جديدة</option>';
+      const mapsSnapshot = await getDocs(collection(db, "maps"));
+      mapsSnapshot.forEach(docSnap => {
+        const map = docSnap.data();
+        const option = document.createElement("option");
+        option.value = docSnap.id;
+        option.textContent = map.name;
+        mapSelect.appendChild(option);
+      });
+    }
+
+    // عرض input اضافة خريطة جديدة
+    addMapBtn.addEventListener("click", () => {
+      newMapContainer.classList.toggle("hidden");
+      newMapName.value = "";
+      newMapName.focus();
+    });
+
+    // حفظ خريطة جديدة
+    saveNewMapBtn.addEventListener("click", async () => {
+      const name = newMapName.value.trim();
+      if (!name) return alert("يرجى كتابة اسم الخريطة");
+
+      // تحقق لو الخريطة موجودة بنفس الاسم (اختياري)
+      const q = query(collection(db, "maps"), where("name", "==", name));
+      const qSnap = await getDocs(q);
+      if (!qSnap.empty) return alert("الخريطة موجودة بالفعل");
+
+      const docRef = await addDoc(collection(db, "maps"), { name });
+      await loadMaps();
+      mapSelect.value = docRef.id;
+      newMapContainer.classList.add("hidden");
+    });
+
+    // توليد ID السكربت التالي بطريقة آمنة باستخدام مستند counters
+    async function getNextScriptId() {
+      const counterRef = doc(db, "counters", "scripts");
+      const counterSnap = await getDoc(counterRef);
+
+      let nextId = 1;
+      if (counterSnap.exists()) {
+        nextId = counterSnap.data().count + 1;
+      }
+      // تحديث العداد
+      await setDoc(counterRef, { count: nextId });
+      return nextId;
+    }
+
+    // التحقق من وجود سكربت بنفس الاسم أو محتوى (عن طريق الاسم فقط هنا للتبسيط)
+    async function checkDuplicateScript(name) {
+      const q = query(collection(db, "scripts"), where("name", "==", name));
+      const qSnap = await getDocs(q);
+      return !qSnap.empty;
+    }
 
     scriptForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       status.textContent = "";
+      progressBarContainer.classList.add("hidden");
+      progressBar.style.width = "0%";
 
       if (!currentUser) {
         status.textContent = "يجب تسجيل الدخول أولاً.";
@@ -90,48 +172,99 @@
       const description = document.getElementById("scriptDescription").value.trim();
       const scriptFileInput = document.getElementById("scriptFile");
       const imageFileInput = document.getElementById("scriptImage");
+      const selectedMapId = mapSelect.value;
 
-      if (!name || !description || scriptFileInput.files.length === 0) {
-        status.textContent = "يرجى ملء كل الحقول المطلوبة.";
+      if (!name || !description || !selectedMapId || scriptFileInput.files.length === 0 || imageFileInput.files.length === 0) {
+  status.textContent = "يرجى ملء كل الحقول المطلوبة (بما فيها اختيار الماب ورفع صورة).";
+  return;
+}
+      
+const imageFileInput = document.getElementById("scriptImage");
+if (imageFileInput.files.length === 0) {
+  status.textContent = "⚠️ يرجى اختيار صورة للسكربت (مطلوبة).";
+  return;
+}
+
+
+      // التحقق من التكرار
+      const isDuplicate = await checkDuplicateScript(name);
+      if (isDuplicate) {
+        status.textContent = "⚠️ السكربت هذا مكرر، لا يمكن رفعه.";
         return;
       }
 
       status.textContent = "جاري رفع السكربت...";
 
       try {
-        // رفع ملف السكربت
         const scriptFile = scriptFileInput.files[0];
+
+        // رفع السكربت مع عداد التقدم
         const scriptFileRef = ref(storage, `scripts/${currentUser.uid}/${Date.now()}_${scriptFile.name}`);
-        await uploadBytes(scriptFileRef, scriptFile);
-        const scriptURL = await getDownloadURL(scriptFileRef);
+        const uploadTask = uploadBytesResumable(scriptFileRef, scriptFile);
+
+        progressBarContainer.classList.remove("hidden");
+
+        // عرض التقدم
+        uploadTask.on("state_changed", snapshot => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          progressBar.style.width = progress + "%";
+        });
+
+        // عند الانتهاء
+        const uploadResult = await uploadTask;
+
+        const scriptURL = await getDownloadURL(uploadResult.ref);
 
         // رفع الصورة (اختياري)
         let imageURL = "";
         if (imageFileInput.files.length > 0) {
           const imageFile = imageFileInput.files[0];
           const imageFileRef = ref(storage, `script-images/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
-          await uploadBytes(imageFileRef, imageFile);
+          await uploadBytesResumable(imageFileRef, imageFile);
           imageURL = await getDownloadURL(imageFileRef);
         }
+
+        // جلب رقم السكربت الجديد
+        const scriptId = await getNextScriptId();
 
         // حفظ البيانات في Firestore
         await addDoc(collection(db, "scripts"), {
           userId: currentUser.uid,
+          id: scriptId,
           name,
           description,
           scriptURL,
           imageURL,
+          mapId: selectedMapId,
           createdAt: serverTimestamp()
         });
 
-        status.textContent = "✅ تم رفع السكربت بنجاح!";
+        status.innerHTML = `
+          ✅ تم رفع السكربت بنجاح!<br/>
+          <button id="copyLinkBtn" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">نسخ رابط عرض السكربت</button>
+        `;
+
         scriptForm.reset();
+        progressBarContainer.classList.add("hidden");
+        progressBar.style.width = "0%";
+
+        // رابط عرض السكربت (تقدر تعدل حسب موقعك)
+        const scriptViewUrl = `${window.location.origin}/view-script.html?id=${scriptId}`;
+
+        // نسخ الرابط عند الضغط على الزر
+        document.getElementById("copyLinkBtn").addEventListener("click", () => {
+          navigator.clipboard.writeText(scriptViewUrl)
+            .then(() => alert("تم نسخ الرابط!"))
+            .catch(() => alert("فشل النسخ، حاول يدوياً"));
+        });
+
       } catch (error) {
         console.error(error);
         status.textContent = "❌ حدث خطأ أثناء الرفع.";
+        progressBarContainer.classList.add("hidden");
+        progressBar.style.width = "0%";
       }
     });
   </script>
-
 </body>
 </html>
