@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الملف الشخصي - مركز الملفات</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module">
+    import { auth } from './db/firebase-config.js';
+    import {
+      onAuthStateChanged,
+      signOut,
+      sendPasswordResetEmail,
+      updatePassword,
+      reauthenticateWithPopup,
+      GoogleAuthProvider
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const userName = document.getElementById("userName");
+    const userEmail = document.getElementById("userEmail");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userName.textContent = user.displayName || "اسم غير محدد";
+        userEmail.textContent = user.email;
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    });
+
+    document.getElementById("resetPassword").addEventListener("click", () => {
+      const email = auth.currentUser.email;
+      sendPasswordResetEmail(auth, email).then(() => {
+        alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.");
+      }).catch((error) => {
+        alert("خطأ: " + error.message);
+      });
+    });
+
+    document.getElementById("changePassword").addEventListener("click", () => {
+      const newPass = prompt("أدخل كلمة المرور الجديدة:");
+      if (newPass) {
+        updatePassword(auth.currentUser, newPass).then(() => {
+          alert("تم تغيير كلمة المرور بنجاح.");
+        }).catch((error) => {
+          alert("خطأ: " + error.message);
+        });
+      }
+    });
+
+    document.getElementById("linkDiscord").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider(); // استبدل بمزود ديسكورد الحقيقي عند الدمج
+      reauthenticateWithPopup(auth.currentUser, provider).then((result) => {
+        alert("تم ربط الحساب بنجاح");
+      }).catch((error) => {
+        alert("فشل الربط: " + error.message);
+      });
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-10">
+  <div class="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-8">
+    <h1 class="text-2xl font-bold mb-4 text-blue-700">الملف الشخصي</h1>
+    <p class="mb-2"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
+    <p class="mb-6"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
+
+    <div class="space-y-3">
+      <button id="changePassword" class="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600">تغيير كلمة المرور</button>
+      <button id="resetPassword" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600">نسيت كلمة المرور؟</button>
+      <button id="linkDiscord" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">ربط مع حساب ديسكورد</button>
+      <button id="logoutBtn" class="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-900">تسجيل الخروج</button>
+    </div>
+  </div>
+</body>
+</html>
