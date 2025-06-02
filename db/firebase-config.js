@@ -5,13 +5,12 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.11.0/firebas
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDhpIG2co2LIV9m_E1a5LE6fNqbceI_eCw",
-  authDomain: "cloud-c5b93.firebaseapp.com",
-  projectId: "cloud-c5b93",
-  storageBucket: "cloud-c5b93.appspot.com",  // صححت الرابط هنا
-  messagingSenderId: "96719477673",
-  appId: "1:96719477673:web:11dc6c42f36f139a0782b8",
-  measurementId: "G-LSQ0249S3D"
+  apiKey: "AIzaSyAKPlddXSZl25p9SI9H0CcPK4XSTNQXxAM",
+  authDomain: "t-shirt-94ff7.firebaseapp.com",
+  projectId: "t-shirt-94ff7",
+  storageBucket: "t-shirt-94ff7.appspot.com",
+  messagingSenderId: "367396012881",
+  appId: "1:367396012881:web:3127607d5ced7678e64970"
 };
 
 const app = initializeApp(firebaseConfig);
