@@ -10,19 +10,15 @@
 
   <style>
     body { font-family: 'Cairo', sans-serif; }
-    .fade-in {
-      animation: fadeIn 0.8s ease-in-out;
-    }
+    .fade-in { animation: fadeIn 0.8s ease-in-out; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* انيميشن أزرار */
     button:hover {
       transform: scale(1.05);
       transition: transform 0.3s ease;
     }
-    /* زر رفع صورة شيك */
     .custom-file-upload {
       cursor: pointer;
       display: inline-block;
@@ -36,9 +32,47 @@
     .custom-file-upload:hover {
       background: linear-gradient(135deg, #4338ca, #2563eb);
     }
+    /* Loader */
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3b82f6;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #3b82f6;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      opacity: 0;
+      animation: fadeInUp 0.5s forwards;
+    }
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(-10px); }
+    }
   </style>
 </head>
+
 <body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen flex items-center justify-center px-4">
+
+  <!-- Loader -->
+  <div id="loader" class="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center hidden z-50">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
 
   <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg fade-in">
     <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">📜 إضافة سكربت جديد</h2>
@@ -65,11 +99,9 @@
 
       <div>
         <label class="block mb-2 font-semibold text-gray-700">رفع صورة (اجباري)</label>
-        <label for="scriptImage" class="custom-file-upload">
-          رفع صورة
-        </label>
+        <label for="scriptImage" class="custom-file-upload">رفع صورة</label>
         <input id="scriptImage" name="scriptImage" type="file" accept="image/*" required class="hidden" />
-        <p id="imageName" class="mt-2 text-sm text-gray-600"></p>
+        <div id="imageName" class="mt-2 text-sm text-gray-600"></div>
       </div>
 
       <div>
@@ -77,16 +109,13 @@
         <select id="mapSelect" name="mapSelect"
           class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">-- اختر ماب --</option>
-          <!-- سيتم إضافة المابات هنا -->
         </select>
         <button type="button" id="addMapBtn"
           class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">إضافة ماب</button>
       </div>
 
-      <div>
-        <!-- reCAPTCHA -->
-        <div class="g-recaptcha" data-sitekey="6LcUz1MrAAAAAHXX9VUHoA2jR2oGxjU87Jz8go7i"></div>
-      </div>
+      <!-- reCAPTCHA -->
+      <div class="g-recaptcha" data-sitekey="6LcUz1MrAAAAAHXX9VUHoA2jR2oGxjU87Jz8go7i"></div>
 
       <button type="submit"
         class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">إضافة السكربت</button>
@@ -97,25 +126,21 @@
 
   <!-- مودال إضافة ماب -->
   <div id="mapModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div
-      class="bg-white rounded-lg p-6 w-80 relative shadow-lg animate-fade-in">
+    <div class="bg-white rounded-lg p-6 w-80 relative shadow-lg animate-fade-in">
       <h3 class="text-lg font-bold mb-4">أدخل اسم الماب</h3>
       <input id="mapNameInput" type="text"
         class="w-full border border-gray-300 rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="اسم الماب" />
       <div class="flex justify-end space-x-2">
         <button id="cancelMap" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">إلغاء</button>
-        <button id="saveMap"
-          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">حفظ</button>
+        <button id="saveMap" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">حفظ</button>
       </div>
       <button id="closeMapModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 font-bold">×</button>
     </div>
   </div>
 
   <script type="module">
-    // بيانات مبدئية للمابات (تقدر تجيبها من داتابيس في التطبيق الحقيقي)
     let maps = ["ماب 1", "ماب 2"];
-
     const mapSelect = document.getElementById('mapSelect');
     const addMapBtn = document.getElementById('addMapBtn');
     const mapModal = document.getElementById('mapModal');
@@ -127,14 +152,15 @@
     const status = document.getElementById('status');
     const scriptImageInput = document.getElementById('scriptImage');
     const imageNameDisplay = document.getElementById('imageName');
+    const loader = document.getElementById('loader');
+    const toast = document.getElementById('toast');
+    let formChanged = false;
 
-    // تسجيل دخول وهمي - هنا تحط كود تحقق تسجيل الدخول الحقيقي
-    const currentUser = { uid: "user_123" }; // بدلها بكود المصادقة الحقيقي
+    const currentUser = { uid: "user_123" }; // مصادقة وهمية
 
-    // تحميل المابات للقائمة
     function loadMaps() {
       mapSelect.innerHTML = '<option value="">-- اختر ماب --</option>';
-      maps.forEach((map, idx) => {
+      maps.forEach((map) => {
         const opt = document.createElement('option');
         opt.value = map;
         opt.textContent = map;
@@ -143,32 +169,14 @@
     }
     loadMaps();
 
-    // فتح المودال عند الضغط على زر إضافة ماب
-    addMapBtn.addEventListener('click', () => {
-      mapModal.classList.remove('hidden');
-    });
+    addMapBtn.addEventListener('click', () => mapModal.classList.remove('hidden'));
+    closeMapModal.addEventListener('click', () => mapModal.classList.add('hidden'));
+    cancelMapBtn.addEventListener('click', () => mapModal.classList.add('hidden'));
 
-    // إغلاق المودال
-    closeMapModal.addEventListener('click', () => {
-      mapModal.classList.add('hidden');
-      mapNameInput.value = '';
-    });
-    cancelMapBtn.addEventListener('click', () => {
-      mapModal.classList.add('hidden');
-      mapNameInput.value = '';
-    });
-
-    // حفظ ماب جديد
     saveMapBtn.addEventListener('click', () => {
       const newMap = mapNameInput.value.trim();
-      if (!newMap) {
-        alert('يرجى إدخال اسم الماب');
-        return;
-      }
-      if (maps.includes(newMap)) {
-        alert('هذا الماب موجود مسبقاً');
-        return;
-      }
+      if (!newMap) return alert('يرجى إدخال اسم الماب');
+      if (maps.includes(newMap)) return alert('هذا الماب موجود مسبقاً');
       maps.push(newMap);
       loadMaps();
       mapSelect.value = newMap;
@@ -176,36 +184,59 @@
       mapNameInput.value = '';
     });
 
-    // عرض اسم الصورة المختارة
+    function showToast(message, success = true) {
+      toast.textContent = message;
+      toast.style.backgroundColor = success ? '#3b82f6' : '#ef4444';
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
     scriptImageInput.addEventListener('change', () => {
       if (scriptImageInput.files.length > 0) {
-        imageNameDisplay.textContent = `تم اختيار: ${scriptImageInput.files[0].name}`;
+        const file = scriptImageInput.files[0];
+        if (!file.type.startsWith('image/')) {
+          showToast("الملف ليس صورة!", false);
+          scriptImageInput.value = '';
+          imageNameDisplay.textContent = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imageNameDisplay.innerHTML = `
+            <span class="block mt-2">تم اختيار: ${file.name}</span>
+            <img src="${e.target.result}" class="mt-2 rounded-lg w-full max-h-48 object-cover" />
+            <button class="mt-2 text-red-500 hover:underline" id="removeImage">حذف الصورة</button>
+          `;
+          document.getElementById('removeImage').onclick = () => {
+            if (confirm("هل أنت متأكد من حذف الصورة؟")) {
+              scriptImageInput.value = '';
+              imageNameDisplay.textContent = '';
+            }
+          };
+        };
+        reader.readAsDataURL(file);
       } else {
         imageNameDisplay.textContent = '';
       }
     });
 
-    // رفع البيانات مع التحقق من الكابتشا
+    scriptForm.addEventListener('input', () => formChanged = true);
+    window.addEventListener('beforeunload', (e) => {
+      if (formChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
     scriptForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       status.textContent = '';
-      const formData = new FormData(scriptForm);
+      if (scriptImageInput.files.length === 0) return showToast("يرجى رفع صورة", false);
 
-      // تحقق من صورة
-      if (scriptImageInput.files.length === 0) {
-        status.textContent = 'يرجى رفع صورة للسكربت';
-        return;
-      }
-
-      // تحقق من reCAPTCHA
       const recaptchaResponse = grecaptcha.getResponse();
-      if (!recaptchaResponse) {
-        status.textContent = 'يرجى تأكيد الكابتشا';
-        return;
-      }
+      if (!recaptchaResponse) return showToast("يرجى تأكيد الكابتشا", false);
 
-      // بيانات الإدخال
+      const formData = new FormData(scriptForm);
       const data = {
         scriptName: formData.get('scriptName'),
         scriptDesc: formData.get('scriptDesc'),
@@ -215,38 +246,26 @@
         captcha: recaptchaResponse,
       };
 
-      status.textContent = 'جاري رفع البيانات...';
-
-      // --- مكان رفع البيانات للقاعدة ---
-      // انتبه: لازم تضيف رفع الصورة (مثلاً رفع إلى سيرفر أو Firebase Storage)
-      // هذا مجرد مثال وهمي للتوضيح فقط
+      loader.classList.remove('hidden');
       setTimeout(() => {
-        // افترضنا ان الرقم التسلسلي للسكربت هو 1 مثلاً (تخليه يزيد من الداتا الحقيقية)
+        loader.classList.add('hidden');
         const scriptId = Math.floor(Math.random() * 1000) + 1;
-
         status.innerHTML = `
           ✅ تم إضافة السكربت بنجاح!<br />
           معرف السكربت: <b>${scriptId}</b><br />
           <button id="copyLinkBtn" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">نسخ رابط السكربت</button>
         `;
-
-        // رابط السكربت (مثال)
         const scriptLink = `${window.location.origin}/script-view.html?id=${scriptId}`;
-
-        // حدث نسخ الرابط
         document.getElementById('copyLinkBtn').addEventListener('click', () => {
-          navigator.clipboard.writeText(scriptLink).then(() => {
-            alert('تم نسخ الرابط!');
-          });
+          navigator.clipboard.writeText(scriptLink).then(() => alert("تم نسخ الرابط!"));
         });
-
-        // إعادة تعيين الفورم والكابتشا
+        showToast("تم رفع السكربت بنجاح!");
         scriptForm.reset();
         grecaptcha.reset();
         imageNameDisplay.textContent = '';
+        formChanged = false;
       }, 2000);
     });
   </script>
-
 </body>
 </html>
