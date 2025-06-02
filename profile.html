@@ -6,25 +6,37 @@
   <title>الملف الشخصي - مركز الملفات</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="./db/firebase-config.js"></script>
   <script type="module">
-    import { auth } from './db/firebase-config.js';
+    import { auth, db } from './db/firebase-config.js';
     import {
       onAuthStateChanged,
       signOut,
       sendPasswordResetEmail,
-      updatePassword,
-      reauthenticateWithPopup,
-      GoogleAuthProvider
+      updatePassword
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const userName = document.getElementById("userName");
     const userEmail = document.getElementById("userEmail");
+    const discordInfo = document.getElementById("discordInfo");
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         userName.textContent = user.displayName || "اسم غير محدد";
         userEmail.textContent = user.email;
+
+        const userRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          const discord = docSnap.data().discord;
+          if (discord) {
+            discordInfo.textContent = `${discord.username} (ID: ${discord.id})`;
+          }
+        }
       } else {
         window.location.href = "login.html";
       }
@@ -55,15 +67,6 @@
         });
       }
     });
-
-    document.getElementById("linkDiscord").addEventListener("click", () => {
-      const provider = new GoogleAuthProvider(); // استبدل بمزود ديسكورد الحقيقي عند الدمج
-      reauthenticateWithPopup(auth.currentUser, provider).then((result) => {
-        alert("تم ربط الحساب بنجاح");
-      }).catch((error) => {
-        alert("فشل الربط: " + error.message);
-      });
-    });
   </script>
   <style>
     body {
@@ -75,12 +78,13 @@
   <div class="max-w-xl mx-auto bg-white shadow-md rounded-2xl p-8">
     <h1 class="text-2xl font-bold mb-4 text-blue-700">الملف الشخصي</h1>
     <p class="mb-2"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
-    <p class="mb-6"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
+    <p class="mb-2"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
+    <p class="mb-6"><span class="font-semibold">ديسكورد:</span> <span id="discordInfo">غير مربوط</span></p>
 
     <div class="space-y-3">
+      <a href="https://discord.com/api/oauth2/authorize?client_id=1379177348301328426&redirect_uri=http://localhost:5500/discord-callback.html&response_type=token&scope=identify" class="block w-full text-center bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">ربط مع حساب ديسكورد</a>
       <button id="changePassword" class="w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600">تغيير كلمة المرور</button>
       <button id="resetPassword" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600">نسيت كلمة المرور؟</button>
-      <button id="linkDiscord" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">ربط مع حساب ديسكورد</button>
       <button id="logoutBtn" class="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-900">تسجيل الخروج</button>
     </div>
   </div>
