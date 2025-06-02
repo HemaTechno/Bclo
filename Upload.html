@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>رفع سكربتات</title>
+
+  <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- reCAPTCHA v2 -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
@@ -109,9 +113,9 @@
         <select id="mapSelect" name="mapSelect"
           class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">-- اختر ماب --</option>
+          <option value="ماب 1">ماب 1</option>
+          <option value="ماب 2">ماب 2</option>
         </select>
-        <button type="button" id="addMapBtn"
-          class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">إضافة ماب</button>
       </div>
 
       <!-- reCAPTCHA -->
@@ -124,65 +128,36 @@
     <div id="status" class="mt-4 text-center text-sm text-gray-600"></div>
   </div>
 
-  <!-- مودال إضافة ماب -->
-  <div id="mapModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-lg p-6 w-80 relative shadow-lg animate-fade-in">
-      <h3 class="text-lg font-bold mb-4">أدخل اسم الماب</h3>
-      <input id="mapNameInput" type="text"
-        class="w-full border border-gray-300 rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="اسم الماب" />
-      <div class="flex justify-end space-x-2">
-        <button id="cancelMap" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">إلغاء</button>
-        <button id="saveMap" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">حفظ</button>
-      </div>
-      <button id="closeMapModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 font-bold">×</button>
-    </div>
-  </div>
-
   <script type="module">
-    let maps = ["ماب 1", "ماب 2"];
-    const mapSelect = document.getElementById('mapSelect');
-    const addMapBtn = document.getElementById('addMapBtn');
-    const mapModal = document.getElementById('mapModal');
-    const closeMapModal = document.getElementById('closeMapModal');
-    const cancelMapBtn = document.getElementById('cancelMap');
-    const saveMapBtn = document.getElementById('saveMap');
-    const mapNameInput = document.getElementById('mapNameInput');
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // استبدل القيم التالية بقيم مشروعك من Firebase Console
+    const firebaseConfig = {
+  apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+  authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+  projectId: "hhhhhh-d4fb8",
+  storageBucket: "hhhhhh-d4fb8.appspot.com",
+  messagingSenderId: "24512338206",
+  appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+  measurementId: "G-HD4R7GNQ5H"
+};
+
+    // تهيئة Firebase
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    const db = getFirestore(app);
+
     const scriptForm = document.getElementById('scriptForm');
-    const status = document.getElementById('status');
     const scriptImageInput = document.getElementById('scriptImage');
     const imageNameDisplay = document.getElementById('imageName');
     const loader = document.getElementById('loader');
     const toast = document.getElementById('toast');
-    let formChanged = false;
+    const status = document.getElementById('status');
 
-    const currentUser = { uid: "user_123" }; // مصادقة وهمية
-
-    function loadMaps() {
-      mapSelect.innerHTML = '<option value="">-- اختر ماب --</option>';
-      maps.forEach((map) => {
-        const opt = document.createElement('option');
-        opt.value = map;
-        opt.textContent = map;
-        mapSelect.appendChild(opt);
-      });
-    }
-    loadMaps();
-
-    addMapBtn.addEventListener('click', () => mapModal.classList.remove('hidden'));
-    closeMapModal.addEventListener('click', () => mapModal.classList.add('hidden'));
-    cancelMapBtn.addEventListener('click', () => mapModal.classList.add('hidden'));
-
-    saveMapBtn.addEventListener('click', () => {
-      const newMap = mapNameInput.value.trim();
-      if (!newMap) return alert('يرجى إدخال اسم الماب');
-      if (maps.includes(newMap)) return alert('هذا الماب موجود مسبقاً');
-      maps.push(newMap);
-      loadMaps();
-      mapSelect.value = newMap;
-      mapModal.classList.add('hidden');
-      mapNameInput.value = '';
-    });
+    // محاكاة مستخدم مسجل (يمكنك ربط هذا بالتحقق الحقيقي في مشروعك)
+    const currentUser = { uid: "user_123" };
 
     function showToast(message, success = true) {
       toast.textContent = message;
@@ -220,52 +195,67 @@
       }
     });
 
-    scriptForm.addEventListener('input', () => formChanged = true);
-    window.addEventListener('beforeunload', (e) => {
-      if (formChanged) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    });
-
     scriptForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.textContent = '';
-      if (scriptImageInput.files.length === 0) return showToast("يرجى رفع صورة", false);
+
+      if (scriptImageInput.files.length === 0) {
+        showToast("يرجى رفع صورة", false);
+        return;
+      }
 
       const recaptchaResponse = grecaptcha.getResponse();
-      if (!recaptchaResponse) return showToast("يرجى تأكيد الكابتشا", false);
-
-      const formData = new FormData(scriptForm);
-      const data = {
-        scriptName: formData.get('scriptName'),
-        scriptDesc: formData.get('scriptDesc'),
-        scriptContent: formData.get('scriptContent'),
-        map: formData.get('mapSelect'),
-        userId: currentUser.uid,
-        captcha: recaptchaResponse,
-      };
+      if (!recaptchaResponse) {
+        showToast("يرجى تأكيد الكابتشا", false);
+        return;
+      }
 
       loader.classList.remove('hidden');
-      setTimeout(() => {
-        loader.classList.add('hidden');
-        const scriptId = Math.floor(Math.random() * 1000) + 1;
+
+      try {
+        const file = scriptImageInput.files[0];
+        const fileRef = storageRef(storage, `scripts_images/${Date.now()}_${file.name}`);
+
+        // رفع الصورة
+        await uploadBytes(fileRef, file);
+        // الحصول على رابط تحميل الصورة
+        const imageUrl = await getDownloadURL(fileRef);
+
+        // حفظ بيانات السكربت في Firestore
+        const docRef = await addDoc(collection(db, "scripts"), {
+          name: scriptForm.scriptName.value,
+          desc: scriptForm.scriptDesc.value,
+          content: scriptForm.scriptContent.value,
+          map: scriptForm.mapSelect.value,
+          imageUrl: imageUrl,
+          userId: currentUser.uid,
+          createdAt: new Date(),
+        });
+
         status.innerHTML = `
-          ✅ تم إضافة السكربت بنجاح!<br />
-          معرف السكربت: <b>${scriptId}</b><br />
+          ✅ تم إضافة السكربت بنجاح!<br/>
+          معرف السكربت: <b>${docRef.id}</b><br/>
           <button id="copyLinkBtn" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">نسخ رابط السكربت</button>
         `;
-        const scriptLink = `${window.location.origin}/script-view.html?id=${scriptId}`;
+
+        const scriptLink = `${window.location.origin}/script-view.html?id=${docRef.id}`;
         document.getElementById('copyLinkBtn').addEventListener('click', () => {
           navigator.clipboard.writeText(scriptLink).then(() => alert("تم نسخ الرابط!"));
         });
+
         showToast("تم رفع السكربت بنجاح!");
         scriptForm.reset();
         grecaptcha.reset();
         imageNameDisplay.textContent = '';
-        formChanged = false;
-      }, 2000);
+
+      } catch (error) {
+        console.error("حدث خطأ أثناء رفع السكربت:", error);
+        showToast("فشل رفع السكربت، حاول مرة أخرى", false);
+      } finally {
+        loader.classList.add('hidden');
+      }
     });
   </script>
+
 </body>
 </html>
