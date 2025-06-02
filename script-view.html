@@ -152,13 +152,13 @@
           document.title = data.name || "عرض السكربت";
 
           // أضف التحذير قبل السكربت تلقائياً في النص المعروض وأيضاً عند التحميل والنسخ
-          const finalCode = warningText + data.code;
+          const finalCode = warningText + data.content;
 
           container.innerHTML = `
             <h1 class="text-3xl font-bold text-blue-700">${data.name}</h1>
             <p class="text-gray-700">${data.desc}</p>
             <p class="text-sm text-gray-500">📍 الماب: <b>${data.map}</b></p>
-            <img src="${data.image}" alt="صورة السكربت" class="script-image" />
+            <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
             <div class="warning">⚠️ لا تقم بمشاركة السكربت مع أشخاص مجهولين</div>
             <pre id="codeBlock">${finalCode}</pre>
           `;
