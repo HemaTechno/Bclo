@@ -1,94 +1,123 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>عرض السكربت</title>
+  <meta charset="UTF-8">
+  <title id="pageTitle">عرض السكربت</title>
   <meta name="description" id="metaDescription" content="">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(to top right, #e0f2ff, #ffffff);
+      background: linear-gradient(to top left, #eef2ff, #ffffff);
     }
     .fade-in {
-      animation: fadeIn 1s ease;
+      animation: fadeIn 0.7s ease-in-out;
     }
     @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .code-box {
+      direction: ltr;
+      white-space: pre-wrap;
+      background-color: #1e293b;
+      color: #f1f5f9;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.875rem;
     }
   </style>
 </head>
-<body class="min-h-screen p-6">
+<body class="p-6">
 
-  <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-3xl p-6 fade-in">
-    <h1 id="scriptTitle" class="text-3xl font-bold text-blue-700 mb-4 text-center">جاري تحميل السكربت...</h1>
+  <div class="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-6 fade-in">
+    <h1 id="scriptName" class="text-2xl font-bold text-blue-700 mb-2"></h1>
+    <p id="scriptDesc" class="text-gray-700 mb-4"></p>
+    <span id="scriptMap" class="inline-block bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm mb-4"></span>
 
-    <p id="scriptDesc" class="text-gray-700 text-center mb-4"></p>
+    <div id="codeBox" class="code-box">جاري التحميل...</div>
 
-    <pre id="scriptCode" class="bg-gray-100 p-4 rounded-xl overflow-x-auto text-sm text-gray-800 font-mono relative">
-جاري تحميل السكربت...
-    </pre>
-
-    <div class="flex justify-center gap-4 mt-6">
-      <button id="copyBtn" class="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition transform hover:scale-105">📋 نسخ السكربت</button>
-      <button id="downloadBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition transform hover:scale-105">⬇️ تحميل السكربت</button>
+    <div class="flex gap-4 justify-end mt-4">
+      <button id="copyBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">📋 نسخ</button>
+      <button id="downloadBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">⬇️ تحميل</button>
     </div>
   </div>
 
+  <!-- Firebase SDK -->
   <script type="module">
-    import { db } from './db/firebase-config.js';
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+  authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+  projectId: "hhhhhh-d4fb8",
+  storageBucket: "hhhhhh-d4fb8.appspot.com",
+  messagingSenderId: "24512338206",
+  appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+  measurementId: "G-HD4R7GNQ5H"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     const params = new URLSearchParams(window.location.search);
-    const scriptId = params.get('id');
-    const scriptTitle = document.getElementById("scriptTitle");
+    const scriptId = parseInt(params.get("id"));
+    const WARNING = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
+
+    const codeBox = document.getElementById("codeBox");
+    const scriptName = document.getElementById("scriptName");
     const scriptDesc = document.getElementById("scriptDesc");
-    const scriptCode = document.getElementById("scriptCode");
-    const copyBtn = document.getElementById("copyBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
+    const scriptMap = document.getElementById("scriptMap");
+    const pageTitle = document.getElementById("pageTitle");
+    const metaDescription = document.getElementById("metaDescription");
 
-    if (!scriptId) {
-      scriptTitle.textContent = "لم يتم تحديد سكربت.";
-      scriptCode.textContent = "";
-    } else {
-      const ref = doc(db, "scripts", scriptId);
-      getDoc(ref).then(docSnap => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const warning = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
+    async function fetchScript() {
+      const scriptsRef = collection(db, "scripts");
+      const q = query(scriptsRef, where("id", "==", scriptId));
+      const querySnapshot = await getDocs(q);
 
-          document.title = data.name;
-          document.getElementById("metaDescription").content = data.description;
+      if (querySnapshot.empty) {
+        codeBox.textContent = "❌ السكربت غير موجود.";
+        return;
+      }
 
-          scriptTitle.textContent = data.name;
-          scriptDesc.textContent = data.description;
-          scriptCode.textContent = warning + data.script;
+      const docData = querySnapshot.docs[0].data();
 
-          copyBtn.onclick = () => {
-            navigator.clipboard.writeText(warning + data.script);
-            alert("✅ تم نسخ السكربت مع التحذير.");
-          };
+      scriptName.textContent = docData.name;
+      scriptDesc.textContent = docData.desc;
+      scriptMap.textContent = "🗺️ " + docData.map;
+      codeBox.textContent = docData.code;
 
-          downloadBtn.onclick = () => {
-            const blob = new Blob([warning + data.script], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${data.name}.lua`;
-            link.click();
-          };
-        } else {
-          scriptTitle.textContent = "لم يتم العثور على السكربت.";
-          scriptDesc.textContent = "";
-          scriptCode.textContent = "";
-        }
-      }).catch(err => {
-        scriptTitle.textContent = "حدث خطأ أثناء تحميل السكربت.";
-        console.error(err);
+      pageTitle.textContent = docData.name + " | ScriptBot";
+      metaDescription.setAttribute("content", docData.desc);
+
+      // نسخ السكربت
+      document.getElementById("copyBtn").addEventListener("click", () => {
+        navigator.clipboard.writeText(WARNING + docData.code);
+        alert("✅ تم نسخ السكربت مع التحذير.");
+      });
+
+      // تحميل السكربت
+      document.getElementById("downloadBtn").addEventListener("click", () => {
+        const blob = new Blob([WARNING + docData.code], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${docData.name.replace(/\s+/g, '_')}.lua`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       });
     }
+
+    fetchScript();
   </script>
+
 </body>
 </html>
