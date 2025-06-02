@@ -1,0 +1,41 @@
+<script type="module">
+  import { auth, db } from '../db/firebase-config.js';
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  async function getDiscordInfo() {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const token = params.get('access_token');
+
+    if (!token) {
+      alert('فشل الحصول على التوكن.');
+      return (window.location.href = 'profile.html');
+    }
+
+    const res = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(userRef, {
+          discord: {
+            username: `${data.username}#${data.discriminator}`,
+            id: data.id
+          }
+        }, { merge: true });
+
+        alert(`تم ربط ديسكورد: ${data.username}#${data.discriminator}`);
+        window.location.href = 'profile.html';
+      } else {
+        alert('يجب تسجيل الدخول أولاً.');
+        window.location.href = 'login.html';
+      }
+    });
+  }
+
+  getDiscordInfo();
+</script>
