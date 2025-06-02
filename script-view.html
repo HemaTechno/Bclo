@@ -1,58 +1,56 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title id="pageTitle">عرض السكربت</title>
-  <meta name="description" id="metaDescription" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>عرض السكربت</title>
+  <meta name="description" content="عرض سكربت Roblox بشكل أنيق وقابل للتحميل" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: linear-gradient(to top left, #eef2ff, #ffffff);
-    }
-    .fade-in {
-      animation: fadeIn 0.7s ease-in-out;
-    }
+    body { font-family: 'Cairo', sans-serif; }
+    .fade-in { animation: fadeIn 0.8s ease-in-out; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .code-box {
-      direction: ltr;
+    pre {
       white-space: pre-wrap;
-      background-color: #1e293b;
-      color: #f1f5f9;
+      word-break: break-word;
+      background-color: #f9fafb;
+      border-radius: 10px;
       padding: 1rem;
-      border-radius: 1rem;
+      direction: ltr;
+    }
+    .warning {
+      background-color: #fef3c7;
+      color: #b45309;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
       margin-bottom: 1rem;
-      overflow-x: auto;
-      font-family: monospace;
-      font-size: 0.875rem;
     }
   </style>
 </head>
-<body class="p-6">
+<body class="bg-gradient-to-tr from-white to-blue-100 min-h-screen flex items-center justify-center px-4">
 
-  <div class="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-6 fade-in">
-    <h1 id="scriptName" class="text-2xl font-bold text-blue-700 mb-2"></h1>
-    <p id="scriptDesc" class="text-gray-700 mb-4"></p>
-    <span id="scriptMap" class="inline-block bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm mb-4"></span>
+  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-3xl fade-in">
+    <div id="scriptContainer" class="space-y-6 text-gray-800">
+      <p class="text-center text-gray-500">...جاري تحميل البيانات</p>
+    </div>
 
-    <div id="codeBox" class="code-box">جاري التحميل...</div>
-
-    <div class="flex gap-4 justify-end mt-4">
-      <button id="copyBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">📋 نسخ</button>
-      <button id="downloadBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">⬇️ تحميل</button>
+    <div class="flex justify-between mt-6">
+      <button onclick="history.back()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">🔙 رجوع</button>
+      <button id="downloadBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled>💾 تحميل السكربت</button>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+  <script>
+    // إعدادات Firebase الخاصة بمشروعك (غيرها بإعدادات مشروعك)
     const firebaseConfig = {
   apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
   authDomain: "hhhhhh-d4fb8.firebaseapp.com",
@@ -63,61 +61,69 @@
   measurementId: "G-HD4R7GNQ5H"
 };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // تهيئة Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
     const params = new URLSearchParams(window.location.search);
-    const scriptId = parseInt(params.get("id"));
-    const WARNING = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
+    const scriptId = params.get("id");
 
-    const codeBox = document.getElementById("scriptContent");
-    const scriptName = document.getElementById("scriptName");
-    const scriptDesc = document.getElementById("scriptDesc");
-    const scriptMap = document.getElementById("map");
-    const pageTitle = document.getElementById("pageTitle");
-    const metaDescription = document.getElementById("metaDescription");
+    const container = document.getElementById("scriptContainer");
+    const downloadBtn = document.getElementById("downloadBtn");
 
-    async function fetchScript() {
-      const scriptsRef = collection(db, "scripts");
-      const q = query(scriptsRef, where("id", "==", scriptId));
-      const querySnapshot = await getDocs(q);
+    if (!scriptId) {
+      container.innerHTML = `<p class="text-center text-red-500 font-bold">❌ لم يتم تحديد معرف السكربت</p>`;
+      document.title = "خطأ";
+      downloadBtn.disabled = true;
+    } else {
+      // جلب السكربت من Firestore
+      db.collection("scripts").doc(scriptId).get()
+        .then(doc => {
+          if (!doc.exists) {
+            container.innerHTML = `<p class="text-center text-red-500 font-bold">❌ لم يتم العثور على السكربت</p>`;
+            document.title = "سكربت غير موجود";
+            downloadBtn.disabled = true;
+            return;
+          }
 
-      if (querySnapshot.empty) {
-        codeBox.textContent = "❌ السكربت غير موجود.";
-        return;
-      }
+          const data = doc.data();
+          document.title = data.name || "عرض السكربت";
 
-      const docData = querySnapshot.docs[0].data();
+          container.innerHTML = `
+            <h1 class="text-3xl font-bold text-blue-700">${data.name}</h1>
+            <p class="text-gray-700">${data.desc}</p>
+            <p class="text-sm text-gray-500">📍 الماب: <b>${data.map}</b></p>
+            <img src="${data.image}" alt="صورة السكربت" class="rounded-lg w-full max-h-72 object-cover mt-4 shadow" />
 
-      scriptName.textContent = docData.name;
-      scriptDesc.textContent = docData.desc;
-      scriptMap.textContent = "🗺️ " + docData.map;
-      codeBox.textContent = docData.code;
+            <div class="warning">⚠️ لا تقم بمشاركة السكربت مع أشخاص مجهولين</div>
 
-      pageTitle.textContent = docData.name + " | ScriptBot";
-      metaDescription.setAttribute("content", docData.desc);
+            <pre id="codeBlock">${data.code}</pre>
+          `;
+          downloadBtn.disabled = false;
 
-      // نسخ السكربت
-      document.getElementById("copyBtn").addEventListener("click", () => {
-        navigator.clipboard.writeText(WARNING + docData.code);
-        alert("✅ تم نسخ السكربت مع التحذير.");
-      });
+          // زر تحميل السكربت
+          downloadBtn.onclick = () => {
+            const blob = new Blob([data.code], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${data.name}.txt`;
+            link.click();
+          };
 
-      // تحميل السكربت
-      document.getElementById("downloadBtn").addEventListener("click", () => {
-        const blob = new Blob([WARNING + docData.code], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${docData.name.replace(/\s+/g, '_')}.lua`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      });
+          // تحذير عند النسخ داخل صندوق الكود
+          document.addEventListener("copy", (e) => {
+            if (document.activeElement.id === "codeBlock") {
+              alert("⚠️ تذكير: تأكد أنك تستخدم السكربت على مسؤوليتك الخاصة.");
+            }
+          });
+        })
+        .catch(error => {
+          container.innerHTML = `<p class="text-center text-red-500 font-bold">❌ حدث خطأ أثناء تحميل السكربت</p>`;
+          console.error("Firestore error:", error);
+          downloadBtn.disabled = true;
+          document.title = "خطأ في التحميل";
+        });
     }
-
-    fetchScript();
   </script>
-
 </body>
 </html>
