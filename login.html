@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الدخول - مركز الملفات</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module">
+    import { auth, provider } from './db/firebase-config.js';
+    import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    document.getElementById('googleLogin').addEventListener('click', () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          alert("تم تسجيل الدخول عبر Google: " + result.user.email);
+        })
+        .catch((error) => {
+          alert("خطأ في تسجيل الدخول عبر Google: " + error.message);
+        });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("تم تسجيل الدخول بنجاح: " + userCredential.user.email);
+        })
+        .catch((error) => {
+          alert("خطأ: " + error.message);
+        });
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md animate-fade-in">
+    <div class="flex flex-col items-center mb-6">
+      <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_jcikwtux.json" background="transparent" speed="1" style="width: 150px; height: 150px;" loop autoplay></lottie-player>
+      <h2 class="text-2xl font-bold text-blue-700 mt-4">تسجيل الدخول</h2>
+      <p class="text-sm text-gray-500">اختر طريقة الدخول للموقع</p>
+    </div>
+
+    <!-- Google Login -->
+    <button id="googleLogin" class="w-full flex items-center justify-center gap-2 bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition mb-4">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google" />
+      تسجيل الدخول عبر Google
+    </button>
+
+    <div class="relative mb-4">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-300"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="bg-white px-2 text-gray-500">أو</span>
+      </div>
+    </div>
+
+    <!-- Email/Password Login -->
+    <form id="loginForm">
+      <div class="mb-4">
+        <label class="block mb-1 text-sm font-medium text-gray-700">البريد الإلكتروني</label>
+        <input id="email" type="email" placeholder="example@email.com" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-400" required />
+      </div>
+      <div class="mb-6">
+        <label class="block mb-1 text-sm font-medium text-gray-700">كلمة المرور</label>
+        <input id="password" type="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-400" required />
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">تسجيل الدخول</button>
+    </form>
+
+    <p class="text-sm text-center text-gray-600 mt-6">
+      ليس لديك حساب؟ <a href="#" class="text-blue-600 hover:underline">إنشاء حساب</a>
+    </p>
+  </div>
+
+  <script>
+    document.querySelector('.animate-fade-in').style.opacity = 0;
+    document.querySelector('.animate-fade-in').style.transform = 'translateY(20px)';
+    setTimeout(() => {
+      document.querySelector('.animate-fade-in').style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      document.querySelector('.animate-fade-in').style.opacity = 1;
+      document.querySelector('.animate-fade-in').style.transform = 'translateY(0)';
+    }, 300);
+  </script>
+</body>
+</html>
