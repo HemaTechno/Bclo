@@ -3,268 +3,281 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>رفع سكربتات مع اختيار الماب</title>
+  <title>رفع السكربتات</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Cairo', sans-serif; }
-    .fade-in { animation: fadeIn 1s ease-in-out; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+    /* أنيميشن لأزرار رفع الصورة */
+    .fancy-upload {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .fancy-upload input[type="file"] {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0; cursor: pointer;
+    }
+    .fancy-upload:hover {
+      background-color: #3b82f6; /* Tailwind blue-500 */
+      color: white;
+    }
+    /* Modal backdrop */
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.6);
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
     }
   </style>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen flex items-center justify-center px-4">
+<body class="bg-gradient-to-tr from-blue-50 to-white min-h-screen flex items-center justify-center p-4">
 
-  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-xl fade-in">
-    <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">📥 رفع سكربت جديد</h2>
+  <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-3xl w-full fade-in">
+    <h2 class="text-3xl font-bold mb-6 text-blue-700 text-center">📜 رفع السكربتات</h2>
 
-    <form id="scriptForm" class="space-y-5" autocomplete="off">
-      <div>
-        <label for="scriptName" class="block font-semibold mb-1">اسم السكربت</label>
-        <input type="text" id="scriptName" required placeholder="اكتب اسم السكربت"
-          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-      </div>
+    <form id="scriptForm" class="space-y-6">
 
       <div>
-        <label for="scriptDescription" class="block font-semibold mb-1">وصف السكربت</label>
-        <textarea id="scriptDescription" required placeholder="اكتب وصف السكربت" rows="4"
-          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
+        <label for="scriptName" class="block mb-1 font-semibold text-gray-700">اسم السكربت</label>
+        <input type="text" id="scriptName" name="scriptName" required
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
 
       <div>
-        <label for="mapSelect" class="block font-semibold mb-1">اختر الماب</label>
-        <select id="mapSelect" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="" disabled selected>اختر خريطة أو أضف جديدة</option>
-        </select>
-        <button type="button" id="addMapBtn" class="mt-2 text-blue-600 hover:underline">+ أضف خريطة جديدة</button>
-      </div>
-
-      <div id="newMapContainer" class="hidden mt-2">
-        <input type="text" id="newMapName" placeholder="اسم الخريطة الجديدة"
-          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-400" />
-        <button type="button" id="saveNewMapBtn"
-          class="mt-2 w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-all transform hover:scale-105">حفظ الخريطة</button>
+        <label for="scriptDesc" class="block mb-1 font-semibold text-gray-700">وصف السكربت</label>
+        <textarea id="scriptDesc" name="scriptDesc" required rows="4"
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
       </div>
 
       <div>
-        <label for="scriptFile" class="block font-semibold mb-1">ملف السكربت (نص أو ملف)</label>
-        <input type="file" id="scriptFile" accept=".png,.js,.json,.ts,.py,.lua,.zip" required class="w-full" />
+        <label for="scriptContent" class="block mb-1 font-semibold text-gray-700">محتوى السكربت (نص)</label>
+        <textarea id="scriptContent" name="scriptContent" required rows="8" spellcheck="false"
+          class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono resize-none"></textarea>
       </div>
 
+      <!-- زر رفع صورة بشكل أفخم -->
       <div>
-        <label for="scriptImage" class="block font-semibold mb-1">صورة السكربت (مطلوب)</label>
-        <input type="file" id="scriptImage" accept="image/*" required class="w-full" />
+        <label class="block mb-1 font-semibold text-gray-700">صورة السكربت (مطلوبة)</label>
+        <label for="scriptImage" class="fancy-upload flex items-center justify-center border-2 border-dashed border-blue-400 rounded-xl p-6 text-blue-600 font-semibold hover:border-blue-600 hover:text-blue-700 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 12l-4-4m0 0l-4 4m4-4v12" />
+          </svg>
+          اضغط لاختيار صورة
+          <input type="file" id="scriptImage" accept="image/*" required />
+        </label>
+        <p id="imageName" class="mt-2 text-sm text-gray-600"></p>
       </div>
 
-      <div class="relative">
-        <button type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105">
-          رفع السكربت
-        </button>
-        <div id="progressBarContainer" class="absolute bottom-0 left-0 right-0 h-1 bg-gray-300 rounded-b-lg overflow-hidden mt-1 hidden">
-          <div id="progressBar" class="h-1 bg-blue-500 w-0 transition-all"></div>
+      <!-- اختيار الماب -->
+      <div>
+        <label for="mapSelect" class="block mb-1 font-semibold text-gray-700">اختار الماب</label>
+        <div class="flex space-x-2">
+          <select id="mapSelect" required
+            class="flex-grow border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled selected>-- اختر ماب --</option>
+          </select>
+          <button type="button" id="addMapBtn" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-5 rounded-lg transition transform hover:scale-105">إضافة ماب</button>
         </div>
       </div>
 
-      <p id="status" class="text-center text-sm text-gray-600 mt-2"></p>
+      <!-- reCAPTCHA v2 -->
+      <div class="mt-4">
+        <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold text-lg transition transform hover:scale-105">
+        إضافة السكربت
+      </button>
     </form>
+
+    <p id="status" class="mt-4 text-center text-sm font-semibold text-red-600"></p>
+  </div>
+
+  <!-- Modal إضافة ماب -->
+  <div id="mapModal" class="modal-backdrop hidden">
+    <div class="bg-white rounded-xl p-6 w-80 max-w-full shadow-xl">
+      <h3 class="text-xl font-bold mb-4 text-blue-700">أدخل اسم الماب</h3>
+      <input type="text" id="newMapName" class="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <div class="flex justify-end space-x-3">
+        <button id="cancelMap" class="bg-gray-300 rounded-lg px-4 py-2 hover:bg-gray-400 transition">إلغاء</button>
+        <button id="saveMap" class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition">حفظ</button>
+      </div>
+    </div>
   </div>
 
   <script type="module">
-    import { auth, db, storage } from './db/firebase-config.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
-    import { collection, addDoc, getDoc, setDoc, doc, query, where, getDocs, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { auth, db, storage } from './db/firebase-config.js';  // عدل هذا حسب مكان ملف config عندك
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      ref,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+    import {
+      collection,
+      addDoc,
+      doc,
+      getDoc,
+      getDocs,
+      query,
+      orderBy,
+      serverTimestamp,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    const scriptForm = document.getElementById("scriptForm");
+    const form = document.getElementById("scriptForm");
     const status = document.getElementById("status");
-    const progressBarContainer = document.getElementById("progressBarContainer");
-    const progressBar = document.getElementById("progressBar");
+    const imageInput = document.getElementById("scriptImage");
+    const imageNameDisplay = document.getElementById("imageName");
     const mapSelect = document.getElementById("mapSelect");
+
+    const mapModal = document.getElementById("mapModal");
+    const newMapNameInput = document.getElementById("newMapName");
     const addMapBtn = document.getElementById("addMapBtn");
-    const newMapContainer = document.getElementById("newMapContainer");
-    const newMapName = document.getElementById("newMapName");
-    const saveNewMapBtn = document.getElementById("saveNewMapBtn");
+    const cancelMapBtn = document.getElementById("cancelMap");
+    const saveMapBtn = document.getElementById("saveMap");
 
     let currentUser = null;
+    let mapsList = [];
 
-    // تحقق تسجيل الدخول
-    onAuthStateChanged(auth, user => {
+    // التحقق من تسجيل الدخول
+    onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "login.html";
-      } else {
-        currentUser = user;
-        loadMaps();
+        return;
       }
+      currentUser = user;
+      await loadMaps();
     });
 
-    // تحميل الخرائط للـ select
+    // تحميل المابس من الفايرستور
     async function loadMaps() {
-      mapSelect.innerHTML = '<option value="" disabled selected>اختر خريطة أو أضف جديدة</option>';
-      const mapsSnapshot = await getDocs(collection(db, "maps"));
-      mapsSnapshot.forEach(docSnap => {
-        const map = docSnap.data();
+      const mapsCol = collection(db, "maps");
+      const q = query(mapsCol, orderBy("createdAt", "asc"));
+      const snapshot = await getDocs(q);
+      mapsList = [];
+      mapSelect.innerHTML = '<option value="" disabled selected>-- اختر ماب --</option>';
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        mapsList.push({ id: docSnap.id, name: data.name });
         const option = document.createElement("option");
         option.value = docSnap.id;
-        option.textContent = map.name;
+        option.textContent = data.name;
         mapSelect.appendChild(option);
       });
     }
 
-    // عرض input اضافة خريطة جديدة
-    addMapBtn.addEventListener("click", () => {
-      newMapContainer.classList.toggle("hidden");
-      newMapName.value = "";
-      newMapName.focus();
-    });
+    // فتح المودال
+    addMapBtn.onclick = () => {
+      newMapNameInput.value = "";
+      mapModal.classList.remove("hidden");
+      newMapNameInput.focus();
+    };
 
-    // حفظ خريطة جديدة
-    saveNewMapBtn.addEventListener("click", async () => {
-      const name = newMapName.value.trim();
-      if (!name) return alert("يرجى كتابة اسم الخريطة");
+    cancelMapBtn.onclick = () => {
+      mapModal.classList.add("hidden");
+    };
 
-      // تحقق لو الخريطة موجودة بنفس الاسم (اختياري)
-      const q = query(collection(db, "maps"), where("name", "==", name));
-      const qSnap = await getDocs(q);
-      if (!qSnap.empty) return alert("الخريطة موجودة بالفعل");
-
-      const docRef = await addDoc(collection(db, "maps"), { name });
-      await loadMaps();
-      mapSelect.value = docRef.id;
-      newMapContainer.classList.add("hidden");
-    });
-
-    // توليد ID السكربت التالي بطريقة آمنة باستخدام مستند counters
-    async function getNextScriptId() {
-      const counterRef = doc(db, "counters", "scripts");
-      const counterSnap = await getDoc(counterRef);
-
-      let nextId = 1;
-      if (counterSnap.exists()) {
-        nextId = counterSnap.data().count + 1;
-      }
-      // تحديث العداد
-      await setDoc(counterRef, { count: nextId });
-      return nextId;
-    }
-
-    // التحقق من وجود سكربت بنفس الاسم أو محتوى (عن طريق الاسم فقط هنا للتبسيط)
-    async function checkDuplicateScript(name) {
-      const q = query(collection(db, "scripts"), where("name", "==", name));
-      const qSnap = await getDocs(q);
-      return !qSnap.empty;
-    }
-
-    scriptForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      status.textContent = "";
-      progressBarContainer.classList.add("hidden");
-      progressBar.style.width = "0%";
-
-      if (!currentUser) {
-        status.textContent = "يجب تسجيل الدخول أولاً.";
+    // حفظ الماب جديد
+    saveMapBtn.onclick = async () => {
+      const name = newMapNameInput.value.trim();
+      if (!name) {
+        alert("الرجاء إدخال اسم الماب");
         return;
       }
-
-      const name = document.getElementById("scriptName").value.trim();
-      const description = document.getElementById("scriptDescription").value.trim();
-      const scriptFileInput = document.getElementById("scriptFile");
-      const imageFileInput = document.getElementById("scriptImage");
-      const selectedMapId = mapSelect.value;
-
-      if (!name || !description || !selectedMapId || scriptFileInput.files.length === 0 || imageFileInput.files.length === 0) {
-  status.textContent = "يرجى ملء كل الحقول المطلوبة (بما فيها اختيار الماب ورفع صورة).";
-  return;
-}
-      
-const imageFileInput = document.getElementById("scriptImage");
-if (imageFileInput.files.length === 0) {
-  status.textContent = "⚠️ يرجى اختيار صورة للسكربت (مطلوبة).";
-  return;
-}
-
-
-      // التحقق من التكرار
-      const isDuplicate = await checkDuplicateScript(name);
-      if (isDuplicate) {
-        status.textContent = "⚠️ السكربت هذا مكرر، لا يمكن رفعه.";
-        return;
-      }
-
-      status.textContent = "جاري رفع السكربت...";
-
       try {
-        const scriptFile = scriptFileInput.files[0];
-
-        // رفع السكربت مع عداد التقدم
-        const scriptFileRef = ref(storage, `scripts/${currentUser.uid}/${Date.now()}_${scriptFile.name}`);
-        const uploadTask = uploadBytesResumable(scriptFileRef, scriptFile);
-
-        progressBarContainer.classList.remove("hidden");
-
-        // عرض التقدم
-        uploadTask.on("state_changed", snapshot => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          progressBar.style.width = progress + "%";
-        });
-
-        // عند الانتهاء
-        const uploadResult = await uploadTask;
-
-        const scriptURL = await getDownloadURL(uploadResult.ref);
-
-        // رفع الصورة (اختياري)
-        let imageURL = "";
-        if (imageFileInput.files.length > 0) {
-          const imageFile = imageFileInput.files[0];
-          const imageFileRef = ref(storage, `script-images/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
-          await uploadBytesResumable(imageFileRef, imageFile);
-          imageURL = await getDownloadURL(imageFileRef);
-        }
-
-        // جلب رقم السكربت الجديد
-        const scriptId = await getNextScriptId();
-
-        // حفظ البيانات في Firestore
-        await addDoc(collection(db, "scripts"), {
-          userId: currentUser.uid,
-          id: scriptId,
+        // إضافة إلى Firestore مع الطابع الزمني
+        const docRef = await addDoc(collection(db, "maps"), {
           name,
-          description,
-          scriptURL,
-          imageURL,
-          mapId: selectedMapId,
           createdAt: serverTimestamp()
         });
+        await loadMaps();
+        // حدد الماب الجديد تلقائياً في القائمة
+        mapSelect.value = docRef.id;
+        mapModal.classList.add("hidden");
+      } catch (err) {
+        alert("حدث خطأ أثناء إضافة الماب: " + err.message);
+      }
+    };
 
-        status.innerHTML = `
-          ✅ تم رفع السكربت بنجاح!<br/>
-          <button id="copyLinkBtn" class="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">نسخ رابط عرض السكربت</button>
-        `;
+    // عرض اسم الصورة المحددة
+    imageInput.onchange = () => {
+      if (imageInput.files.length > 0) {
+        imageNameDisplay.textContent = `الصورة المختارة: ${imageInput.files[0].name}`;
+      } else {
+        imageNameDisplay.textContent = "";
+      }
+    };
 
-        scriptForm.reset();
-        progressBarContainer.classList.add("hidden");
-        progressBar.style.width = "0%";
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      status.textContent = "";
+      
+      // تحقق من reCAPTCHA
+      const recaptchaResponse = grecaptcha.getResponse();
+      if (!recaptchaResponse) {
+        status.textContent = "يرجى إكمال التحقق البشري (كابتشا)";
+        return;
+      }
 
-        // رابط عرض السكربت (تقدر تعدل حسب موقعك)
-        const scriptViewUrl = `${window.location.origin}/view-script.html?id=${scriptId}`;
+      const name = form.scriptName.value.trim();
+      const description = form.scriptDesc.value.trim();
+      const content = form.scriptContent.value.trim();
+      const selectedMap = mapSelect.value;
+      const imageFile = imageInput.files[0];
 
-        // نسخ الرابط عند الضغط على الزر
-        document.getElementById("copyLinkBtn").addEventListener("click", () => {
-          navigator.clipboard.writeText(scriptViewUrl)
-            .then(() => alert("تم نسخ الرابط!"))
-            .catch(() => alert("فشل النسخ، حاول يدوياً"));
+      if (!name || !description || !content || !selectedMap || !imageFile) {
+        status.textContent = "يرجى ملء كل الحقول المطلوبة.";
+        return;
+      }
+
+      try {
+        status.textContent = "جاري رفع الصورة...";
+        // رفع الصورة إلى Storage
+        const storageRef = ref(storage, `scriptImages/${Date.now()}_${imageFile.name}`);
+        await uploadBytes(storageRef, imageFile);
+        const imageURL = await getDownloadURL(storageRef);
+
+        status.textContent = "جاري حفظ البيانات...";
+
+        // إنشاء رقم ID تلقائي بسيرفر - نستخدم addDoc الذي يعطينا ID تلقائي
+        // يمكن إضافة حقل عداد تحميلات برقم صفر مبدئياً
+        await addDoc(collection(db, "scripts"), {
+          name,
+          description,
+          content,
+          imageURL,
+          mapId: selectedMap,
+          createdBy: currentUser.uid,
+          createdAt: serverTimestamp(),
+          downloads: 0,
         });
 
-      } catch (error) {
-        console.error(error);
-        status.textContent = "❌ حدث خطأ أثناء الرفع.";
-        progressBarContainer.classList.add("hidden");
-        progressBar.style.width = "0%";
+        // إعادة تعيين الفورم والـ reCAPTCHA
+        form.reset();
+        grecaptcha.reset();
+        imageNameDisplay.textContent = "";
+        status.style.color = "green";
+        status.textContent = "تم إضافة السكربت بنجاح 🎉";
+
+      } catch (err) {
+        status.style.color = "red";
+        status.textContent = "حدث خطأ: " + err.message;
       }
-    });
+    };
   </script>
+
 </body>
 </html>
