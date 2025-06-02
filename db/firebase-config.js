@@ -5,13 +5,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.11.0/firebas
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAX8PWbKfWeBYzmX7sdrBhIT0Wp1yPjR04",
-  authDomain: "hemaern.firebaseapp.com",
-  databaseURL: "https://hemaern-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "hemaern",
-  storageBucket: "hemaern.firebasestorage.app",
-  messagingSenderId: "533729874483",
-  appId: "1:533729874483:web:142462fdbd96156fe30946"
+  apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+  authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+  projectId: "hhhhhh-d4fb8",
+  storageBucket: "hhhhhh-d4fb8.appspot.com",
+  messagingSenderId: "24512338206",
+  appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+  measurementId: "G-HD4R7GNQ5H"
 };
 
 const app = initializeApp(firebaseConfig);
