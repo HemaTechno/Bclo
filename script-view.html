@@ -10,12 +10,11 @@
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #e0e7ff;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       padding: 1rem;
     }
     .fade-in {
@@ -25,187 +24,131 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .container {
-      background: #1e293b;
-      border-radius: 2rem;
-      box-shadow:
-        0 0 15px rgba(99, 102, 241, 0.4),
-        inset 0 0 25px rgba(147, 197, 253, 0.15);
-      max-width: 900px;
-      width: 100%;
-      padding: 2.5rem 3rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    h1 {
-      font-weight: 900;
-      font-size: 2.25rem;
-      color: #6366f1;
-      text-align: center;
-      text-shadow: 0 0 8px #6366f1aa;
-    }
-    p.desc {
-      color: #cbd5e1;
-      text-align: center;
-      font-size: 1.1rem;
-    }
-    p.map {
-      text-align: center;
-      font-size: 0.95rem;
-      color: #94a3b8;
-    }
-    img.script-image {
-      border-radius: 1rem;
-      max-height: 220px;
-      object-fit: cover;
-      width: 100%;
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
-      user-select: none;
-      pointer-events: none;
-      animation: fadeIn 1s ease forwards;
-    }
-    .warning {
-      background: #fbbf24;
-      color: #78350f;
-      padding: 12px 20px;
-      border-radius: 1rem;
-      font-weight: 700;
-      text-align: center;
-      box-shadow: 0 0 12px #fbbf24cc;
-      user-select: none;
-    }
-    pre#codeBlock {
-      background: #0f172a;
-      border-radius: 1rem;
-      padding: 1.5rem 2rem;
-      font-family: 'Fira Code', monospace, 'Courier New', Courier, monospace;
-      font-size: 16px;
-      line-height: 1.5;
-      color: #d1d5db;
-      max-height: 320px;
-      overflow-y: auto;
-      box-shadow:
-        inset 0 0 15px rgba(147, 197, 253, 0.3),
-        0 0 15px rgba(99, 102, 241, 0.5);
-      border: 1px solid #3b82f6;
-      user-select: text;
-      direction: ltr;
+    pre {
       white-space: pre-wrap;
       word-break: break-word;
+      background-color: #1e293b; /* خلفية داكنة للمحرر */
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      direction: ltr;
+      max-height: 320px;
+      overflow-y: auto;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+      font-family: 'Fira Code', 'Courier New', Courier, monospace;
+      font-size: 15px;
+      color: #cbd5e1; /* لون الخط فاتح على الخلفية الداكنة */
+      user-select: text;
+      border: 2px solid #3b82f6;
+      transition: box-shadow 0.3s ease;
     }
-    /* Custom scrollbar */
-    pre#codeBlock::-webkit-scrollbar {
-      width: 8px;
+    pre:hover {
+      box-shadow: 0 0 25px #60a5fa;
     }
-    pre#codeBlock::-webkit-scrollbar-track {
-      background: #1e293b;
-      border-radius: 1rem;
-    }
-    pre#codeBlock::-webkit-scrollbar-thumb {
-      background: #6366f1;
-      border-radius: 1rem;
-    }
-    /* Buttons */
-    .btn-group {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    button {
-      padding: 0.75rem 1.5rem;
-      border-radius: 9999px;
+    .warning {
+      background-color: #fef3c7;
+      color: #b45309;
+      padding: 12px 16px;
+      border-radius: 8px;
       font-weight: 700;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-      transition: background-color 0.3s ease, transform 0.15s ease;
-      border: none;
-      user-select: none;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 12px #fbbf24;
+      text-align: center;
+    }
+    .btn-group button {
+      margin-left: 0.5rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: 600;
+    }
+    button:hover {
+      filter: brightness(90%);
       cursor: pointer;
-      color: white;
-      min-width: 140px;
-      flex-grow: 1;
-      max-width: 200px;
-    }
-    button:disabled {
-      background-color: #475569;
-      cursor: not-allowed;
-      box-shadow: none;
-      color: #94a3b8;
-    }
-    button:not(:disabled):hover {
-      filter: brightness(1.1);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.7);
     }
-    .btn-back {
-      background-color: #64748b;
-      color: #f1f5f9;
-      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.6);
-    }
-    .btn-back:hover {
-      background-color: #475569;
-    }
-    .btn-copy {
-      background-color: #22c55e;
-    }
-    .btn-copy:hover {
-      background-color: #16a34a;
-    }
-    .btn-download {
-      background-color: #3b82f6;
-    }
-    .btn-download:hover {
-      background-color: #2563eb;
-    }
-    /* Toast */
     #copyToast {
       position: fixed;
       bottom: 30px;
       right: 30px;
-      background-color: #22c55e;
+      background-color: #4ade80;
       color: white;
-      padding: 14px 26px;
-      border-radius: 50px;
-      box-shadow: 0 6px 16px rgba(34, 197, 94, 0.6);
+      padding: 12px 20px;
+      border-radius: 25px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
-      font-weight: 800;
+      font-weight: bold;
       z-index: 9999;
-      font-size: 1.1rem;
     }
     #copyToast.show {
       opacity: 1;
       pointer-events: auto;
     }
-    /* Responsive */
-    @media (max-width: 640px) {
-      .container {
-        padding: 2rem 1.5rem;
-      }
-      button {
-        min-width: unset;
-        max-width: 100%;
-      }
-      .btn-group {
-        flex-direction: column;
-        gap: 0.75rem;
-      }
+    img.script-image {
+      border-radius: 12px;
+      max-height: 220px;
+      object-fit: cover;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      margin-top: 1rem;
+      user-select: none;
+      pointer-events: none;
+      animation: fadeIn 1s ease forwards;
+    }
+    .container {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 15px 40px rgba(59, 130, 246, 0.25);
+      width: 100%;
+      max-width: 720px;
+    }
+    h1 {
+      color: #1e40af;
+      font-weight: 800;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+    p.desc {
+      color: #475569;
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      text-align: center;
+    }
+    p.map {
+      color: #64748b;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    /* أزرار متجاورة */
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn-group > div {
+      display: flex;
+      gap: 0.5rem;
     }
   </style>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/fira_code.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
 </head>
 <body>
+
   <div class="container fade-in" id="scriptContainer">
-    <p class="text-center text-gray-400">...جاري تحميل البيانات</p>
+    <p class="text-center text-gray-500">...جاري تحميل البيانات</p>
   </div>
 
-  <div class="btn-group max-w-3xl w-full mt-6">
-    <button onclick="history.back()" class="btn-back">🔙 رجوع</button>
-    <button id="copyBtn" class="btn-copy" disabled>📋 نسخ السكربت</button>
-    <button id="downloadBtn" class="btn-download" disabled>💾 تحميل السكربت</button>
+  <div class="btn-group container fade-in" style="margin-top: 1rem;">
+    <button onclick="history.back()" class="px-5 py-2 rounded bg-gray-300 hover:bg-gray-400">🔙 رجوع</button>
+    <div>
+      <button id="copyBtn" class="px-5 py-2 rounded bg-green-600 text-white hover:bg-green-700" disabled>📋 نسخ السكربت</button>
+      <button id="downloadBtn" class="px-5 py-2 rounded bg-blue-600 text-white hover:bg-blue-700" disabled>💾 تحميل السكربت</button>
+    </div>
   </div>
 
   <div id="copyToast">تم النسخ بنجاح!</div>
