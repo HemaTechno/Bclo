@@ -218,7 +218,7 @@
       }
     }
 
-    // إضافة ماب جديد
+    // إضافة ماب جديد مع جعل اسم الوثيقة نفس اسم الماب
     async function addNewMap() {
       const mapName = newMapName.value.trim();
       if (!mapName) {
@@ -226,19 +226,21 @@
         return;
       }
 
+      // استبدال المسافات بشرطات وتصحيح الاسم ليكون مناسباً كمعرف
+      const docId = mapName.replace(/\s+/g, '_').toLowerCase();
+
       try {
         // التحقق من وجود الماب مسبقاً
-        const mapsCollection = collection(db, "maps");
-        const q = query(mapsCollection, where("name", "==", mapName));
-        const querySnapshot = await getDocs(q);
+        const mapRef = doc(db, "maps", docId);
+        const mapDoc = await getDoc(mapRef);
         
-        if (!querySnapshot.empty) {
+        if (mapDoc.exists()) {
           showToast("هذا الماب موجود بالفعل", false);
           return;
         }
 
-        // إضافة الماب الجديد
-        await addDoc(mapsCollection, {
+        // إضافة الماب الجديد مع استخدام الاسم كمعرف للوثيقة
+        await setDoc(mapRef, {
           name: mapName,
           createdAt: new Date()
         });
