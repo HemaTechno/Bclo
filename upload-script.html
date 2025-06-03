@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>إضافة سكربت</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       font-family: 'Tajawal', sans-serif;
@@ -51,6 +52,12 @@
       outline: none;
       border-color: #007BFF;
       background: #fff;
+    }
+
+    .g-recaptcha {
+      transform: scale(1.02);
+      transform-origin: right;
+      margin-top: 15px;
     }
 
     button {
@@ -148,10 +155,7 @@
       mapSelect.innerHTML = `<option value="">-- اختر الماب --</option>`;
 
       const snapshot = await getDocs(collection(db, "maps"));
-      let hasMaps = false;
-
       snapshot.forEach(doc => {
-        hasMaps = true;
         const data = doc.data();
         mapSelect.innerHTML += `<option value="${data.name}">${data.name}</option>`;
       });
@@ -164,11 +168,20 @@
         window.location.href = "/login.html";
         return;
       }
+
       loadMaps();
 
       scriptForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         loader.classList.remove('hidden');
+
+        // التحقق من الكابشا
+        const recaptchaResponse = grecaptcha.getResponse();
+        if (!recaptchaResponse) {
+          showToast("الرجاء التحقق من أنك لست روبوتًا", false);
+          loader.classList.add('hidden');
+          return;
+        }
 
         const name = scriptForm.scriptName.value;
         const desc = scriptForm.scriptDesc.value;
@@ -197,7 +210,7 @@
         await uploadBytes(storageRef, file);
         const imageUrl = await getDownloadURL(storageRef);
 
-        const docRef = await addDoc(collection(db, "scripts"), {
+        await addDoc(collection(db, "scripts"), {
           name,
           desc,
           code,
@@ -209,7 +222,6 @@
           userId: user.uid
         });
 
-        // إرسال إلى Webhooks
         const usersSnapshot = await getDocs(collection(db, "users"));
         usersSnapshot.forEach(async userDoc => {
           const userData = userDoc.data();
@@ -237,7 +249,8 @@
         showToast("تمت إضافة السكربت بنجاح 🎉");
         scriptForm.reset();
         loader.classList.add('hidden');
-        loadMaps(); // تحديث قائمة المابات
+        loadMaps();
+        grecaptcha.reset(); // إعادة تعيين الكابشا
       });
     });
   </script>
@@ -250,6 +263,10 @@
     <textarea id="scriptCode" name="scriptCode" rows="10" placeholder="أدخل كود السكربت هنا" required></textarea>
     <select id="mapSelect" name="mapSelect" required></select>
     <input type="file" id="scriptImage" name="scriptImage" accept="image/*" required>
+    
+    <!-- كود كابشا -->
+    <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+    
     <button type="submit">➕ إضافة السكربت</button>
     <div id="loader" class="hidden">⏳ جاري المعالجة...</div>
   </form>
