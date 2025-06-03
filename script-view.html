@@ -89,7 +89,7 @@
       box-shadow:
         inset 0 0 8px rgba(255,255,255,0.05),
         0 0 12px rgba(0,0,0,0.3);
-      user-select: text;
+      user-select: none; /* منع تحديد النص */
       white-space: pre-wrap;
       word-break: break-word;
       direction: ltr;
@@ -101,6 +101,18 @@
       gap: 1rem;
       flex-wrap: wrap;
       margin-top: 1rem;
+    }
+    .btn-back-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .btn-stats-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+      flex-wrap: nowrap;
     }
     button {
       font-weight: 700;
@@ -120,16 +132,40 @@
       letter-spacing: 0.7px;
       filter: drop-shadow(0 2px 2px rgba(0,0,0,0.12));
     }
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-      box-shadow: none;
+    /* الأزرار الصغيرة */
+    .btn-small {
+      min-width: 70px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .btn-small-viewers {
+      background: linear-gradient(135deg, #facc15, #ca8a04);
+      color: #fff;
+      box-shadow: 0 5px 10px rgba(202,138,4,0.6);
+    }
+    .btn-small-downloads {
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: #fff;
+      box-shadow: 0 5px 10px rgba(30,64,175,0.6);
+    }
+    .btn-small-viewers:hover {
+      background: linear-gradient(135deg, #ca8a04, #a16207);
+      box-shadow: 0 7px 16px rgba(161,98,7,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-small-downloads:hover {
+      background: linear-gradient(135deg, #1e40af, #1e3a8a);
+      box-shadow: 0 7px 16px rgba(30,58,138,0.7);
+      transform: translateY(-2px);
     }
     .btn-back {
       background: linear-gradient(135deg, #9ca3af, #6b7280);
       color: #f9fafb;
       box-shadow:
         0 6px 12px rgba(107,114,128,0.5);
+      min-width: 120px;
     }
     .btn-back:hover:not(:disabled) {
       background: linear-gradient(135deg, #6b7280, #4b5563);
@@ -247,97 +283,140 @@
       setTimeout(() => copyToast.classList.remove('show'), 2000);
     }
 
-    function createButtons(finalCode, scriptName) {
+    // دالة لإنشاء الأزرار مع عدادات المشاهدات والتحميلات
+    function createButtons(finalCode, scriptName, views, downloads) {
       const btnGroup = document.createElement('div');
       btnGroup.className = 'btn-group';
 
-      // زر رجوع
+      // مجموعة الأزرار الصغيرة للعدادات فوق زر الرجوع
+      const backGroup = document.createElement('div');
+      backGroup.className = 'btn-back-group';
+
+      const statsGroup = document.createElement('div');
+      statsGroup.className = 'btn-stats-group';
+
+      const viewsBtn = document.createElement('button');
+      viewsBtn.className = 'btn-small btn-small-viewers';
+      viewsBtn.textContent = `👁️ ${views || 0}`;
+      viewsBtn.disabled = true;
+
+      const downloadsBtn = document.createElement('button');
+      downloadsBtn.className = 'btn-small btn-small-downloads';
+      downloadsBtn.textContent = `⬇️ ${downloads || 0}`;
+      downloadsBtn.disabled = true;
+
+      statsGroup.appendChild(viewsBtn);
+      statsGroup.appendChild(downloadsBtn);
+
       const backBtn = document.createElement('button');
       backBtn.className = 'btn-back';
-      backBtn.textContent = '🔙 رجوع';
-      backBtn.onclick = () => history.back();
-      btnGroup.appendChild(backBtn);
+      backBtn.textContent = "رجوع";
+      backBtn.onclick = () => {
+        window.history.back();
+      };
 
-      // زر نسخ
+      backGroup.appendChild(statsGroup);
+      backGroup.appendChild(backBtn);
+
+      btnGroup.appendChild(backGroup);
+
+      // زر نسخ السكربت
       const copyBtn = document.createElement('button');
       copyBtn.className = 'btn-copy';
-      copyBtn.textContent = '📋 نسخ السكربت';
+      copyBtn.textContent = "نسخ السكربت";
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(finalCode).then(() => {
           showCopyToast();
-        }).catch(() => {
-          alert('حدث خطأ أثناء النسخ');
         });
       };
       btnGroup.appendChild(copyBtn);
 
-      // زر تحميل
+      // زر تحميل السكربت
       const downloadBtn = document.createElement('button');
       downloadBtn.className = 'btn-download';
-      downloadBtn.textContent = '💾 تحميل السكربت';
+      downloadBtn.textContent = "تحميل السكربت";
       downloadBtn.onclick = () => {
-        const blob = new Blob([finalCode], { type: 'text/plain' });
+        const blob = new Blob([finalCode], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = (scriptName || 'script') + '.lua';
+        a.download = `${scriptName}.txt`;
         document.body.appendChild(a);
         a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 0);
+        a.remove();
+        URL.revokeObjectURL(url);
+        // تحديث عدد التحميلات في Firebase
+        updateDownloads(scriptId, downloads + 1);
       };
       btnGroup.appendChild(downloadBtn);
-
-      // زر ديسكورد
-      const discordBtn = document.createElement('button');
-      discordBtn.className = 'btn-discord';
-      discordBtn.textContent = 'Discord';
-      discordBtn.onclick = () => {
-        window.open('https://discord.gg/yourdiscordinvite', '_blank');
-      };
-      btnGroup.appendChild(discordBtn);
 
       container.appendChild(btnGroup);
     }
 
-    if (!scriptId) {
-      container.innerHTML = `<p class="error">❌ لم يتم تحديد معرف السكربت</p>`;
-      document.title = "خطأ";
-    } else {
-      container.innerHTML = `<p class="loading">...جاري تحميل البيانات</p>`;
-
-      db.collection("scripts").doc(scriptId).get()
-        .then(doc => {
-          if (!doc.exists) {
-            container.innerHTML = `<p class="error">❌ لم يتم العثور على السكربت</p>`;
-            document.title = "سكربت غير موجود";
-            return;
-          }
-
-          const data = doc.data();
-          document.title = data.name || "عرض السكربت";
-
-          const finalCode = warningText + data.content;
-
-          container.innerHTML = `
-            <h1>${data.name}</h1>
-            <p class="desc">${data.desc}</p>
-            <p class="map">📍 الماب: <b>${data.map}</b></p>
-            <img src="${data.imageUrl || 'https://via.placeholder.com/720x220?text=No+Image'}" alt="صورة السكربت" class="script-image" />
-            <div class="warning">⚠️ يرجى توخي الحذر عند استخدام السكربتات غير الموثوقة.</div>
-            <pre id="codeBlock">${data.content}</pre>
-          `;
-
-          createButtons(finalCode, data.name);
-        })
-        .catch(err => {
-          container.innerHTML = `<p class="error">❌ حدث خطأ أثناء تحميل البيانات</p>`;
-          console.error(err);
+    // تحديث عدد التحميلات
+    async function updateDownloads(id, newCount) {
+      try {
+        await db.collection('scripts').doc(id).update({
+          downloads: newCount
         });
+      } catch (error) {
+        console.error("خطأ في تحديث التحميلات:", error);
+      }
+    }
+
+    // تحديث عدد المشاهدات مرة واحدة فقط لكل تحميل صفحة
+    async function updateViews(id, currentViews) {
+      try {
+        const newViews = (currentViews || 0) + 1;
+        await db.collection('scripts').doc(id).update({
+          views: newViews
+        });
+        return newViews;
+      } catch (error) {
+        console.error("خطأ في تحديث المشاهدات:", error);
+        return currentViews || 0;
+      }
+    }
+
+    // تحميل بيانات السكربت من Firebase
+    async function loadScript(id) {
+      try {
+        const docRef = db.collection('scripts').doc(id);
+        const docSnap = await docRef.get();
+
+        if (!docSnap.exists) {
+          container.innerHTML = '<p class="error">السكربت غير موجود.</p>';
+          return;
+        }
+
+        const data = docSnap.data();
+
+        // زيادة عدد المشاهدات
+        const updatedViews = await updateViews(id, data.views);
+
+        container.innerHTML = `
+          <h1>${data.name}</h1>
+          <p class="desc">${data.desc}</p>
+          <p class="map">الخريطة: ${data.map}</p>
+          <img src="${data.imageURL || 'https://via.placeholder.com/720x220?text=No+Image'}" alt="صورة السكربت" class="script-image" draggable="false" />
+          <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
+          <pre id="codeBlock">${data.code}</pre>
+        `;
+
+        // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات
+        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0);
+
+      } catch (error) {
+        container.innerHTML = `<p class="error">خطأ في تحميل البيانات. حاول مرة أخرى لاحقًا.</p>`;
+        console.error(error);
+      }
+    }
+
+    if (scriptId) {
+      loadScript(scriptId);
+    } else {
+      container.innerHTML = '<p class="error">لم يتم تحديد معرف السكربت.</p>';
     }
   </script>
-
 </body>
 </html>
