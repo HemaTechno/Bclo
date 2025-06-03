@@ -3,39 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="موقع scriptbot.cloud لرفع وتحميل السكربتات بأمان وسرعة، مع واجهة مخصصة لكل مستخدم.">
-  <meta name="keywords" content="رفع ملفات, سكربتات, سكربت روبلوكس, مشاركة السكربتات, ملفات roblox">
-  <meta name="author" content="ScriptBot Cloud">
-  <link rel="canonical" href="https://scriptbot.cloud/">
+  <meta name="description" content="منصة آمنة وموثوقة لرفع ومشاركة السكربتات بسهولة وسرعة.">
   <title>الرئيسية - ScriptBot Cloud</title>
-
+  <link rel="canonical" href="https://scriptbot.cloud/">
   <link rel="icon" href="/logo.png">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-white text-gray-800 min-h-screen flex flex-col">
 
   <!-- Header -->
   <header class="bg-white shadow-md p-4 sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center">
-      <a href="/">
-        <img src="/logo.png" alt="Logo" class="w-10 h-10 rounded-full">
-      </a>
-      <nav class="space-x-4 space-x-reverse">
-        <a href="index.html" class="text-blue-600 font-semibold hover:underline">الرئيسية</a>
-        <a href="files.html" class="hover:text-blue-600">الملفات</a>
-        <a href="scripts.html" class="hover:text-blue-600">السكربتات</a>
-      </nav>
-      <div id="userArea" class="flex items-center gap-2"></div>
+      <img src="/logo.png" alt="logo" class="w-10 h-10">
+      <div id="user-info" class="flex items-center gap-3 hidden">
+        <span id="user-name" class="text-sm font-semibold text-gray-700"></span>
+        <img id="user-pic" src="" alt="profile" class="w-9 h-9 rounded-full cursor-pointer">
+      </div>
     </div>
   </header>
 
@@ -43,7 +35,7 @@
   <section class="flex-1 flex flex-col items-center justify-center text-center py-16 px-4">
     <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
     <h2 class="text-4xl font-bold text-gray-800 mb-4 animate-fade-in">مرحبًا بك في ScriptBot Cloud</h2>
-    <p class="text-lg text-gray-600 mb-6 animate-fade-in delay-200">منصة موثوقة وآمنة لرفع ومشاركة السكربتات والملفات.</p>
+    <p class="text-lg text-gray-600 mb-6 animate-fade-in delay-200">منصة موثوقة وآمنة لرفع ومشاركة السكربتات بسهولة وسرعة.</p>
     <a href="upload.html" class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105 animate-fade-in delay-500">⬆️ ارفع سكربتك الآن</a>
   </section>
 
@@ -59,58 +51,22 @@
       <p class="text-gray-600 mb-4">ارفع ملفاتك في خطوات بسيطة وبشكل آمن.</p>
       <a href="upload.html" class="text-blue-600 font-medium hover:underline">رفع ملف →</a>
     </div>
+    <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+      <h3 class="text-2xl font-semibold mb-2 text-blue-700">ℹ️ سياسة الخصوصية</h3>
+      <p class="text-gray-600 mb-4">احرص على معرفة حقوقك وبياناتك الشخصية.</p>
+      <a href="privacy.html" class="text-blue-600 font-medium hover:underline">عرض السياسة →</a>
+    </div>
   </section>
 
   <!-- Footer -->
   <footer class="bg-white mt-12 p-4 text-center text-sm text-gray-500 shadow-inner">
-    &copy; 2025 ScriptBot Cloud. جميع الحقوق محفوظة.
-    <br>تم تحسين هذا الموقع ليناسب معايير Google AdSense.
+    <div class="space-x-2 space-x-reverse">
+      <a href="about.html" class="hover:underline">من نحن</a> ·
+      <a href="privacy.html" class="hover:underline">سياسة الخصوصية</a> ·
+      <a href="contact.html" class="hover:underline">تواصل معنا</a>
+    </div>
+    <div class="mt-2">&copy; 2025 ScriptBot Cloud. جميع الحقوق محفوظة.</div>
   </footer>
-
-  <!-- Firebase Config -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    const userArea = document.getElementById('userArea');
-
-    function renderUser(user) {
-      if (user) {
-        userArea.innerHTML = `
-          <a href="profile.html" title="الملف الشخصي">
-            <img src="${user.photoURL || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="w-10 h-10 rounded-full object-cover hover:scale-105 transition" />
-          </a>
-          <span class="hidden sm:inline-block font-semibold text-gray-700">${user.displayName || user.email}</span>
-          <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm">تسجيل خروج</button>
-        `;
-
-        document.getElementById('logoutBtn').onclick = () => {
-          auth.signOut();
-        };
-      } else {
-        userArea.innerHTML = `
-          <button id="loginBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold">تسجيل الدخول</button>
-        `;
-
-        document.getElementById('loginBtn').onclick = () => {
-          const provider = new firebase.auth.GoogleAuthProvider();
-          auth.signInWithPopup(provider).catch(err => alert('خطأ: ' + err.message));
-        };
-      }
-    }
-
-    auth.onAuthStateChanged(user => {
-      renderUser(user);
-    });
-  </script>
 
   <!-- Animations -->
   <script>
@@ -124,5 +80,31 @@
       }, 300 + index * 200);
     });
   </script>
+
+  <!-- Firebase Auth -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("user-info").classList.remove("hidden");
+        document.getElementById("user-name").textContent = user.displayName;
+        document.getElementById("user-pic").src = user.photoURL;
+        document.getElementById("user-pic").addEventListener('click', () => {
+          window.location.href = '/profile.html';
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
