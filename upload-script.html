@@ -1,139 +1,76 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <script type="module" src="maintenance-check.js"></script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>رفع سكربتات</title>
-
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-
-  <!-- reCAPTCHA v2 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>رفع سكربت جديد</title>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js"></script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body { font-family: 'Cairo', sans-serif; }
-    .fade-in { animation: fadeIn 0.8s ease-in-out; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    button:hover {
-      transform: scale(1.05);
-      transition: transform 0.3s ease;
-    }
     .custom-file-upload {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 0.75rem;
+      background-color: #e5e7eb;
+      border-radius: 0.5rem;
       cursor: pointer;
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
-      color: white;
-      font-weight: bold;
-      transition: background 0.3s ease;
+      margin-top: 0.5rem;
+      transition: background 0.3s;
     }
     .custom-file-upload:hover {
-      background: linear-gradient(135deg, #4338ca, #2563eb);
-    }
-    .loader {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #3b82f6;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #3b82f6;
-      color: white;
-      padding: 14px 20px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      opacity: 0;
-      animation: fadeInUp 0.5s forwards;
-    }
-    @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(-10px); }
-    }
-    .discord-status {
-      padding: 12px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-    }
-    .discord-connected {
-      background-color: #edf7ed;
-      border-left: 4px solid #4caf50;
-    }
-    .discord-not-connected {
-      background-color: #fff3e0;
-      border-left: 4px solid #ffa000;
-    }
-    .discord-link-btn {
-      background-color: #5865F2;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 4px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
+      background-color: #d1d5db;
     }
   </style>
 </head>
-
-<body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen flex items-center justify-center px-4">
-
-  <!-- Loader -->
-  <div id="loader" class="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center hidden z-50">
-    <div class="loader"></div>
-  </div>
-
-  <!-- Toast -->
-  <div id="toast" class="toast hidden"></div>
-
-  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg fade-in" id="mainContent" style="display:none;">
-    <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">📜 إضافة سكربت جديد</h2>
-
-    <!-- Discord Connection Status -->
-    <div id="discordStatus" class="discord-status hidden">
-      <div id="discordConnected" class="discord-connected hidden">
-        <p class="font-semibold">✅ حساب الديسكورد مرتبط: <span id="discordUsername"></span></p>
-        <button id="changeDiscord" class="text-blue-600 hover:underline mt-2">تغيير الحساب</button>
-      </div>
-      <div id="discordNotConnected" class="discord-not-connected hidden">
-        <p class="font-semibold">⚠️ لم تقم بربط حساب الديسكورد الخاص بك!</p>
-        <a href="link-discord.html" class="discord-link-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.472.515.917.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
-          </svg>
-          ربط حساب الديسكورد
-        </a>
-      </div>
-    </div>
-
+<body class="bg-gray-100 py-10 px-4">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center">📤 رفع سكربت جديد</h1>
     <form id="scriptForm" class="space-y-6" autocomplete="off">
-      <!-- باقي حقول الفورم كما هي -->
-    </form>
+      <div>
+        <label for="name" class="block text-gray-700 font-semibold">📛 اسم السكربت</label>
+        <input id="name" name="name" type="text" required
+          class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
 
+      <div>
+        <label for="desc" class="block text-gray-700 font-semibold">📝 وصف السكربت</label>
+        <textarea id="desc" name="desc" rows="3" required
+          class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      </div>
+
+      <div>
+        <label for="map" class="block text-gray-700 font-semibold">🗺️ اسم الخريطة</label>
+        <input id="map" name="map" type="text" required
+          class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <div>
+        <label for="code" class="block text-gray-700 font-semibold">💻 كود السكربت</label>
+        <textarea id="code" name="code" rows="6" required
+          class="mt-1 w-full px-4 py-2 border rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="الصق الكود هنا..."></textarea>
+      </div>
+
+      <input type="file" id="scriptImage" accept="image/*" class="hidden" />
+      <label for="scriptImage" class="custom-file-upload">📁 اختر صورة السكربت</label>
+      <div id="imageName" class="text-sm mt-2 text-center text-gray-600"></div>
+
+      <!-- Google reCAPTCHA -->
+      <div class="g-recaptcha mt-4" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+
+      <button type="submit"
+        class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg mt-4">📤 رفع السكربت</button>
+    </form>
     <div id="status" class="mt-4 text-center text-sm text-gray-600"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
-    import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-
+  <script>
+    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
       authDomain: "hhhhhh-d4fb8.firebaseapp.com",
@@ -143,209 +80,82 @@
       appId: "1:24512338206:web:dfe045db59bd3434a2110f",
       measurementId: "G-HD4R7GNQ5H"
     };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
 
-    const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    const form = document.getElementById('scriptForm');
+    const status = document.getElementById('status');
+    const imageInput = document.getElementById('scriptImage');
+    const imageName = document.getElementById('imageName');
 
-    // عناصر DOM
-    const elements = {
-      loader: document.getElementById('loader'),
-      toast: document.getElementById('toast'),
-      mainContent: document.getElementById('mainContent'),
-      discordStatus: document.getElementById('discordStatus'),
-      discordConnected: document.getElementById('discordConnected'),
-      discordNotConnected: document.getElementById('discordNotConnected'),
-      discordUsername: document.getElementById('discordUsername'),
-      changeDiscord: document.getElementById('changeDiscord'),
-      scriptForm: document.getElementById('scriptForm'),
-      submitBtn: document.querySelector('#scriptForm button[type="submit"]'),
-      scriptImageInput: document.getElementById('scriptImage'),
-      imageNameDisplay: document.getElementById('imageName'),
-      status: document.getElementById('status')
-    };
-
-    // وظائف مساعدة
-    const helpers = {
-      showToast: (message, success = true) => {
-        elements.toast.textContent = message;
-        elements.toast.style.backgroundColor = success ? '#3b82f6' : '#ef4444';
-        elements.toast.classList.remove('hidden');
-        setTimeout(() => elements.toast.classList.add('hidden'), 3000);
-      },
-
-// في جزء التحقق من حالة الديسكورد (استبدال الكود القديم بهذا)
-const checkDiscordConnection = async (user) => {
-  try {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    console.log("User document data:", userDoc.data());
-    
-    if (!userDoc.exists()) {
-      throw new Error("User document not found");
-    }
-
-    const discordData = userDoc.data().discord || 
-                      (userDoc.data().discordId ? {
-                        id: userDoc.data().discordId,
-                        username: userDoc.data().discordUsername
-                      } : null);
-
-    if (discordData && discordData.id) {
-      // حالة الربط الناجحة
-      elements.discordStatus.classList.remove('hidden');
-      elements.discordConnected.classList.remove('hidden');
-      elements.discordNotConnected.classList.add('hidden');
-      elements.discordUsername.textContent = discordData.username || `ID: ${discordData.id}`;
-      elements.submitBtn.disabled = false;
-      return discordData;
-    } else {
-      // حالة عدم الربط
-      elements.discordStatus.classList.remove('hidden');
-      elements.discordConnected.classList.add('hidden');
-      elements.discordNotConnected.classList.remove('hidden');
-      elements.submitBtn.disabled = true;
-      return null;
-    }
-  } catch (error) {
-    console.error("Error in checkDiscordConnection:", error);
-    elements.discordStatus.classList.remove('hidden');
-    elements.discordConnected.classList.add('hidden');
-    elements.discordNotConnected.classList.remove('hidden');
-    elements.submitBtn.disabled = true;
-    helpers.showToast("حدث خطأ في التحقق من حساب الديسكورد", false);
-    return null;
-  }
-};
-
-// في دالة onAuthStateChanged (استبدال الجزء الخاص بالديسكورد بهذا)
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    elements.mainContent.style.display = 'block';
-    await checkDiscordConnection(user);
-  } else {
-    window.location.href = 'login.html';
-  }
-});
-
-
-
-
-
-        
-    // أحداث
-    elements.changeDiscord?.addEventListener('click', () => {
-      window.location.href = 'link-discord.html';
+    imageInput.addEventListener('change', () => {
+      imageName.textContent = imageInput.files[0]?.name || '';
     });
 
-    elements.scriptImageInput.addEventListener('change', () => {
-      if (elements.scriptImageInput.files.length > 0) {
-        const file = elements.scriptImageInput.files[0];
-        if (!file.type.startsWith('image/')) {
-          helpers.showToast("الملف ليس صورة!", false);
-          elements.scriptImageInput.value = '';
-          elements.imageNameDisplay.textContent = '';
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          elements.imageNameDisplay.innerHTML = `
-            <span class="block mt-2">تم اختيار: ${file.name}</span>
-            <img src="${e.target.result}" class="mt-2 rounded-lg w-full max-h-48 object-cover" />
-            <button class="mt-2 text-red-500 hover:underline" id="removeImage">حذف الصورة</button>
-          `;
-          document.getElementById('removeImage').onclick = () => {
-            if (confirm("هل أنت متأكد من حذف الصورة؟")) {
-              elements.scriptImageInput.value = '';
-              elements.imageNameDisplay.textContent = '';
-            }
-          };
-        };
-        reader.readAsDataURL(file);
-      } else {
-        elements.imageNameDisplay.textContent = '';
-      }
-    });
-
-    elements.scriptForm.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      elements.status.textContent = '';
-
-      // التحقق من الصورة
-      if (elements.scriptImageInput.files.length === 0) {
-        helpers.showToast("يرجى رفع صورة", false);
-        return;
-      }
 
       // التحقق من reCAPTCHA
-      const recaptchaResponse = grecaptcha.getResponse();
-      if (!recaptchaResponse) {
-        helpers.showToast("يرجى تأكيد الكابتشا", false);
+      const captchaToken = grecaptcha.getResponse();
+      if (!captchaToken) {
+        status.textContent = 'يرجى التحقق من أنك لست روبوت';
         return;
       }
 
-      elements.loader.classList.remove('hidden');
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        status.textContent = 'يجب تسجيل الدخول أولاً!';
+        return;
+      }
+
+      const uid = user.uid;
+
+      const name = form.name.value.trim();
+      const desc = form.desc.value.trim();
+      const code = form.code.value.trim();
+      const map = form.map.value.trim();
+      const imageFile = imageInput.files[0];
+
+      if (!imageFile) {
+        status.textContent = 'يرجى اختيار صورة!';
+        return;
+      }
 
       try {
-        const user = auth.currentUser;
-        if (!user) {
-          helpers.showToast("يجب تسجيل الدخول أولاً", false);
-          elements.loader.classList.add('hidden');
-          return;
-        }
+        status.textContent = 'جاري رفع الصورة...';
+        const imageRef = storage.ref(`scripts/${Date.now()}_${imageFile.name}`);
+        await imageRef.put(imageFile);
+        const imageUrl = await imageRef.getDownloadURL();
 
-        // التحقق من ربط الديسكورد
-        const discordData = await helpers.checkDiscordConnection(user);
-        if (!discordData) {
-          helpers.showToast("يجب ربط حساب الديسكورد أولاً", false);
-          elements.loader.classList.add('hidden');
-          return;
-        }
-
-        // رفع الصورة
-        const file = elements.scriptImageInput.files[0];
-        const fileRef = storageRef(storage, `scripts_images/${Date.now()}_${file.name}`);
-        await uploadBytes(fileRef, file);
-        const imageUrl = await getDownloadURL(fileRef);
-
-        // حفظ السكربت
-        const docRef = await addDoc(collection(db, "scripts"), {
-          name: elements.scriptForm.scriptName.value,
-          desc: elements.scriptForm.scriptDesc.value,
-          content: elements.scriptForm.scriptContent.value,
-          map: elements.scriptForm.mapSelect.value,
-          imageUrl: imageUrl,
-          userId: user.uid,
-          discord: discordData,
-          createdAt: new Date(),
+        const docRef = await db.collection('scripts').add({
+          name,
+          desc,
+          code,
+          map,
+          image: imageUrl,
+          uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // عرض رسالة النجاح
-        elements.status.innerHTML = `
-          ✅ تم إضافة السكربت بنجاح!<br/>
-          معرف السكربت: <b>${docRef.id}</b><br/>
-          <button id="copyLinkBtn" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">نسخ رابط السكربت</button>
+        status.innerHTML = `
+          ✅ تم رفع السكربت بنجاح!<br>
+          <a href="/script/${docRef.id}" class="text-blue-600 underline">عرض السكربت</a>
         `;
-
-        // نسخ الرابط
-        const scriptLink = `${window.location.origin}/script-view.html?id=${docRef.id}`;
-        document.getElementById('copyLinkBtn').addEventListener('click', () => {
-          navigator.clipboard.writeText(scriptLink).then(() => {
-            helpers.showToast("تم نسخ الرابط!");
-          });
-        });
-
-        helpers.showToast("تم رفع السكربت بنجاح!");
-        elements.scriptForm.reset();
+        form.reset();
+        imageName.textContent = '';
         grecaptcha.reset();
-        elements.imageNameDisplay.textContent = '';
 
-      } catch (error) {
-        console.error("حدث خطأ أثناء رفع السكربت:", error);
-        helpers.showToast("فشل رفع السكربت، حاول مرة أخرى", false);
-      } finally {
-        elements.loader.classList.add('hidden');
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'حدث خطأ أثناء الرفع. حاول مرة أخرى.';
       }
+    });
+
+    // تحقق من تسجيل الدخول تلقائياً
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) window.location.href = "/login";
     });
   </script>
 </body>
