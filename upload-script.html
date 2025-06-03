@@ -174,43 +174,65 @@
         elements.toast.classList.remove('hidden');
         setTimeout(() => elements.toast.classList.add('hidden'), 3000);
       },
-      checkDiscordConnection: async (user) => {
-        try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          
-          if (userDoc.exists() && userDoc.data().discord) {
-            elements.discordStatus.classList.remove('hidden');
-            elements.discordConnected.classList.remove('hidden');
-            elements.discordNotConnected.classList.add('hidden');
-            elements.discordUsername.textContent = userDoc.data().discord.username || `ID: ${userDoc.data().discord.id}`;
-            elements.submitBtn.disabled = false;
-            return userDoc.data().discord;
-          } else {
-            elements.discordStatus.classList.remove('hidden');
-            elements.discordConnected.classList.add('hidden');
-            elements.discordNotConnected.classList.remove('hidden');
-            elements.submitBtn.disabled = true;
-            return null;
-          }
-        } catch (error) {
-          console.error("Error checking Discord connection:", error);
-          helpers.showToast("حدث خطأ في التحقق من حساب الديسكورد", false);
-          return null;
-        }
-      }
-    };
 
-    // إدارة حالة المصادقة
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        elements.mainContent.style.display = 'block';
-        const discordData = await helpers.checkDiscordConnection(user);
-        console.log("Discord connection data:", discordData);
-      } else {
-        window.location.href = 'login.html';
-      }
-    });
+// في جزء التحقق من حالة الديسكورد (استبدال الكود القديم بهذا)
+const checkDiscordConnection = async (user) => {
+  try {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    console.log("User document data:", userDoc.data());
+    
+    if (!userDoc.exists()) {
+      throw new Error("User document not found");
+    }
 
+    const discordData = userDoc.data().discord || 
+                      (userDoc.data().discordId ? {
+                        id: userDoc.data().discordId,
+                        username: userDoc.data().discordUsername
+                      } : null);
+
+    if (discordData && discordData.id) {
+      // حالة الربط الناجحة
+      elements.discordStatus.classList.remove('hidden');
+      elements.discordConnected.classList.remove('hidden');
+      elements.discordNotConnected.classList.add('hidden');
+      elements.discordUsername.textContent = discordData.username || `ID: ${discordData.id}`;
+      elements.submitBtn.disabled = false;
+      return discordData;
+    } else {
+      // حالة عدم الربط
+      elements.discordStatus.classList.remove('hidden');
+      elements.discordConnected.classList.add('hidden');
+      elements.discordNotConnected.classList.remove('hidden');
+      elements.submitBtn.disabled = true;
+      return null;
+    }
+  } catch (error) {
+    console.error("Error in checkDiscordConnection:", error);
+    elements.discordStatus.classList.remove('hidden');
+    elements.discordConnected.classList.add('hidden');
+    elements.discordNotConnected.classList.remove('hidden');
+    elements.submitBtn.disabled = true;
+    helpers.showToast("حدث خطأ في التحقق من حساب الديسكورد", false);
+    return null;
+  }
+};
+
+// في دالة onAuthStateChanged (استبدال الجزء الخاص بالديسكورد بهذا)
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    elements.mainContent.style.display = 'block';
+    await checkDiscordConnection(user);
+  } else {
+    window.location.href = 'login.html';
+  }
+});
+
+
+
+
+
+        
     // أحداث
     elements.changeDiscord?.addEventListener('click', () => {
       window.location.href = 'link-discord.html';
