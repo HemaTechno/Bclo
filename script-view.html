@@ -99,7 +99,7 @@
       box-shadow:
         inset 0 0 8px rgba(255,255,255,0.05),
         0 0 12px rgba(0,0,0,0.3);
-      user-select: none; /* منع تحديد النص */
+      user-select: none;
       white-space: pre-wrap;
       word-break: break-word;
       direction: ltr;
@@ -142,7 +142,6 @@
       letter-spacing: 0.7px;
       filter: drop-shadow(0 2px 2px rgba(0,0,0,0.12));
     }
-    /* الأزرار الصغيرة */
     .btn-small {
       min-width: 70px;
       padding: 0.4rem 0.8rem;
@@ -222,133 +221,120 @@
   </style>
 </head>
 <body>
-  <div class="container fade-in" id="container">
-    <p>جاري تحميل السكربت...</p>
-  </div>
+  <main class="container fade-in" id="container">
+    <p>جارِ تحميل السكربت...</p>
+  </main>
 
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <script>
     // إعداد Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
-      projectId: "hhhhhh-d4fb8",
-      storageBucket: "hhhhhh-d4fb8.appspot.com",
-      messagingSenderId: "24512338206",
-      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
-      measurementId: "G-HD4R7GNQ5H"
+      // ضع إعدادات Firebase هنا
+      apiKey: "AIza...",
+      authDomain: "yourproject.firebaseapp.com",
+      projectId: "yourproject",
+      storageBucket: "yourproject.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456",
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // تحذير النسخ
+    const warningText = `
+      ⚠️ تحذير ⚠️
+      يمنع نسخ أو مشاركة السكربتات بدون إذن الناشر.
+      استخدام غير قانوني قد يؤدي للحظر.
+    `;
+
     const container = document.getElementById('container');
-    const urlParams = new URLSearchParams(window.location.search);
-    const scriptId = urlParams.get('id');
 
-    const warningText = `تحذير: استخدم السكربت بحذر.\nلا تتحمل الإدارة أي مسؤولية عن سوء الاستخدام.`;
+    // تحديث عدد المشاهدات
+    async function updateViews(id, currentViews) {
+      try {
+        const docRef = db.collection('scripts').doc(id);
+        await docRef.update({
+          views: (currentViews || 0) + 1,
+        });
+        return (currentViews || 0) + 1;
+      } catch (err) {
+        console.error("خطأ تحديث المشاهدات:", err);
+        return currentViews || 0;
+      }
+    }
 
-    function createButtons(finalCode, scriptName, views, downloads, publisherName) {
+    // إنشاء أزرار التحميل والنسخ والرجوع
+    function createButtons(scriptCode, scriptName, views, downloads, publisherName) {
       const btnGroup = document.createElement('div');
       btnGroup.className = 'btn-group';
 
-      // مجموعة الإحصائيات الصغيرة
-      const backGroup = document.createElement('div');
-      backGroup.className = 'btn-back-group';
+      // زر النسخ
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn-copy btn-small';
+      copyBtn.textContent = 'نسخ السكربت';
+      copyBtn.title = "انسخ السكربت للحافظة";
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(scriptCode).then(() => {
+          alert('تم نسخ السكربت!');
+        }).catch(() => {
+          alert('حدث خطأ أثناء النسخ!');
+        });
+      });
 
+      // زر التحميل
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-download btn-small';
+      downloadBtn.textContent = 'تحميل السكربت';
+      downloadBtn.title = "حفظ السكربت كملف .lua";
+      downloadBtn.addEventListener('click', () => {
+        const blob = new Blob([scriptCode], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = scriptName.replace(/\s+/g, '_') + '.lua';
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+
+      // زر الرجوع
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn-back btn-small';
+      backBtn.textContent = 'رجوع';
+      backBtn.title = "العودة للصفحة السابقة";
+      backBtn.addEventListener('click', () => {
+        window.history.back();
+      });
+
+      // أزرار عرض إحصائيات المشاهدات والتحميلات
       const statsGroup = document.createElement('div');
       statsGroup.className = 'btn-stats-group';
 
       const viewersBtn = document.createElement('button');
       viewersBtn.className = 'btn-small btn-small-viewers';
-      viewersBtn.textContent = `👁️ ${views || 0}`;
+      viewersBtn.textContent = `👁️ ${views}`;
 
       const downloadsBtn = document.createElement('button');
       downloadsBtn.className = 'btn-small btn-small-downloads';
-      downloadsBtn.textContent = `⬇️ ${downloads || 0}`;
+      downloadsBtn.textContent = `⬇️ ${downloads}`;
+
+      const publisherBtn = document.createElement('button');
+      publisherBtn.className = 'btn-small btn-small-viewers';
+      publisherBtn.textContent = `👤 ${publisherName}`;
 
       statsGroup.appendChild(viewersBtn);
       statsGroup.appendChild(downloadsBtn);
+      statsGroup.appendChild(publisherBtn);
 
-      // زر رجوع
-      const backBtn = document.createElement('button');
-      backBtn.className = 'btn-back';
-      backBtn.textContent = "رجوع";
-      backBtn.onclick = () => window.history.back();
-
-      backGroup.appendChild(statsGroup);
-      backGroup.appendChild(backBtn);
-
-      btnGroup.appendChild(backGroup);
-
-      // زر نسخ السكربت
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'btn-copy';
-      copyBtn.textContent = "نسخ السكربت";
-      copyBtn.onclick = () => {
-        navigator.clipboard.writeText(finalCode).then(() => {
-          alert('تم نسخ السكربت!');
-        });
-      };
+      btnGroup.appendChild(statsGroup);
       btnGroup.appendChild(copyBtn);
-
-      // زر تحميل السكربت
-      const downloadBtn = document.createElement('button');
-      downloadBtn.className = 'btn-download';
-      downloadBtn.textContent = "تحميل السكربت";
-      downloadBtn.onclick = () => {
-        const blob = new Blob([finalCode], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${scriptName}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        // تحديث عدد التحميلات في Firebase
-        updateDownloads(scriptId, downloads + 1);
-      };
       btnGroup.appendChild(downloadBtn);
-
-      // زر Discord
-      const discordBtn = document.createElement('button');
-      discordBtn.className = 'btn-discord';
-      discordBtn.textContent = "Discord";
-      discordBtn.onclick = () => {
-        window.open('https://discord.gg/YOUR_SERVER_INVITE', '_blank');
-      };
-      btnGroup.appendChild(discordBtn);
+      btnGroup.appendChild(backBtn);
 
       container.appendChild(btnGroup);
     }
 
-    // تحديث عدد التحميلات
-    async function updateDownloads(id, newCount) {
-      try {
-        await db.collection('scripts').doc(id).update({
-          downloads: newCount
-        });
-      } catch (error) {
-        console.error("خطأ في تحديث التحميلات:", error);
-      }
-    }
-
-    // تحديث عدد المشاهدات مرة واحدة فقط لكل تحميل صفحة
-    async function updateViews(id, currentViews) {
-      try {
-        const newViews = (currentViews || 0) + 1;
-        await db.collection('scripts').doc(id).update({
-          views: newViews
-        });
-        return newViews;
-      } catch (error) {
-        console.error("خطأ في تحديث المشاهدات:", error);
-        return currentViews || 0;
-      }
-    }
-
-    // تحميل بيانات السكربت من Firebase
+    // تحميل السكربت وجلب اسم الناشر من users
     async function loadScript(id) {
       try {
         const docRef = db.collection('scripts').doc(id);
@@ -364,37 +350,50 @@
         // زيادة عدد المشاهدات
         const updatedViews = await updateViews(id, data.views);
 
-      if (data.publisher) {
-      // جلب بيانات الناشر من مجموعة users
-      const userDoc = await db.collection('users').doc(data.publisher).get();
-      if (userDoc.exists) {
-        const userData = userDoc.data();
-        publisherName = userData.name || "غير معروف";  // افترض أن اسم المستخدم في الحقل 'name'
-      }
-      }
+        let publisherName = "غير معروف";
+
+        if (data.publisher) {
+          // جلب بيانات الناشر من مجموعة users
+          const userDoc = await db.collection('users').doc(data.publisher).get();
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            publisherName = userData.name || "غير معروف";
+          }
+        }
+
+        // تحديث عنوان الصفحة والوصف لأغراض SEO
+        document.title = data.name + " | سكربت Roblox";
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+          metaDesc.setAttribute('content', data.desc || 'عرض سكربت Roblox');
+        }
+
         container.innerHTML = `
           <h1>${data.name}</h1>
           <p class="desc">${data.desc}</p>
           <p class="map">الخريطة: ${data.map}</p>
-          <p class="publisher">الناشر: ${data.publisherName || "غير معروف"}</p>
-          <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
-            <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
+          <p class="publisher">الناشر: ${publisherName}</p>
+          ${data.imageUrl ? `<img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />` : ''}
+          <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
           <pre id="codeBlock">${data.content}</pre>
         `;
 
-        // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات واسم الناشر
-        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0, data.publisher);
+        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0, publisherName);
 
       } catch (error) {
-        container.innerHTML = `<p class="error">خطأ في تحميل البيانات. حاول مرة أخرى لاحقًا.</p>`;
+        container.innerHTML = `<p class="error">حدث خطأ أثناء تحميل السكربت.</p>`;
         console.error(error);
       }
     }
 
+    // استخرج id من الرابط مثلا script.html?id=abc123
+    const urlParams = new URLSearchParams(window.location.search);
+    const scriptId = urlParams.get('id');
+
     if (scriptId) {
       loadScript(scriptId);
     } else {
-      container.innerHTML = '<p class="error">لم يتم تحديد معرف السكربت.</p>';
+      container.innerHTML = '<p class="error">معرف السكربت غير موجود في الرابط.</p>';
     }
   </script>
 </body>
