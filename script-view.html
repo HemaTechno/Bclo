@@ -24,77 +24,112 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background-color: #1e293b;
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      direction: ltr;
-      max-height: 320px;
-      overflow-y: auto;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
-      font-family: 'Fira Code', 'Courier New', Courier, monospace;
-      font-size: 15px;
-      color: #cbd5e1;
-      user-select: text;
-      border: 2px solid #3b82f6;
-      transition: box-shadow 0.3s ease;
+    .container {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      max-width: 720px;
+      width: 100%;
+      padding: 2rem 2.5rem;
     }
-    pre:hover {
-      box-shadow: 0 0 25px #60a5fa;
+    h1 {
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 2.25rem;
+      margin-bottom: 0.5rem;
+    }
+    p.desc {
+      color: #374151;
+      margin-bottom: 0.25rem;
+      font-size: 1rem;
+    }
+    p.map {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    img.script-image {
+      border-radius: 12px;
+      max-height: 220px;
+      object-fit: cover;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      margin-bottom: 1.5rem;
+      user-select: none;
+      pointer-events: none;
+      animation: fadeIn 1s ease forwards;
     }
     .warning {
       background-color: #fef3c7;
       color: #b45309;
       padding: 12px 16px;
-      border-radius: 8px;
+      border-radius: 12px;
       font-weight: 700;
       margin-bottom: 1.5rem;
       box-shadow: 0 0 12px #fbbf24;
-      text-align: center;
+      user-select: none;
+    }
+    pre#codeBlock {
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      max-height: 320px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      box-shadow:
+        inset 0 0 8px rgba(255,255,255,0.05),
+        0 0 12px rgba(0,0,0,0.3);
+      user-select: text;
+      white-space: pre-wrap;
+      word-break: break-word;
+      direction: ltr;
+      margin-bottom: 1.75rem;
     }
     .btn-group {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 2rem;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .btn-group > div {
-      display: flex;
       gap: 0.5rem;
     }
-    .btn-group button {
-      margin-left: 0.5rem;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      font-weight: 600;
-      padding: 0.5rem 1.2rem;
-      border-radius: 8px;
+    button {
+      font-weight: 700;
+      padding: 0.5rem 1.25rem;
+      border-radius: 12px;
       border: none;
+      transition: background-color 0.3s ease;
+      user-select: none;
       cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    .btn-group button:hover {
-      filter: brightness(90%);
-      transform: translateY(-2px);
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      box-shadow: none;
     }
     .btn-back {
       background-color: #d1d5db;
+      color: #374151;
+    }
+    .btn-back:hover:not(:disabled) {
+      background-color: #9ca3af;
     }
     .btn-copy {
       background-color: #16a34a;
       color: white;
+      margin-left: auto;
     }
-    .btn-copy:hover {
+    .btn-copy:hover:not(:disabled) {
       background-color: #15803d;
     }
     .btn-download {
       background-color: #2563eb;
       color: white;
     }
-    .btn-download:hover {
-      background-color: #1d4ed8;
+    .btn-download:hover:not(:disabled) {
+      background-color: #1e40af;
     }
     #copyToast {
       position: fixed;
@@ -108,64 +143,41 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
-      font-weight: bold;
+      font-weight: 700;
       z-index: 9999;
     }
     #copyToast.show {
       opacity: 1;
       pointer-events: auto;
     }
-    img.script-image {
-      border-radius: 12px;
-      max-height: 220px;
-      object-fit: cover;
-      width: 100%;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-      margin-top: 1rem;
+    p.loading {
+      text-align: center;
+      color: #6b7280;
+      font-weight: 600;
+      font-size: 1rem;
       user-select: none;
-      pointer-events: none;
-      animation: fadeIn 1s ease forwards;
     }
-    .container {
-      background: white;
-      padding: 2rem 2.5rem;
-      border-radius: 2rem;
-      box-shadow: 0 15px 40px rgba(59, 130, 246, 0.25);
-      width: 100%;
-      max-width: 720px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    h1 {
-      color: #1e40af;
-      font-weight: 800;
-      font-size: 2.5rem;
-      margin-bottom: 0.4rem;
+    p.error {
       text-align: center;
-      width: 100%;
-    }
-    p.desc {
-      color: #475569;
-      font-size: 1.1rem;
-      margin-bottom: 0.6rem;
-      text-align: center;
-      width: 100%;
-    }
-    p.map {
-      color: #64748b;
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-      text-align: center;
-      width: 100%;
+      color: #dc2626;
+      font-weight: 700;
+      font-size: 1.125rem;
+      user-select: none;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
 </head>
 <body>
 
   <div class="container fade-in" id="scriptContainer">
-    <p class="text-center text-gray-500">...جاري تحميل البيانات</p>
+    <p class="loading">...جاري تحميل البيانات</p>
+  </div>
+
+  <div class="container fade-in mt-4 btn-group" style="max-width:720px;">
+    <button class="btn-back" onclick="history.back()">🔙 رجوع</button>
+    <div>
+      <button id="copyBtn" class="btn-copy" disabled>📋 نسخ السكربت</button>
+      <button id="downloadBtn" class="btn-download" disabled>💾 تحميل السكربت</button>
+    </div>
   </div>
 
   <div id="copyToast">تم النسخ بنجاح!</div>
@@ -192,7 +204,11 @@
     const scriptId = params.get("id");
 
     const container = document.getElementById("scriptContainer");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const copyBtn = document.getElementById("copyBtn");
     const copyToast = document.getElementById("copyToast");
+
+    const warningText = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
 
     function showCopyToast() {
       copyToast.classList.add('show');
@@ -200,70 +216,70 @@
     }
 
     if (!scriptId) {
-      container.innerHTML = `<p class="text-center text-red-500 font-bold">❌ لم يتم تحديد معرف السكربت</p>`;
+      container.innerHTML = `<p class="error">❌ لم يتم تحديد معرف السكربت</p>`;
       document.title = "خطأ";
-      return;
+      downloadBtn.disabled = true;
+      copyBtn.disabled = true;
     } else {
+      container.innerHTML = `<p class="loading">...جاري تحميل البيانات</p>`;
+
       db.collection("scripts").doc(scriptId).get()
         .then(doc => {
           if (!doc.exists) {
-            container.innerHTML = `<p class="text-center text-red-500 font-bold">❌ لم يتم العثور على السكربت</p>`;
+            container.innerHTML = `<p class="error">❌ لم يتم العثور على السكربت</p>`;
             document.title = "سكربت غير موجود";
+            downloadBtn.disabled = true;
+            copyBtn.disabled = true;
             return;
           }
 
           const data = doc.data();
           document.title = data.name || "عرض السكربت";
 
-          const warningText = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
-          const finalCode = warningText + data.content;
+          const finalCode = warningText + data.code;
 
           container.innerHTML = `
             <h1>${data.name}</h1>
             <p class="desc">${data.desc}</p>
             <p class="map">📍 الماب: <b>${data.map}</b></p>
-            <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
-            <div class="warning">⚠️ خلي بالك لأن الاسكربت أو الهاك ممكن يعرضك للحظر</div>
-            <pre id="codeBlock">${data.content}</pre>
-            <div class="btn-group" style="width: 100%; max-width: 360px;">
-              <button onclick="history.back()" class="btn-back">🔙 رجوع</button>
-              <div>
-                <button id="copyBtn" class="btn-copy">📋 نسخ السكربت</button>
-                <button id="downloadBtn" class="btn-download">💾 تحميل السكربت</button>
-              </div>
-            </div>
+            <img src="${data.imageUrl || 'https://via.placeholder.com/720x220?text=No+Image'}" alt="صورة السكربت" class="script-image" />
+            <div class="warning">⚠️ يرجى توخي الحذر عند استخدام السكربتات غير الموثوقة.</div>
+            <pre id="codeBlock">${finalCode}</pre>
           `;
 
-          const downloadBtn = document.getElementById("downloadBtn");
-          const copyBtn = document.getElementById("copyBtn");
-
-          downloadBtn.onclick = () => {
-            const blob = new Blob([finalCode], { type: "text/plain" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `${data.name}.txt`;
-            link.click();
-          };
+          downloadBtn.disabled = false;
+          copyBtn.disabled = false;
 
           copyBtn.onclick = () => {
             navigator.clipboard.writeText(finalCode).then(() => {
               showCopyToast();
             }).catch(() => {
-              alert("فشل النسخ. يرجى المحاولة مرة أخرى.");
+              alert('حدث خطأ أثناء النسخ');
             });
           };
 
-          document.getElementById("codeBlock").addEventListener("copy", e => {
-            alert("⚠️ تذكير: تأكد أنك تستخدم السكربت على مسؤوليتك الخاصة.");
-          });
-
+          downloadBtn.onclick = () => {
+            const blob = new Blob([finalCode], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (data.name || 'script') + '.lua';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }, 0);
+          };
         })
-        .catch(error => {
-          container.innerHTML = `<p class="text-center text-red-500 font-bold">❌ حدث خطأ أثناء تحميل السكربت</p>`;
-          console.error("Firestore error:", error);
-          document.title = "خطأ في التحميل";
+        .catch(err => {
+          container.innerHTML = `<p class="error">❌ حدث خطأ أثناء تحميل البيانات</p>`;
+          downloadBtn.disabled = true;
+          copyBtn.disabled = true;
+          console.error(err);
         });
     }
   </script>
+
 </body>
 </html>
