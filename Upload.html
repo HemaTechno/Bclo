@@ -78,7 +78,7 @@
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
 
-  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg fade-in">
+  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg fade-in" id="mainContent" style="display:none;">
     <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">📜 إضافة سكربت جديد</h2>
 
     <form id="scriptForm" class="space-y-6" autocomplete="off">
@@ -132,22 +132,22 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-    // استبدل القيم التالية بقيم مشروعك من Firebase Console
     const firebaseConfig = {
-  apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-  authDomain: "hhhhhh-d4fb8.firebaseapp.com",
-  projectId: "hhhhhh-d4fb8",
-  storageBucket: "hhhhhh-d4fb8.appspot.com",
-  messagingSenderId: "24512338206",
-  appId: "1:24512338206:web:dfe045db59bd3434a2110f",
-  measurementId: "G-HD4R7GNQ5H"
-};
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H"
+    };
 
-    // تهيئة Firebase
     const app = initializeApp(firebaseConfig);
     const storage = getStorage(app);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const scriptForm = document.getElementById('scriptForm');
     const scriptImageInput = document.getElementById('scriptImage');
@@ -155,9 +155,7 @@
     const loader = document.getElementById('loader');
     const toast = document.getElementById('toast');
     const status = document.getElementById('status');
-
-    // محاكاة مستخدم مسجل (يمكنك ربط هذا بالتحقق الحقيقي في مشروعك)
-    const currentUser = { uid: "user_123" };
+    const mainContent = document.getElementById('mainContent');
 
     function showToast(message, success = true) {
       toast.textContent = message;
@@ -165,6 +163,17 @@
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 3000);
     }
+
+    // تحقق من تسجيل الدخول
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        // المستخدم مسجل الدخول، نعرض المحتوى
+        mainContent.style.display = 'block';
+      } else {
+        // غير مسجل دخول، نعيد توجيهه لصفحة تسجيل الدخول
+        window.location.href = 'login.html'; // غير هذا للصفحة الحقيقية التي تريدها
+      }
+    });
 
     scriptImageInput.addEventListener('change', () => {
       if (scriptImageInput.files.length > 0) {
@@ -213,6 +222,13 @@
       loader.classList.remove('hidden');
 
       try {
+        const user = auth.currentUser;
+        if (!user) {
+          showToast("يجب تسجيل الدخول أولاً", false);
+          loader.classList.add('hidden');
+          return;
+        }
+
         const file = scriptImageInput.files[0];
         const fileRef = storageRef(storage, `scripts_images/${Date.now()}_${file.name}`);
 
@@ -228,7 +244,7 @@
           content: scriptForm.scriptContent.value,
           map: scriptForm.mapSelect.value,
           imageUrl: imageUrl,
-          userId: currentUser.uid,
+          userId: user.uid,
           createdAt: new Date(),
         });
 
