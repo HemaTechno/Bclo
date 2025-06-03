@@ -52,7 +52,19 @@
 
     <h1 class="text-3xl font-bold mb-6 text-blue-600 text-center">الملف الشخصي</h1>
 
-    <p class="mb-2 text-gray-700"><span class="font-semibold">الاسم:</span> <span id="userName">...جاري التحميل</span></p>
+    <p class="mb-2 text-gray-700"><span class="font-semibold">الاسم:</span> 
+      <span id="userName">...جاري التحميل</span>
+      <button id="editNameBtn" class="text-sm text-blue-500 mr-2 hover:underline">تعديل</button>
+    </p>
+
+    <!-- صندوق تعديل الاسم (مخفي افتراضياً) -->
+    <div id="editNameContainer" class="mb-4 hidden">
+      <input type="text" id="newNameInput" placeholder="أدخل الاسم الجديد" 
+             class="border border-gray-300 rounded px-3 py-2 w-full mb-2" />
+      <button id="saveNameBtn" class="bg-blue-600 text-white px-4 py-2 rounded btn-animate">حفظ الاسم</button>
+      <button id="cancelEditBtn" class="mr-2 px-4 py-2 rounded border border-gray-400 hover:bg-gray-100">إلغاء</button>
+    </div>
+
     <p class="mb-2 text-gray-700"><span class="font-semibold">البريد:</span> <span id="userEmail">...جاري التحميل</span></p>
     <p class="mb-6 text-gray-600"><span class="font-semibold">ديسكورد:</span> <span id="discordInfo">غير مربوط</span></p>
 
@@ -90,11 +102,14 @@
     import {
       onAuthStateChanged,
       signOut,
-      updatePassword
+      updatePassword,
+      updateProfile
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
     import {
       doc,
-      getDoc
+      getDoc,
+      setDoc,
+      updateDoc
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -102,6 +117,12 @@
       const userEmail = document.getElementById("userEmail");
       const discordInfo = document.getElementById("discordInfo");
       const dashboardBtn = document.getElementById("dashboardBtn");
+
+      const editNameBtn = document.getElementById("editNameBtn");
+      const editNameContainer = document.getElementById("editNameContainer");
+      const newNameInput = document.getElementById("newNameInput");
+      const saveNameBtn = document.getElementById("saveNameBtn");
+      const cancelEditBtn = document.getElementById("cancelEditBtn");
 
       const discordOauthUrl = "https://discord.com/oauth2/authorize?client_id=1379177348301328426&redirect_uri=https%3A%2F%2Fscriptbot.cloud%2Fdiscord-callback.html&response_type=token&scope=identify";
 
@@ -115,21 +136,66 @@
         correctLevel : QRCode.CorrectLevel.H
       });
 
+      let currentUser = null;
+
       onAuthStateChanged(auth, async (user) => {
         if (user) {
+          currentUser = user;
           userName.textContent = user.displayName || "اسم غير محدد";
           userEmail.textContent = user.email;
 
           const userRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(userRef);
           if (docSnap.exists()) {
-            const discord = docSnap.data().discord;
+            const data = docSnap.data();
+            const discord = data.discord;
             if (discord) {
               discordInfo.textContent = `${discord.username} (ID: ${discord.id})`;
+            }
+            // إذا في publisher مخزن في الداتا
+            if(data.publisher) {
+              userName.textContent = data.publisher;
             }
           }
         } else {
           window.location.href = "login.html";
+        }
+      });
+
+      editNameBtn.addEventListener("click", () => {
+        // إظهار صندوق تعديل الاسم وملء القيمة الحالية
+        editNameContainer.classList.remove("hidden");
+        newNameInput.value = userName.textContent;
+        editNameBtn.style.display = "none";
+      });
+
+      cancelEditBtn.addEventListener("click", () => {
+        editNameContainer.classList.add("hidden");
+        editNameBtn.style.display = "inline";
+      });
+
+      saveNameBtn.addEventListener("click", async () => {
+        const newName = newNameInput.value.trim();
+        if (!newName) {
+          alert("الاسم لا يمكن أن يكون فارغاً.");
+          return;
+        }
+
+        try {
+          // تحديث اسم المستخدم في Firebase Auth
+          await updateProfile(currentUser, { displayName: newName });
+
+          // تحديث اسم الناشر (publisher) في Firestore
+          const userRef = doc(db, "users", currentUser.uid);
+          await updateDoc(userRef, { publisher: newName });
+
+          userName.textContent = newName;
+
+          alert("تم تحديث الاسم بنجاح.");
+          editNameContainer.classList.add("hidden");
+          editNameBtn.style.display = "inline";
+        } catch (error) {
+          alert("حدث خطأ أثناء تحديث الاسم: " + error.message);
         }
       });
 
