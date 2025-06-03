@@ -364,11 +364,19 @@
         // زيادة عدد المشاهدات
         const updatedViews = await updateViews(id, data.views);
 
+      if (data.publisher) {
+      // جلب بيانات الناشر من مجموعة users
+      const userDoc = await db.collection('users').doc(data.publisher).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        publisherName = userData.name || "غير معروف";  // افترض أن اسم المستخدم في الحقل 'name'
+      }
+      }
         container.innerHTML = `
           <h1>${data.name}</h1>
           <p class="desc">${data.desc}</p>
           <p class="map">الخريطة: ${data.map}</p>
-          <p class="publisher">الناشر: ${data.publisher || "غير معروف"}</p>
+          <p class="publisher">الناشر: ${data.publisherName || "غير معروف"}</p>
           <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
             <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
           <pre id="codeBlock">${data.content}</pre>
