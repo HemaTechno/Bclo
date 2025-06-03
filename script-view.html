@@ -369,9 +369,9 @@
           <p class="desc">${data.desc}</p>
           <p class="map">الخريطة: ${data.map}</p>
           <p class="publisher">الناشر: ${data.publisher || "غير معروف"}</p>
-          <img src="${data.imageURL || 'https://via.placeholder.com/720x220?text=No+Image'}" alt="صورة السكربت" class="script-image" draggable="false" />
+          <img src="${data.imageURL}" alt="صورة السكربت" class="script-image" draggable="false" />
           <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
-          <pre id="codeBlock">${data.code}</pre>
+          <pre id="codeBlock">${data.content}</pre>
         `;
 
         // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات واسم الناشر
