@@ -24,6 +24,9 @@
   <header class="bg-white shadow-md p-4 sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center">
       <img src="/logo.png" alt="logo" class="w-10 h-10">
+      <div id="auth-buttons" class="hidden">
+        <button onclick="login()" class="bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700">تسجيل الدخول</button>
+      </div>
       <div id="user-info" class="flex items-center gap-3 hidden">
         <span id="user-name" class="text-sm font-semibold text-gray-700"></span>
         <img id="user-pic" src="" alt="profile" class="w-9 h-9 rounded-full cursor-pointer">
@@ -97,13 +100,21 @@
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         document.getElementById("user-info").classList.remove("hidden");
+        document.getElementById("auth-buttons").classList.add("hidden");
         document.getElementById("user-name").textContent = user.displayName;
         document.getElementById("user-pic").src = user.photoURL;
         document.getElementById("user-pic").addEventListener('click', () => {
           window.location.href = '/profile.html';
         });
+      } else {
+        document.getElementById("auth-buttons").classList.remove("hidden");
       }
     });
+
+    function login() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider);
+    }
   </script>
 
 </body>
