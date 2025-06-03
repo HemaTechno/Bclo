@@ -67,6 +67,28 @@
     @keyframes fadeInUp {
       to { opacity: 1; transform: translateY(-10px); }
     }
+    .add-map-container {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .add-map-input {
+      flex-grow: 1;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
+    .add-map-btn {
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+    .add-map-btn:hover {
+      background-color: #059669;
+    }
   </style>
 </head>
 
@@ -112,14 +134,15 @@
 
       <div>
         <label for="mapSelect" class="block mb-1 font-semibold text-gray-700">اختار الماب</label>
-        <select id="mapSelect" name="mapSelect"
+        <select id="mapSelect" name="mapSelect" required
           class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">-- اختر ماب --</option>
-          <option value="BloxFruits">BloxFruits </option>
-          <option value="Mm2">Mm2</option>
-      <option value="Genral">Genral</option>
-      
+          <!-- سيتم ملئ الخيارات من فايربيس -->
         </select>
+        <div class="add-map-container">
+          <input type="text" id="newMapName" placeholder="إضافة ماب جديد" class="add-map-input">
+          <button type="button" id="addMapBtn" class="add-map-btn">إضافة</button>
+        </div>
       </div>
 
       <!-- reCAPTCHA -->
@@ -135,7 +158,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
@@ -160,6 +183,9 @@
     const toast = document.getElementById('toast');
     const status = document.getElementById('status');
     const mainContent = document.getElementById('mainContent');
+    const mapSelect = document.getElementById('mapSelect');
+    const newMapName = document.getElementById('newMapName');
+    const addMapBtn = document.getElementById('addMapBtn');
 
     function showToast(message, success = true) {
       toast.textContent = message;
@@ -168,14 +194,77 @@
       setTimeout(() => toast.classList.add('hidden'), 3000);
     }
 
+    // تحميل قائمة الماب من فايربيس
+    async function loadMaps() {
+      try {
+        const mapsCollection = collection(db, "maps");
+        const querySnapshot = await getDocs(mapsCollection);
+        
+        // مسح الخيارات الحالية مع الحفاظ على الخيار الأول
+        while (mapSelect.options.length > 1) {
+          mapSelect.remove(1);
+        }
+        
+        querySnapshot.forEach((doc) => {
+          const mapData = doc.data();
+          const option = document.createElement("option");
+          option.value = mapData.name;
+          option.textContent = mapData.name;
+          mapSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error loading maps:", error);
+        showToast("حدث خطأ في تحميل قائمة الماب", false);
+      }
+    }
+
+    // إضافة ماب جديد
+    async function addNewMap() {
+      const mapName = newMapName.value.trim();
+      if (!mapName) {
+        showToast("يرجى إدخال اسم الماب", false);
+        return;
+      }
+
+      try {
+        // التحقق من وجود الماب مسبقاً
+        const mapsCollection = collection(db, "maps");
+        const q = query(mapsCollection, where("name", "==", mapName));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          showToast("هذا الماب موجود بالفعل", false);
+          return;
+        }
+
+        // إضافة الماب الجديد
+        await addDoc(mapsCollection, {
+          name: mapName,
+          createdAt: new Date()
+        });
+
+        showToast("تم إضافة الماب بنجاح");
+        newMapName.value = "";
+        await loadMaps(); // إعادة تحميل القائمة
+        
+        // تحديد الماب المضاف حديثاً
+        mapSelect.value = mapName;
+      } catch (error) {
+        console.error("Error adding new map:", error);
+        showToast("حدث خطأ في إضافة الماب", false);
+      }
+    }
+
     // تحقق من تسجيل الدخول
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
         // المستخدم مسجل الدخول، نعرض المحتوى
         mainContent.style.display = 'block';
+        // تحميل قائمة الماب
+        await loadMaps();
       } else {
         // غير مسجل دخول، نعيد توجيهه لصفحة تسجيل الدخول
-        window.location.href = 'login.html'; // غير هذا للصفحة الحقيقية التي تريدها
+        window.location.href = 'login.html';
       }
     });
 
@@ -208,6 +297,9 @@
       }
     });
 
+    // حدث إضافة ماب جديد
+    addMapBtn.addEventListener('click', addNewMap);
+
     scriptForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.textContent = '';
@@ -220,6 +312,11 @@
       const recaptchaResponse = grecaptcha.getResponse();
       if (!recaptchaResponse) {
         showToast("يرجى تأكيد الكابتشا", false);
+        return;
+      }
+
+      if (!mapSelect.value) {
+        showToast("يرجى اختيار ماب أو إضافة ماب جديد", false);
         return;
       }
 
