@@ -276,6 +276,34 @@
       mapSelect.innerHTML += `<option value="__new__">➕ إضافة ماب جديد</option>`;
     }
 
+    async function sendWebhookNotification(webhookUrl, scriptData) {
+      try {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            embeds: [{
+              title: `🆕 سكربت جديد: ${scriptData.name}`,
+              description: scriptData.desc || "بدون وصف",
+              color: 0x2196F3,
+              fields: [
+                { name: "🗺 الماب", value: scriptData.map || "غير محدد", inline: true },
+                { name: "📄 السكربت", value: `\`\`\`lua\n${scriptData.code.slice(0, 1000)}\n\`\`\`` }
+              ],
+              image: { url: scriptData.imageUrl },
+              timestamp: new Date().toISOString()
+            }]
+          })
+        });
+        
+        if (!response.ok) {
+          console.error(`فشل إرسال الويب هوك إلى ${webhookUrl}: ${response.status}`);
+        }
+      } catch (error) {
+        console.error(`خطأ في إرسال الويب هوك إلى ${webhookUrl}:`, error);
+      }
+    }
+
     onAuthStateChanged(auth, user => {
       if (!user) {
         window.location.href = "/login.html";
@@ -341,32 +369,30 @@
             userId: user.uid
           });
 
-          // إرسال Webhook
+          // إعداد بيانات السكربت للإشعارات
+          const scriptData = {
+            name,
+            desc,
+            code,
+            map,
+            imageUrl
+          };
+
+          // إرسال إشعارات لكل الويب هوكات
           const usersSnapshot = await getDocs(collection(db, "users"));
-          usersSnapshot.forEach(async userDoc => {
+          const webhookPromises = [];
+          
+          usersSnapshot.forEach(userDoc => {
             const u = userDoc.data();
             if (u.webhook?.url) {
-              await fetch(u.webhook.url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  embeds: [{
-                    title: `🆕 سكربت جديد: ${name}`,
-                    description: desc || "بدون وصف",
-                    color: 0x2196F3,
-                    fields: [
-                      { name: "🗺 الماب", value: map || "غير محدد", inline: true },
-                      { name: "📄 السكربت", value: `\`\`\`lua\n${code.slice(0, 1000)}\n\`\`\`` }
-                    ],
-                    image: { url: imageUrl },
-                    timestamp: new Date().toISOString()
-                  }]
-                })
-              });
+              webhookPromises.push(sendWebhookNotification(u.webhook.url, scriptData));
             }
           });
 
-          showToast("✅ تمت إضافة السكربت بنجاح");
+          // انتظار إكمال جميع طلبات الويب هوك
+          await Promise.all(webhookPromises);
+
+          showToast("✅ تمت إضافة السكربت وإرسال الإشعارات");
           form.reset();
           grecaptcha.reset();
           loadMaps();
