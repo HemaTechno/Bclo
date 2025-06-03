@@ -89,6 +89,12 @@
     .add-map-btn:hover {
       background-color: #059669;
     }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
   </style>
 </head>
 
@@ -143,6 +149,7 @@
           <input type="text" id="newMapName" placeholder="إضافة ماب جديد" class="add-map-input">
           <button type="button" id="addMapBtn" class="add-map-btn">إضافة</button>
         </div>
+        <div id="mapError" class="error-message">حدث خطأ أثناء إضافة الماب، يرجى المحاولة مرة أخرى</div>
       </div>
 
       <!-- reCAPTCHA -->
@@ -158,7 +165,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
@@ -186,6 +193,7 @@
     const mapSelect = document.getElementById('mapSelect');
     const newMapName = document.getElementById('newMapName');
     const addMapBtn = document.getElementById('addMapBtn');
+    const mapError = document.getElementById('mapError');
 
     function showToast(message, success = true) {
       toast.textContent = message;
@@ -226,6 +234,9 @@
         return;
       }
 
+      // إخفاء رسالة الخطأ السابقة
+      mapError.style.display = 'none';
+      
       // استبدال المسافات بشرطات وتصحيح الاسم ليكون مناسباً كمعرف
       const docId = mapName.replace(/\s+/g, '_').toLowerCase();
 
@@ -253,7 +264,12 @@
         mapSelect.value = mapName;
       } catch (error) {
         console.error("Error adding new map:", error);
-        showToast("حدث خطأ في إضافة الماب", false);
+        // عرض رسالة الخطأ تحت حقل إضافة الماب
+        mapError.style.display = 'block';
+        mapError.textContent = "حدث خطأ أثناء إضافة الماب: " + (error.message || "يرجى المحاولة مرة أخرى");
+        
+        // يمكنك أيضاً عرض التنبيه كـ toast
+        showToast("فشل إضافة الماب: " + (error.message || "حدث خطأ غير متوقع"), false);
       }
     }
 
