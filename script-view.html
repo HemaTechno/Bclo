@@ -31,6 +31,9 @@
       max-width: 720px;
       width: 100%;
       padding: 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
     h1 {
       color: #2563eb;
@@ -54,7 +57,6 @@
       object-fit: cover;
       width: 100%;
       box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-      margin-bottom: 1.5rem;
       user-select: none;
       pointer-events: none;
       animation: fadeIn 1s ease forwards;
@@ -65,7 +67,6 @@
       padding: 12px 16px;
       border-radius: 12px;
       font-weight: 700;
-      margin-bottom: 1.5rem;
       box-shadow: 0 0 12px #fbbf24;
       user-select: none;
     }
@@ -86,13 +87,13 @@
       white-space: pre-wrap;
       word-break: break-word;
       direction: ltr;
-      margin-bottom: 1.75rem;
     }
     .btn-group {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
     button {
       font-weight: 700;
@@ -103,6 +104,9 @@
       user-select: none;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      flex-grow: 1;
+      min-width: 100px;
+      text-align: center;
     }
     button:disabled {
       cursor: not-allowed;
@@ -119,7 +123,6 @@
     .btn-copy {
       background-color: #16a34a;
       color: white;
-      margin-left: auto;
     }
     .btn-copy:hover:not(:disabled) {
       background-color: #15803d;
@@ -130,6 +133,13 @@
     }
     .btn-download:hover:not(:disabled) {
       background-color: #1e40af;
+    }
+    .btn-discord {
+      background-color: #5865F2;
+      color: white;
+    }
+    .btn-discord:hover {
+      background-color: #4752c4;
     }
     #copyToast {
       position: fixed;
@@ -172,14 +182,6 @@
     <p class="loading">...جاري تحميل البيانات</p>
   </div>
 
-  <div class="container fade-in mt-4 btn-group" style="max-width:720px;">
-    <button class="btn-back" onclick="history.back()">🔙 رجوع</button>
-    <div>
-      <button id="copyBtn" class="btn-copy" disabled>📋 نسخ السكربت</button>
-      <button id="downloadBtn" class="btn-download" disabled>💾 تحميل السكربت</button>
-    </div>
-  </div>
-
   <div id="copyToast">تم النسخ بنجاح!</div>
 
   <!-- Firebase SDKs -->
@@ -204,8 +206,6 @@
     const scriptId = params.get("id");
 
     const container = document.getElementById("scriptContainer");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const copyBtn = document.getElementById("copyBtn");
     const copyToast = document.getElementById("copyToast");
 
     const warningText = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
@@ -215,11 +215,64 @@
       setTimeout(() => copyToast.classList.remove('show'), 2000);
     }
 
+    function createButtons(finalCode, scriptName) {
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'btn-group';
+
+      // زر رجوع
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn-back';
+      backBtn.textContent = '🔙 رجوع';
+      backBtn.onclick = () => history.back();
+      btnGroup.appendChild(backBtn);
+
+      // زر نسخ
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn-copy';
+      copyBtn.textContent = '📋 نسخ السكربت';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(finalCode).then(() => {
+          showCopyToast();
+        }).catch(() => {
+          alert('حدث خطأ أثناء النسخ');
+        });
+      };
+      btnGroup.appendChild(copyBtn);
+
+      // زر تحميل
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-download';
+      downloadBtn.textContent = '💾 تحميل السكربت';
+      downloadBtn.onclick = () => {
+        const blob = new Blob([finalCode], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (scriptName || 'script') + '.lua';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 0);
+      };
+      btnGroup.appendChild(downloadBtn);
+
+      // زر ديسكورد
+      const discordBtn = document.createElement('button');
+      discordBtn.className = 'btn-discord';
+      discordBtn.textContent = 'Discord';
+      discordBtn.onclick = () => {
+        window.open('https://discord.gg/yourdiscordinvite', '_blank');
+      };
+      btnGroup.appendChild(discordBtn);
+
+      container.appendChild(btnGroup);
+    }
+
     if (!scriptId) {
       container.innerHTML = `<p class="error">❌ لم يتم تحديد معرف السكربت</p>`;
       document.title = "خطأ";
-      downloadBtn.disabled = true;
-      copyBtn.disabled = true;
     } else {
       container.innerHTML = `<p class="loading">...جاري تحميل البيانات</p>`;
 
@@ -228,8 +281,6 @@
           if (!doc.exists) {
             container.innerHTML = `<p class="error">❌ لم يتم العثور على السكربت</p>`;
             document.title = "سكربت غير موجود";
-            downloadBtn.disabled = true;
-            copyBtn.disabled = true;
             return;
           }
 
@@ -247,35 +298,10 @@
             <pre id="codeBlock">${finalCode}</pre>
           `;
 
-          downloadBtn.disabled = false;
-          copyBtn.disabled = false;
-
-          copyBtn.onclick = () => {
-            navigator.clipboard.writeText(finalCode).then(() => {
-              showCopyToast();
-            }).catch(() => {
-              alert('حدث خطأ أثناء النسخ');
-            });
-          };
-
-          downloadBtn.onclick = () => {
-            const blob = new Blob([finalCode], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = (data.name || 'script') + '.lua';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-            }, 0);
-          };
+          createButtons(finalCode, data.name);
         })
         .catch(err => {
           container.innerHTML = `<p class="error">❌ حدث خطأ أثناء تحميل البيانات</p>`;
-          downloadBtn.disabled = true;
-          copyBtn.disabled = true;
           console.error(err);
         });
     }
