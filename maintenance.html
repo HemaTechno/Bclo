@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🚧 الموقع تحت الصيانة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    }
+
+    .float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .glass {
+      backdrop-filter: blur(20px);
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white px-4">
+
+  <div class="text-center max-w-lg w-full bg-white bg-opacity-5 p-8 rounded-2xl shadow-xl glass">
+    <img src="https://cdn-icons-png.flaticon.com/512/565/565547.png" alt="صيانة" class="w-32 mx-auto mb-6 float" />
+    
+    <h1 class="text-4xl font-extrabold mb-4">🚧 الموقع تحت الصيانة</h1>
+    <p class="text-lg mb-8">نقوم حالياً ببعض التحديثات لتحسين تجربتكم. الرجاء العودة لاحقًا!</p>
+
+    <div class="space-y-4">
+      <a href="https://discord.gg/f9cJyhfS4H" target="_blank"
+         class="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg transition duration-300">
+        تواصل مع الدعم عبر ديسكورد
+      </a>
+
+      <a href="/" 
+         class="inline-block w-full border border-white hover:bg-white hover:text-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg transition duration-300">
+        عودة للموقع
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
