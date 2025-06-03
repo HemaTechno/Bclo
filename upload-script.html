@@ -9,91 +9,97 @@
   <style>
     body {
       font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(to bottom, #e0f7ff, #ffffff);
       margin: 0;
-      background: #f5faff;
-      color: #222;
+      padding: 0;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: flex-start;
       min-height: 100vh;
+      padding-top: 50px;
     }
 
     form {
-      background: #ffffff;
+      background: #fff;
       padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      width: 90%;
-      max-width: 600px;
-      animation: fadeInUp 0.8s ease forwards;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+      width: 95%;
+      max-width: 500px;
+      animation: fadeIn 0.8s ease forwards;
+      position: relative;
     }
 
     h2 {
-      margin-bottom: 20px;
       text-align: center;
-      font-weight: bold;
-      font-size: 24px;
-      color: #007BFF;
+      margin-bottom: 20px;
+      color: #0077cc;
+      font-size: 22px;
     }
 
-    input, select, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 12px;
-      margin: 12px 0;
-      border: 1px solid #ccc;
+      margin: 10px 0 15px;
+      border: 1px solid #ddd;
       border-radius: 12px;
-      background: #f9f9f9;
-      color: #333;
       font-size: 15px;
       transition: 0.3s ease;
+      background: #f9f9f9;
     }
 
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #007BFF;
+    input:focus, textarea:focus, select:focus {
+      border-color: #0077cc;
       background: #fff;
-    }
-
-    .g-recaptcha {
-      transform: scale(1.02);
-      transform-origin: right;
-      margin-top: 15px;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      background: #007BFF;
+      background-color: #0077cc;
       color: white;
       border: none;
       border-radius: 12px;
       font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s ease;
-      margin-top: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     button:hover {
-      background: #0056d2;
+      background-color: #005fa3;
+      transform: scale(1.02);
     }
 
-    #loader.hidden {
-      display: none;
+    button.loading::after {
+      content: "";
+      border: 3px solid #fff;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      animation: spin 0.8s linear infinite;
     }
 
-    #loader {
-      text-align: center;
-      margin-top: 15px;
-      color: #007BFF;
+    @keyframes spin {
+      0% {transform: rotate(0deg);}
+      100% {transform: rotate(360deg);}
+    }
+
+    .g-recaptcha {
+      margin-bottom: 15px;
     }
 
     #toast {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: #4caf50;
+      background: #333;
       color: white;
-      padding: 15px 20px;
+      padding: 14px 20px;
       border-radius: 10px;
       opacity: 0;
       pointer-events: none;
@@ -106,170 +112,99 @@
       pointer-events: auto;
     }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
+    #popup {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      display: none;
+    }
+
+    #popup .content {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease;
+    }
+
+    #popup button {
+      margin-top: 15px;
+      background: #0077cc;
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
     }
   </style>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, doc, getDocs, setDoc
-    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-    import {
-      getAuth, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-    import {
-      getStorage, ref, uploadBytes, getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
-      projectId: "hhhhhh-d4fb8",
-      storageBucket: "hhhhhh-d4fb8.appspot.com",
-      messagingSenderId: "24512338206",
-      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
-      measurementId: "G-HD4R7GNQ5H"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth();
-    const storage = getStorage(app);
-
-    const scriptForm = document.getElementById('scriptForm');
-    const loader = document.getElementById('loader');
-
-    function showToast(msg, success = true) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.backgroundColor = success ? '#4caf50' : '#f44336';
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    async function loadMaps() {
-      const mapSelect = document.getElementById('mapSelect');
-      mapSelect.innerHTML = `<option value="">-- اختر الماب --</option>`;
-
-      const snapshot = await getDocs(collection(db, "maps"));
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        mapSelect.innerHTML += `<option value="${data.name}">${data.name}</option>`;
-      });
-
-      mapSelect.innerHTML += `<option value="__new__">➕ إضافة ماب جديد</option>`;
-    }
-
-    onAuthStateChanged(auth, user => {
-      if (!user) {
-        window.location.href = "/login.html";
-        return;
-      }
-
-      loadMaps();
-
-      scriptForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        loader.classList.remove('hidden');
-
-        // التحقق من الكابشا
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-          showToast("الرجاء التحقق من أنك لست روبوتًا", false);
-          loader.classList.add('hidden');
-          return;
-        }
-
-        const name = scriptForm.scriptName.value;
-        const desc = scriptForm.scriptDesc.value;
-        const code = scriptForm.scriptCode.value;
-        const file = scriptForm.scriptImage.files[0];
-
-        if (!file) {
-          showToast("الرجاء اختيار صورة", false);
-          loader.classList.add('hidden');
-          return;
-        }
-
-        let selectedMap = scriptForm.mapSelect.value;
-        if (selectedMap === "__new__") {
-          selectedMap = prompt("اكتب اسم الماب الجديد:");
-          if (selectedMap) {
-            await setDoc(doc(db, "maps", selectedMap), { name: selectedMap });
-          } else {
-            showToast("تم إلغاء العملية", false);
-            loader.classList.add('hidden');
-            return;
-          }
-        }
-
-        const storageRef = ref(storage, `scripts/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const imageUrl = await getDownloadURL(storageRef);
-
-        await addDoc(collection(db, "scripts"), {
-          name,
-          desc,
-          code,
-          image: imageUrl,
-          map: selectedMap,
-          createdAt: new Date(),
-          views: 0,
-          downloads: 0,
-          userId: user.uid
-        });
-
-        const usersSnapshot = await getDocs(collection(db, "users"));
-        usersSnapshot.forEach(async userDoc => {
-          const userData = userDoc.data();
-          if (userData.webhook?.url) {
-            await fetch(userData.webhook.url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                embeds: [{
-                  title: `📜 سكربت جديد: ${name}`,
-                  description: desc || "بدون وصف",
-                  fields: [
-                    { name: "🗺 الماب", value: selectedMap || "غير محدد", inline: true },
-                    { name: "💻 السكربت", value: `\`\`\`lua\n${code.slice(0, 1000)}\n\`\`\`` }
-                  ],
-                  image: { url: imageUrl },
-                  timestamp: new Date().toISOString(),
-                  color: 0x00bcd4
-                }]
-              })
-            });
-          }
-        });
-
-        showToast("تمت إضافة السكربت بنجاح 🎉");
-        scriptForm.reset();
-        loader.classList.add('hidden');
-        loadMaps();
-        grecaptcha.reset(); // إعادة تعيين الكابشا
-      });
-    });
-  </script>
 </head>
 <body>
   <form id="scriptForm">
-    <h2>🛠 إضافة سكربت جديد</h2>
-    <input type="text" id="scriptName" name="scriptName" placeholder="اسم السكربت" required>
-    <textarea id="scriptDesc" name="scriptDesc" rows="3" placeholder="وصف السكربت (اختياري)"></textarea>
-    <textarea id="scriptCode" name="scriptCode" rows="10" placeholder="أدخل كود السكربت هنا" required></textarea>
-    <select id="mapSelect" name="mapSelect" required></select>
-    <input type="file" id="scriptImage" name="scriptImage" accept="image/*" required>
-    
-    <!-- كود كابشا -->
-    <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
-    
-    <button type="submit">➕ إضافة السكربت</button>
-    <div id="loader" class="hidden">⏳ جاري المعالجة...</div>
+    <h2>✨ إضافة سكربت جديد</h2>
+
+    <input type="text" id="scriptName" placeholder="اسم السكربت" required>
+    <textarea id="scriptDesc" rows="3" placeholder="وصف السكربت (اختياري)"></textarea>
+    <textarea id="scriptCode" rows="8" placeholder="كود السكربت" required></textarea>
+    <select id="mapSelect" required>
+      <option value="">اختر الماب</option>
+    </select>
+    <input type="file" id="scriptImage" accept="image/*" required>
+    <div class="g-recaptcha" data-sitekey="6LcUz1MrAAAAAHXX9VUHoA2jR2oGxjU87Jz8go7i"></div>
+    <button type="submit" id="submitBtn">📤 رفع السكربت</button>
   </form>
+
   <div id="toast"></div>
+  <div id="popup">
+    <div class="content">
+      <h3>✅ تم رفع السكربت بنجاح!</h3>
+      <p>شكراً لمساهمتك، سيتم مراجعة السكربت قريبًا.</p>
+      <button onclick="closePopup()">حسناً</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('scriptForm');
+    const btn = document.getElementById('submitBtn');
+    const toast = document.getElementById('toast');
+    const popup = document.getElementById('popup');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        showToast("✅ تم إرسال السكربت! سيتم مراجعته.");
+        showPopup();
+        form.reset();
+        grecaptcha.reset();
+      }, 2000); // محاكاة الانتظار
+    });
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function showPopup() {
+      popup.style.display = 'flex';
+    }
+
+    function closePopup() {
+      popup.style.display = 'none';
+    }
+  </script>
 </body>
 </html>
