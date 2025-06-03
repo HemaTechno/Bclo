@@ -369,8 +369,8 @@
           <p class="desc">${data.desc}</p>
           <p class="map">الخريطة: ${data.map}</p>
           <p class="publisher">الناشر: ${data.publisher || "غير معروف"}</p>
-          <img src="${data.imageURL}" alt="صورة السكربت" class="script-image" draggable="false" />
-          <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
+          <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
+            <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
           <pre id="codeBlock">${data.content}</pre>
         `;
 
