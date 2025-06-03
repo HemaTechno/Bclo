@@ -1,20 +1,54 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>لوحة تحكم</title>
-
+  <title>سكربتاتي - تعديل وحذف</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-
   <style>
-    body { font-family: 'Cairo', sans-serif; }
-    .fade-in { animation: fadeIn 0.8s ease-in-out; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    body {
+      font-family: 'Cairo', sans-serif;
     }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+
+    .custom-file-upload {
+      cursor: pointer;
+      display: inline-block;
+      padding: 6px 15px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      color: white;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .custom-file-upload:hover {
+      background: linear-gradient(135deg, #4338ca, #2563eb);
+    }
+
+    /* Loader */
     .loader {
       border: 5px solid #f3f3f3;
       border-top: 5px solid #3b82f6;
@@ -24,28 +58,17 @@
       animation: spin 1s linear infinite;
       margin: auto;
     }
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
-    button:hover {
-      transform: scale(1.05);
-      transition: transform 0.3s ease;
-    }
-    .custom-file-upload {
-      cursor: pointer;
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
-      color: white;
-      font-weight: bold;
-      transition: background 0.3s ease;
-      font-size: 0.9rem;
-    }
-    .custom-file-upload:hover {
-      background: linear-gradient(135deg, #4338ca, #2563eb);
-    }
+
     .toast {
       position: fixed;
       bottom: 20px;
@@ -54,16 +77,21 @@
       color: white;
       padding: 14px 20px;
       border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       opacity: 0;
       animation: fadeInUp 0.5s forwards;
       z-index: 9999;
     }
+
     @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(-10px); }
+      to {
+        opacity: 1;
+        transform: translateY(-10px);
+      }
     }
   </style>
 </head>
+
 <body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen px-4 py-8">
 
   <!-- Loader -->
@@ -74,18 +102,39 @@
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
 
-  <div class="max-w-4xl mx-auto bg-white p-6 rounded-3xl shadow-2xl fade-in">
+  <div id="content" class="max-w-4xl mx-auto bg-white p-6 rounded-3xl shadow-2xl fade-in" style="display:none;">
     <h1 class="text-3xl font-bold text-center mb-6 text-blue-700">📂 سكربتاتي</h1>
-    <div id="scriptsContainer" class="space-y-6">
-      <!-- السكربتات تظهر هنا -->
-    </div>
+    <div id="scriptsContainer" class="space-y-8"></div>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
-    import { getFirestore, collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import {
+      getStorage,
+      ref as storageRef,
+      uploadBytes,
+      getDownloadURL,
+      deleteObject
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      updateDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
+    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
       authDomain: "hhhhhh-d4fb8.firebaseapp.com",
@@ -97,23 +146,19 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
+    const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
-    const scriptsContainer = document.getElementById('scriptsContainer');
     const loader = document.getElementById('loader');
+    const content = document.getElementById('content');
+    const scriptsContainer = document.getElementById('scriptsContainer');
     const toast = document.getElementById('toast');
 
-    // ** مهم: هنا تحتاج استبدال هذا بالتحقق الحقيقي من تسجيل الدخول **
-    // مثال: إذا كنت تستخدم Firebase Auth، استخدم auth.currentUser
-    // حالياً محاكاة مستخدم مسجل:
-    const currentUser = { uid: "user_123", username: "User123" };
+    // رابط ويب هوك الديسكورد — غيره لرابطك الخاص
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN";
 
-    if (!currentUser) {
-      // إذا لم يسجل الدخول، تحويله لصفحة تسجيل الدخول
-      window.location.href = '/login.html';
-    }
-
+    // دالة عرض رسالة تنبيه بسيطة
     function showToast(message, success = true) {
       toast.textContent = message;
       toast.style.backgroundColor = success ? '#3b82f6' : '#ef4444';
@@ -121,20 +166,33 @@
       setTimeout(() => toast.classList.add('hidden'), 3000);
     }
 
-    async function fetchUserScripts() {
+    // تحقق حالة تسجيل الدخول
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        content.style.display = 'block';
+        fetchUserScripts(user);
+      } else {
+        // إذا لم يسجل دخول، توجه لصفحة تسجيل الدخول
+        window.location.href = "/login.html"; // غيّر للرابط الصحيح لصفحتك
+      }
+    });
+
+    async function fetchUserScripts(user) {
       loader.classList.remove('hidden');
       scriptsContainer.innerHTML = '';
       try {
-        const q = query(collection(db, "scripts"), where("userId", "==", currentUser.uid));
+        const q = query(collection(db, "scripts"), where("userId", "==", user.uid));
         const querySnapshot = await getDocs(q);
+
         if (querySnapshot.empty) {
-          scriptsContainer.innerHTML = '<p class="text-center text-gray-500">لا يوجد سكربتات لديك بعد.</p>';
+          scriptsContainer.innerHTML = `<p class="text-center text-gray-500">لا يوجد سكربتات لديك بعد.</p>`;
           return;
         }
+
         querySnapshot.forEach(docSnap => {
           const script = docSnap.data();
           script.id = docSnap.id;
-          renderScriptCard(script);
+          renderScriptCard(script, user);
         });
       } catch (error) {
         showToast("حدث خطأ في جلب السكربتات", false);
@@ -144,232 +202,196 @@
       }
     }
 
-    function renderScriptCard(script) {
+    // عرض بطاقة السكربت مع إمكانية تعديل وحذف
+    function renderScriptCard(script, user) {
       const card = document.createElement('div');
-      card.className = "border border-gray-300 rounded-lg p-5 shadow-sm";
+      card.className = "border border-gray-300 rounded-xl p-6 relative";
 
       card.innerHTML = `
-        <form data-id="${script.id}" class="space-y-4" enctype="multipart/form-data">
-          <div>
-            <label class="block mb-1 font-semibold text-gray-700">اسم السكربت</label>
-            <input name="name" type="text" required class="w-full border border-gray-300 rounded-lg p-2" value="${escapeHTML(script.name)}" />
-          </div>
-          <div>
-            <label class="block mb-1 font-semibold text-gray-700">الوصف</label>
-            <textarea name="desc" rows="2" required class="w-full border border-gray-300 rounded-lg p-2">${escapeHTML(script.desc)}</textarea>
-          </div>
-          <div>
-            <label class="block mb-1 font-semibold text-gray-700">نص السكربت</label>
-            <textarea name="content" rows="4" required class="w-full border border-gray-300 rounded-lg p-2 font-mono text-sm">${escapeHTML(script.content)}</textarea>
-          </div>
-          <div>
-            <label class="block mb-1 font-semibold text-gray-700">صورة السكربت الحالية</label>
-            <img src="${script.imageUrl}" alt="صورة السكربت" class="w-full max-h-48 object-cover rounded-lg mb-2" />
-            <label for="imageInput_${script.id}" class="custom-file-upload">تغيير الصورة</label>
-            <input id="imageInput_${script.id}" name="image" type="file" accept="image/*" class="hidden" />
-            <div class="text-sm mt-1 text-gray-600" id="imageName_${script.id}"></div>
+        <form id="form-${script.id}" class="space-y-4" autocomplete="off">
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-xl font-bold text-blue-700">📝 تعديل السكربت</h2>
+            <button type="button" data-id="${script.id}" class="delete-btn bg-red-600 text-white rounded px-3 py-1 hover:bg-red-700 transition">حذف</button>
           </div>
 
-          <div class="flex space-x-4 justify-end">
-            <button type="button" class="delete-btn px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">حذف</button>
-            <button type="submit" class="save-btn px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">حفظ التعديلات</button>
-          </div>
+          <label class="block font-semibold">اسم السكربت</label>
+          <input type="text" name="name" value="${escapeHtml(script.name)}" required
+            class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+          <label class="block font-semibold">الوصف</label>
+          <textarea name="desc" rows="3" required
+            class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">${escapeHtml(script.desc)}</textarea>
+
+          <label class="block font-semibold">نص السكربت</label>
+          <textarea name="content" rows="5" required
+            class="w-full font-mono text-sm border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">${escapeHtml(script.content)}</textarea>
+
+          <label class="block font-semibold">الصورة الحالية</label>
+          <img src="${script.imageUrl}" alt="صورة السكربت" class="w-full max-h-48 object-cover rounded mb-3" />
+
+          <label class="custom-file-upload">
+            تغيير الصورة
+            <input type="file" name="newImage" accept="image/*" class="hidden" />
+          </label>
+
+          <button type="submit" class="bg-blue-600 text-white py-2 px-5 rounded hover:bg-blue-700 transition font-bold">حفظ التعديل</button>
         </form>
       `;
 
       scriptsContainer.appendChild(card);
 
-      // صورة جديدة مختارة
-      const imageInput = card.querySelector(`#imageInput_${script.id}`);
-      const imageNameDiv = card.querySelector(`#imageName_${script.id}`);
-      let newImageFile = null;
+      const form = card.querySelector('form');
+      const deleteBtn = card.querySelector('.delete-btn');
 
-      imageInput.addEventListener('change', () => {
-        if (imageInput.files.length > 0) {
-          const file = imageInput.files[0];
-          if (!file.type.startsWith('image/')) {
-            showToast('الملف المختار ليس صورة!', false);
-            imageInput.value = '';
-            imageNameDiv.textContent = '';
-            newImageFile = null;
-            return;
-          }
-          imageNameDiv.textContent = `تم اختيار: ${file.name}`;
-          newImageFile = file;
-        } else {
-          imageNameDiv.textContent = '';
-          newImageFile = null;
-        }
-      });
-
-      // حذف السكربت
-      card.querySelector('.delete-btn').addEventListener('click', async () => {
-        if (!confirm('هل أنت متأكد من حذف هذا السكربت؟ لا يمكن التراجع عن ذلك!')) return;
-
+      // حفظ التعديل
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
         loader.classList.remove('hidden');
+
+        // قيم قبل التعديل للإرسال بالويب هوك
+        const oldData = {
+          name: script.name,
+          desc: script.desc,
+          content: script.content,
+          imageUrl: script.imageUrl
+        };
+
+        const formData = new FormData(form);
+        const newName = formData.get('name').trim();
+        const newDesc = formData.get('desc').trim();
+        const newContent = formData.get('content').trim();
+        const newImageFile = formData.get('newImage');
+
+        let newImageUrl = script.imageUrl;
+
         try {
-          // حذف الصورة من التخزين
-          if (script.imageUrl) {
-            const imgRef = storageRef(storage, script.imageUrl.split('/').pop().split('?')[0]);
-            try {
-              await deleteObject(imgRef);
-            } catch (e) {
-              // أحياناً لا تحذف الصورة، نتابع بدون مشكلة
-              console.warn("فشل حذف الصورة من التخزين:", e);
+          // إذا اختار صورة جديدة، ارفعها إلى التخزين ثم احصل على الرابط
+          if (newImageFile && newImageFile.size > 0) {
+            const imageRef = storageRef(storage, `scripts_images/${user.uid}_${script.id}_${Date.now()}`);
+            await uploadBytes(imageRef, newImageFile);
+            newImageUrl = await getDownloadURL(imageRef);
+
+            // حذف الصورة القديمة من التخزين (اختياري)
+            if (script.imageUrl) {
+              try {
+                const oldImageRef = storageRef(storage, script.imageUrl);
+                await deleteObject(oldImageRef);
+              } catch { /* لا تفعل شيء لو فشل الحذف */ }
             }
           }
-          // حذف المستند
-          await deleteDoc(doc(db, "scripts", script.id));
 
-          // ارسال ويب هوك ديسكورد للحذف
-          await sendDiscordWebhook({
-            username: currentUser.username,
-            action: 'حذف',
-            scriptBefore: script,
-            scriptAfter: null,
-          });
-
-          card.remove();
-          showToast('تم حذف السكربت بنجاح!');
-        } catch (error) {
-          console.error(error);
-          showToast('فشل حذف السكربت', false);
-        } finally {
-          loader.classList.add('hidden');
-        }
-      });
-
-      // حفظ التعديلات
-      card.querySelector('form').addEventListener('submit', async e => {
-        e.preventDefault();
-
-        loader.classList.remove('hidden');
-
-        const form = e.target;
-        const updatedName = form.name.value.trim();
-        const updatedDesc = form.desc.value.trim();
-        const updatedContent = form.content.value.trim();
-
-        if (!updatedName || !updatedDesc || !updatedContent) {
-          showToast('يرجى تعبئة جميع الحقول', false);
-          loader.classList.add('hidden');
-          return;
-        }
-
-        try {
-          let newImageUrl = script.imageUrl;
-
-          if (newImageFile) {
-            // رفع الصورة الجديدة
-            const newImageRef = storageRef(storage, `scripts_images/${Date.now()}_${newImageFile.name}`);
-            await uploadBytes(newImageRef, newImageFile);
-            newImageUrl = await getDownloadURL(newImageRef);
-          }
-
-          // حفظ التعديلات في Firestore
-          const scriptDocRef = doc(db, "scripts", script.id);
-          const scriptBeforeUpdate = {...script}; // نسخة قبل التعديل
-
-          await updateDoc(scriptDocRef, {
-            name: updatedName,
-            desc: updatedDesc,
-            content: updatedContent,
+          // تحديث مستند السكربت
+          const docRef = doc(db, "scripts", script.id);
+          await updateDoc(docRef, {
+            name: newName,
+            desc: newDesc,
+            content: newContent,
             imageUrl: newImageUrl
           });
 
-          // إرسال ويب هوك ديسكورد بالتعديل
-          await sendDiscordWebhook({
-            username: currentUser.username,
-            action: 'تعديل',
-            scriptBefore: scriptBeforeUpdate,
-            scriptAfter: { name: updatedName, desc: updatedDesc, content: updatedContent, imageUrl: newImageUrl }
+          showToast("تم حفظ التعديل بنجاح");
+
+          // إرسال ويب هوك إلى ديسكورد
+          sendDiscordWebhook(user.displayName || user.email, "تعديل", oldData, {
+            name: newName,
+            desc: newDesc,
+            content: newContent,
+            imageUrl: newImageUrl
           });
 
-          showToast('تم حفظ التعديلات بنجاح!');
-          newImageFile = null;
-          imageNameDiv.textContent = '';
-
-          // تحديث بيانات السكربت في المتغير المحلي
-          script.name = updatedName;
-          script.desc = updatedDesc;
-          script.content = updatedContent;
+          // تحديث البيانات محليًا
+          script.name = newName;
+          script.desc = newDesc;
+          script.content = newContent;
           script.imageUrl = newImageUrl;
 
-          // تحديث الصورة المعروضة
+          // تحديث الصورة في العرض
           form.querySelector('img').src = newImageUrl;
 
         } catch (error) {
           console.error(error);
-          showToast('فشل حفظ التعديلات', false);
+          showToast("حدث خطأ أثناء حفظ التعديل", false);
+        } finally {
+          loader.classList.add('hidden');
+        }
+      });
+
+      // حذف السكربت
+      deleteBtn.addEventListener('click', async () => {
+        if (!confirm('هل أنت متأكد أنك تريد حذف هذا السكربت؟')) return;
+
+        loader.classList.remove('hidden');
+        try {
+          // حذف المستند من قاعدة البيانات
+          const docRef = doc(db, "scripts", script.id);
+          await deleteDoc(docRef);
+
+          // حذف الصورة من التخزين (إن وجدت)
+          if (script.imageUrl) {
+            try {
+              const imgRef = storageRef(storage, script.imageUrl);
+              await deleteObject(imgRef);
+            } catch { }
+          }
+
+          // إزالة البطاقة من الصفحة
+          card.remove();
+
+          showToast("تم حذف السكربت بنجاح");
+
+          // إرسال ويب هوك حذف
+          sendDiscordWebhook(user.displayName || user.email, "حذف", script, null);
+
+        } catch (error) {
+          console.error(error);
+          showToast("حدث خطأ أثناء الحذف", false);
         } finally {
           loader.classList.add('hidden');
         }
       });
     }
 
-    // دالة تساعد على منع مشاكل XSS عند عرض النصوص
-    function escapeHTML(text) {
-      if (!text) return '';
-      return text.replace(/[&<>"']/g, m => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[m]);
-    }
-
-    // دالة إرسال رسالة ويب هوك ديسكورد (استبدل رابط الويب هوك بالرابط الحقيقي الخاص بك)
-    async function sendDiscordWebhook({ username, action, scriptBefore, scriptAfter }) {
-      const webhookUrl = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN";
-
-      let description = `**${action} من قبل المستخدم:** \`${username}\`\n`;
-
-      if (action === 'تعديل') {
-        description += `**قبل التعديل:**\n` +
-          `> الاسم: ${scriptBefore.name}\n` +
-          `> الوصف: ${scriptBefore.desc}\n` +
-          `> نص السكربت: ${scriptBefore.content.substring(0, 50)}...\n` +
-          `> [صورة قديمة](${scriptBefore.imageUrl})\n\n` +
-          `**بعد التعديل:**\n` +
-          `> الاسم: ${scriptAfter.name}\n` +
-          `> الوصف: ${scriptAfter.desc}\n` +
-          `> نص السكربت: ${scriptAfter.content.substring(0, 50)}...\n` +
-          `> [صورة جديدة](${scriptAfter.imageUrl})\n`;
-      } else if (action === 'حذف') {
-        description += `**تفاصيل السكربت المحذوف:**\n` +
-          `> الاسم: ${scriptBefore.name}\n` +
-          `> الوصف: ${scriptBefore.desc}\n` +
-          `> نص السكربت: ${scriptBefore.content.substring(0, 50)}...\n` +
-          `> [الصورة](${scriptBefore.imageUrl})\n`;
-      }
-
-      const payload = {
-        username: "Bot - إدارة السكربتات",
-        embeds: [{
-          title: `تم ${action} سكربت`,
-          description: description,
-          color: action === 'تعديل' ? 3066993 : 15158332,
-          timestamp: new Date().toISOString(),
-          footer: {
-            text: `موقع السكربتات`
-          }
-        }]
-      };
-
+    // إرسال بيانات التعديل أو الحذف إلى ديسكورد عبر ويب هوك
+    async function sendDiscordWebhook(username, action, beforeData, afterData) {
       try {
-        await fetch(webhookUrl, {
+        const embed = {
+          title: `📢 حدث ${action} على سكربت`,
+          color: action === "حذف" ? 0xff0000 : 0x00ff00,
+          fields: [
+            { name: "المستخدم", value: username, inline: true },
+            { name: "الإجراء", value: action, inline: true },
+            { name: "قبل", value: "```json\n" + JSON.stringify(beforeData, null, 2) + "\n```" },
+          ],
+          timestamp: new Date().toISOString()
+        };
+
+        if (afterData) {
+          embed.fields.push({
+            name: "بعد",
+            value: "```json\n" + JSON.stringify(afterData, null, 2) + "\n```"
+          });
+        }
+
+        await fetch(DISCORD_WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ embeds: [embed] }),
         });
-      } catch (error) {
-        console.warn("فشل إرسال الويب هوك:", error);
+      } catch (err) {
+        console.error("خطأ في إرسال ويب هوك الديسكورد:", err);
       }
     }
 
-    fetchUserScripts();
+    // دالة لتفادي مشاكل HTML injection
+    function escapeHtml(text) {
+      if (!text) return "";
+      return text.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
   </script>
-
 </body>
+
 </html>
