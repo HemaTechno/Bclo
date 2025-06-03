@@ -156,7 +156,7 @@
     const toast = document.getElementById('toast');
 
     // رابط ويب هوك الديسكورد — غيره لرابطك الخاص
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN";
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1379269164770000936/jkeC7lFcPV515jD8Az3oeaiiT4uadElIUicMcS4hAfz_Jh0-ofMUxjZbU9R9jdcIfse7";
 
     // دالة عرض رسالة تنبيه بسيطة
     function showToast(message, success = true) {
@@ -372,7 +372,7 @@
           });
         }
 
-        await fetch(DISCORD_WEBHOOK_URL, {
+        await fetch(DISCORD_WEBHOOK_URL , {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ embeds: [embed] }),
