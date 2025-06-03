@@ -319,7 +319,7 @@
           const data = doc.data();
           document.title = data.name || "عرض السكربت";
 
-          const finalCode = warningText + data.code;
+          const finalCode = warningText + data.content;
 
           container.innerHTML = `
             <h1>${data.name}</h1>
@@ -327,7 +327,7 @@
             <p class="map">📍 الماب: <b>${data.map}</b></p>
             <img src="${data.imageUrl || 'https://via.placeholder.com/720x220?text=No+Image'}" alt="صورة السكربت" class="script-image" />
             <div class="warning">⚠️ يرجى توخي الحذر عند استخدام السكربتات غير الموثوقة.</div>
-            <pre id="codeBlock">${finalCode}</pre>
+            <pre id="codeBlock">${content}</pre>
           `;
 
           createButtons(finalCode, data.name);
