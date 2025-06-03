@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>عرض السكربت</title>
+  <meta name="description" content="عرض سكربت Roblox بشكل أنيق وقابل للتحميل" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .fade-in {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .container {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      max-width: 720px;
+      width: 100%;
+      padding: 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    h1 {
+      color: #2563eb;
+      font-weight: 800;
+      font-size: 2.75rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+    }
+    p.desc {
+      color: #374151;
+      margin-bottom: 0.25rem;
+      font-size: 1rem;
+      text-align: center;
+    }
+    p.map {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+    p.publisher {
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      letter-spacing: 0.6px;
+      user-select: none;
+      font-style: italic;
+    }
+    img.script-image {
+      border-radius: 12px;
+      max-height: 220px;
+      object-fit: cover;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      user-select: none;
+      pointer-events: none;
+      animation: fadeIn 1s ease forwards;
+    }
+    .warning {
+      background-color: #fef3c7;
+      color: #b45309;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: 0 0 12px #fbbf24;
+      user-select: none;
+      text-align: center;
+    }
+    pre#codeBlock {
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      max-height: 320px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      box-shadow:
+        inset 0 0 8px rgba(255,255,255,0.05),
+        0 0 12px rgba(0,0,0,0.3);
+      user-select: none; /* منع تحديد النص */
+      white-space: pre-wrap;
+      word-break: break-word;
+      direction: ltr;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .btn-back-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .btn-stats-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+      flex-wrap: nowrap;
+    }
+    button {
+      font-weight: 700;
+      padding: 0.65rem 1.8rem;
+      border-radius: 14px;
+      border: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      cursor: pointer;
+      box-shadow:
+        0 4px 8px rgba(0,0,0,0.15),
+        0 0 8px rgba(0,0,0,0.1);
+      flex-grow: 0;
+      min-width: 120px;
+      text-align: center;
+      font-size: 1rem;
+      letter-spacing: 0.7px;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.12));
+    }
+    /* الأزرار الصغيرة */
+    .btn-small {
+      min-width: 70px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .btn-small-viewers {
+      background: linear-gradient(135deg, #facc15, #ca8a04);
+      color: #fff;
+      box-shadow: 0 5px 10px rgba(202,138,4,0.6);
+    }
+    .btn-small-downloads {
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: #fff;
+      box-shadow: 0 5px 10px rgba(30,64,175,0.6);
+    }
+    .btn-small-viewers:hover {
+      background: linear-gradient(135deg, #ca8a04, #a16207);
+      box-shadow: 0 7px 16px rgba(161,98,7,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-small-downloads:hover {
+      background: linear-gradient(135deg, #1e40af, #1e3a8a);
+      box-shadow: 0 7px 16px rgba(30,58,138,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-back {
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      color: #f9fafb;
+      box-shadow:
+        0 6px 12px rgba(107,114,128,0.5);
+      min-width: 120px;
+    }
+    .btn-back:hover:not(:disabled) {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      box-shadow:
+        0 8px 20px rgba(75,85,99,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-copy {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      box-shadow:
+        0 6px 15px rgba(22,163,74,0.6);
+    }
+    .btn-copy:hover:not(:disabled) {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      box-shadow:
+        0 10px 20px rgba(21,128,61,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-download {
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      color: white;
+      box-shadow:
+        0 6px 15px rgba(30,64,175,0.6);
+    }
+    .btn-download:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1e40af, #1e3a8a);
+      box-shadow:
+        0 10px 25px rgba(30,58,138,0.7);
+      transform: translateY(-2px);
+    }
+    .btn-discord {
+      background: linear-gradient(135deg, #5865F2, #4752c4);
+      color: white;
+      box-shadow:
+        0 6px 15px rgba(87,86,242,0.6);
+    }
+    .btn-discord:hover {
+      background: linear-gradient(135deg, #4752c4, #3c41a4);
+      box-shadow:
+        0 10px 25px rgba(60,65,164,0.7);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container fade-in" id="container">
+    <p>جاري تحميل السكربت...</p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+  <script>
+    // إعداد Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const container = document.getElementById('container');
+    const urlParams = new URLSearchParams(window.location.search);
+    const scriptId = urlParams.get('id');
+
+    const warningText = `تحذير: استخدم السكربت بحذر.\nلا تتحمل الإدارة أي مسؤولية عن سوء الاستخدام.`;
+
+    function createButtons(finalCode, scriptName, views, downloads, publisherName) {
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'btn-group';
+
+      // مجموعة الإحصائيات الصغيرة
+      const backGroup = document.createElement('div');
+      backGroup.className = 'btn-back-group';
+
+      const statsGroup = document.createElement('div');
+      statsGroup.className = 'btn-stats-group';
+
+      const viewersBtn = document.createElement('button');
+      viewersBtn.className = 'btn-small btn-small-viewers';
+      viewersBtn.textContent = `👁️ ${views || 0}`;
+
+      const downloadsBtn = document.createElement('button');
+      downloadsBtn.className = 'btn-small btn-small-downloads';
+      downloadsBtn.textContent = `⬇️ ${downloads || 0}`;
+
+      statsGroup.appendChild(viewersBtn);
+      statsGroup.appendChild(downloadsBtn);
+
+      // زر رجوع
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn-back';
+      backBtn.textContent = "رجوع";
+      backBtn.onclick = () => window.history.back();
+
+      backGroup.appendChild(statsGroup);
+      backGroup.appendChild(backBtn);
+
+      btnGroup.appendChild(backGroup);
+
+      // زر نسخ السكربت
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn-copy';
+      copyBtn.textContent = "نسخ السكربت";
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(finalCode).then(() => {
+          alert('تم نسخ السكربت!');
+        });
+      };
+      btnGroup.appendChild(copyBtn);
+
+      // زر تحميل السكربت
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-download';
+      downloadBtn.textContent = "تحميل السكربت";
+      downloadBtn.onclick = () => {
+        const blob = new Blob([finalCode], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${scriptName}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        // تحديث عدد التحميلات في Firebase
+        updateDownloads(scriptId, downloads + 1);
+      };
+      btnGroup.appendChild(downloadBtn);
+
+      // زر Discord
+      const discordBtn = document.createElement('button');
+      discordBtn.className = 'btn-discord';
+      discordBtn.textContent = "Discord";
+      discordBtn.onclick = () => {
+        window.open('https://discord.gg/YOUR_SERVER_INVITE', '_blank');
+      };
+      btnGroup.appendChild(discordBtn);
+
+      container.appendChild(btnGroup);
+    }
+
+    // تحديث عدد التحميلات
+    async function updateDownloads(id, newCount) {
+      try {
+        await db.collection('scripts').doc(id).update({
+          downloads: newCount
+        });
+      } catch (error) {
+        console.error("خطأ في تحديث التحميلات:", error);
+      }
+    }
+
+    // تحديث عدد المشاهدات مرة واحدة فقط لكل تحميل صفحة
+    async function updateViews(id, currentViews) {
+      try {
+        const newViews = (currentViews || 0) + 1;
+        await db.collection('scripts').doc(id).update({
+          views: newViews
+        });
+        return newViews;
+      } catch (error) {
+        console.error("خطأ في تحديث المشاهدات:", error);
+        return currentViews || 0;
+      }
+    }
+
+    // تحميل بيانات السكربت من Firebase
+    async function loadScript(id) {
+      try {
+        const docRef = db.collection('scripts').doc(id);
+        const docSnap = await docRef.get();
+
+        if (!docSnap.exists) {
+          container.innerHTML = '<p class="error">السكربت غير موجود.</p>';
+          return;
+        }
+
+        const data = docSnap.data();
+
+        // زيادة عدد المشاهدات
+        const updatedViews = await updateViews(id, data.views);
+
+      if (data.publisher) {
+      // جلب بيانات الناشر من مجموعة users
+      const userDoc = await db.collection('users').doc(data.publisher).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        publisherName = userData.name || "غير معروف";  // افترض أن اسم المستخدم في الحقل 'name'
+      }
+      }
+        container.innerHTML = `
+          <h1>${data.name}</h1>
+          <p class="desc">${data.desc}</p>
+          <p class="map">الخريطة: ${data.map}</p>
+          <p class="publisher">الناشر: ${data.publisherName || "غير معروف"}</p>
+          <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
+            <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
+          <pre id="codeBlock">${data.content}</pre>
+        `;
+
+        // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات واسم الناشر
+        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0, data.publisher);
+
+      } catch (error) {
+        container.innerHTML = `<p class="error">خطأ في تحميل البيانات. حاول مرة أخرى لاحقًا.</p>`;
+        console.error(error);
+      }
+    }
+
+    if (scriptId) {
+      loadScript(scriptId);
+    } else {
+      container.innerHTML = '<p class="error">لم يتم تحديد معرف السكربت.</p>';
+    }
+  </script>
+</body>
+</html>
