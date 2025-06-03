@@ -2,75 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>رفع سكربت جديد</title>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    .custom-file-upload {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 0.75rem;
-      background-color: #e5e7eb;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      margin-top: 0.5rem;
-      transition: background 0.3s;
-    }
-    .custom-file-upload:hover {
-      background-color: #d1d5db;
-    }
-  </style>
-</head>
-<body class="bg-gray-100 py-10 px-4">
-  <div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-    <h1 class="text-2xl font-bold mb-6 text-center">📤 رفع سكربت جديد</h1>
-    <form id="scriptForm" class="space-y-6" autocomplete="off">
-      <div>
-        <label for="name" class="block text-gray-700 font-semibold">📛 اسم السكربت</label>
-        <input id="name" name="name" type="text" required
-          class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>إضافة سكربت</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, doc, getDocs, setDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import {
+      getAuth, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import {
+      getStorage, ref, uploadBytes, getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
-      <div>
-        <label for="desc" class="block text-gray-700 font-semibold">📝 وصف السكربت</label>
-        <textarea id="desc" name="desc" rows="3" required
-          class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-      </div>
-
-      <div>
-        <label for="map" class="block text-gray-700 font-semibold">🗺️ اسم الخريطة</label>
-        <input id="map" name="map" type="text" required
-          class="mt-1 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
-
-      <div>
-        <label for="code" class="block text-gray-700 font-semibold">💻 كود السكربت</label>
-        <textarea id="code" name="code" rows="6" required
-          class="mt-1 w-full px-4 py-2 border rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="الصق الكود هنا..."></textarea>
-      </div>
-
-      <input type="file" id="scriptImage" accept="image/*" class="hidden" />
-      <label for="scriptImage" class="custom-file-upload">📁 اختر صورة السكربت</label>
-      <div id="imageName" class="text-sm mt-2 text-center text-gray-600"></div>
-
-      <!-- Google reCAPTCHA -->
-      <div class="g-recaptcha mt-4" data-sitekey="6LcUz1MrAAAAAHXX9VUHoA2jR2oGxjU87Jz8go7i"></div>
-
-      <button type="submit"
-        class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg mt-4">📤 رفع السكربت</button>
-    </form>
-    <div id="status" class="mt-4 text-center text-sm text-gray-600"></div>
-  </div>
-
-  <script>
-    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
       authDomain: "hhhhhh-d4fb8.firebaseapp.com",
@@ -80,83 +25,143 @@
       appId: "1:24512338206:web:dfe045db59bd3434a2110f",
       measurementId: "G-HD4R7GNQ5H"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
 
-    const form = document.getElementById('scriptForm');
-    const status = document.getElementById('status');
-    const imageInput = document.getElementById('scriptImage');
-    const imageName = document.getElementById('imageName');
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+    const storage = getStorage(app);
 
-    imageInput.addEventListener('change', () => {
-      imageName.textContent = imageInput.files[0]?.name || '';
-    });
+    const scriptForm = document.getElementById('scriptForm');
+    const loader = document.getElementById('loader');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    function showToast(msg, success = true) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.backgroundColor = success ? '#4caf50' : '#f44336';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
 
-      // التحقق من reCAPTCHA
-      const captchaToken = grecaptcha.getResponse();
-      if (!captchaToken) {
-        status.textContent = 'يرجى التحقق من أنك لست روبوت';
-        return;
-      }
+    async function loadMaps() {
+      const mapSelect = document.getElementById('mapSelect');
+      mapSelect.innerHTML = `<option value="">-- اختر الماب --</option>`;
 
-      const user = firebase.auth().currentUser;
+      const snapshot = await getDocs(collection(db, "maps"));
+      let hasMaps = false;
+
+      snapshot.forEach(doc => {
+        hasMaps = true;
+        const data = doc.data();
+        mapSelect.innerHTML += `<option value="${data.name}">${data.name}</option>`;
+      });
+
+      mapSelect.innerHTML += `<option value="__new__">➕ إضافة ماب جديد</option>`;
+    }
+
+    onAuthStateChanged(auth, user => {
       if (!user) {
-        status.textContent = 'يجب تسجيل الدخول أولاً!';
+        window.location.href = "/login.html";
         return;
       }
+      loadMaps();
 
-      const uid = user.uid;
+      scriptForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        loader.classList.remove('hidden');
 
-      const name = form.name.value.trim();
-      const desc = form.desc.value.trim();
-      const code = form.code.value.trim();
-      const map = form.map.value.trim();
-      const imageFile = imageInput.files[0];
+        const name = scriptForm.scriptName.value;
+        const desc = scriptForm.scriptDesc.value;
+        const code = scriptForm.scriptCode.value;
+        const file = scriptForm.scriptImage.files[0];
 
-      if (!imageFile) {
-        status.textContent = 'يرجى اختيار صورة!';
-        return;
-      }
+        if (!file) {
+          showToast("الرجاء اختيار صورة", false);
+          loader.classList.add('hidden');
+          return;
+        }
 
-      try {
-        status.textContent = 'جاري رفع الصورة...';
-        const imageRef = storage.ref(`scripts/${Date.now()}_${imageFile.name}`);
-        await imageRef.put(imageFile);
-        const imageUrl = await imageRef.getDownloadURL();
+        let selectedMap = scriptForm.mapSelect.value;
+        if (selectedMap === "__new__") {
+          selectedMap = prompt("اكتب اسم الماب الجديد:");
+          if (selectedMap) {
+            await setDoc(doc(db, "maps", selectedMap), { name: selectedMap });
+          } else {
+            showToast("تم إلغاء العملية", false);
+            loader.classList.add('hidden');
+            return;
+          }
+        }
 
-        const docRef = await db.collection('scripts').add({
+        const storageRef = ref(storage, `scripts/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        const imageUrl = await getDownloadURL(storageRef);
+
+        const docRef = await addDoc(collection(db, "scripts"), {
           name,
           desc,
           code,
-          map,
           image: imageUrl,
-          uid,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          map: selectedMap,
+          createdAt: new Date(),
+          views: 0,
+          downloads: 0,
+          userId: user.uid
         });
 
-        status.innerHTML = `
-          ✅ تم رفع السكربت بنجاح!<br>
-          <a href="/script/${docRef.id}" class="text-blue-600 underline">عرض السكربت</a>
-        `;
-        form.reset();
-        imageName.textContent = '';
-        grecaptcha.reset();
+        // إرسال إلى Webhooks
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        usersSnapshot.forEach(async userDoc => {
+          const userData = userDoc.data();
+          if (userData.webhook?.url) {
+            await fetch(userData.webhook.url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                embeds: [{
+                  title: `📜 سكربت جديد: ${name}`,
+                  description: desc || "بدون وصف",
+                  fields: [
+                    { name: "🗺 الماب", value: selectedMap || "غير محدد", inline: true },
+                    { name: "💻 السكربت", value: `\`\`\`lua\n${code.slice(0, 1000)}\n\`\`\`` }
+                  ],
+                  image: { url: imageUrl },
+                  timestamp: new Date().toISOString(),
+                  color: 0x00bcd4
+                }]
+              })
+            });
+          }
+        });
 
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'حدث خطأ أثناء الرفع. حاول مرة أخرى.';
-      }
-    });
-
-    // تحقق من تسجيل الدخول تلقائياً
-    firebase.auth().onAuthStateChanged((user) => {
-      if (!user) window.location.href = "/login";
+        showToast("تمت إضافة السكربت بنجاح 🎉");
+        scriptForm.reset();
+        loader.classList.add('hidden');
+        loadMaps(); // تحديث قائمة المابات
+      });
     });
   </script>
+  <style>
+    body { font-family: 'Tajawal', sans-serif; margin: 20px; background: #f7f7f7; direction: rtl; }
+    form { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; }
+    button { padding: 10px 20px; background: #00bcd4; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #0097a7; }
+    #loader.hidden { display: none; }
+    #toast { position: fixed; bottom: 20px; right: 20px; background: #4caf50; color: white; padding: 12px 20px; border-radius: 6px; opacity: 0; transition: 0.5s ease; z-index: 999; }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <form id="scriptForm">
+    <h2>🛠 إضافة سكربت جديد</h2>
+    <input type="text" id="scriptName" name="scriptName" placeholder="اسم السكربت" required>
+    <textarea id="scriptDesc" name="scriptDesc" rows="3" placeholder="وصف السكربت (اختياري)"></textarea>
+    <textarea id="scriptCode" name="scriptCode" rows="10" placeholder="أدخل كود السكربت هنا" required></textarea>
+    <select id="mapSelect" name="mapSelect" required></select>
+    <input type="file" id="scriptImage" name="scriptImage" accept="image/*" required>
+    <button type="submit">➕ إضافة السكربت</button>
+    <div id="loader" class="hidden">⏳ جاري المعالجة...</div>
+  </form>
+  <div id="toast"></div>
 </body>
 </html>
