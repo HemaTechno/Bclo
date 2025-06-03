@@ -53,8 +53,18 @@
     p.map {
       color: #6b7280;
       font-size: 0.875rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.25rem;
       text-align: center;
+    }
+    p.publisher {
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      letter-spacing: 0.6px;
+      user-select: none;
+      font-style: italic;
     }
     img.script-image {
       border-radius: 12px;
@@ -209,54 +219,17 @@
         0 10px 25px rgba(60,65,164,0.7);
       transform: translateY(-2px);
     }
-    #copyToast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background-color: #4ade80;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 25px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      font-weight: 700;
-      z-index: 9999;
-    }
-    #copyToast.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    p.loading {
-      text-align: center;
-      color: #6b7280;
-      font-weight: 600;
-      font-size: 1rem;
-      user-select: none;
-    }
-    p.error {
-      text-align: center;
-      color: #dc2626;
-      font-weight: 700;
-      font-size: 1.125rem;
-      user-select: none;
-    }
   </style>
 </head>
 <body>
-
-  <div class="container fade-in" id="scriptContainer">
-    <p class="loading">...جاري تحميل البيانات</p>
+  <div class="container fade-in" id="container">
+    <p>جاري تحميل السكربت...</p>
   </div>
 
-  <div id="copyToast">تم النسخ بنجاح!</div>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
   <script>
+    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
       authDomain: "hhhhhh-d4fb8.firebaseapp.com",
@@ -266,54 +239,42 @@
       appId: "1:24512338206:web:dfe045db59bd3434a2110f",
       measurementId: "G-HD4R7GNQ5H"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const params = new URLSearchParams(window.location.search);
-    const scriptId = params.get("id");
+    const container = document.getElementById('container');
+    const urlParams = new URLSearchParams(window.location.search);
+    const scriptId = urlParams.get('id');
 
-    const container = document.getElementById("scriptContainer");
-    const copyToast = document.getElementById("copyToast");
+    const warningText = `تحذير: استخدم السكربت بحذر.\nلا تتحمل الإدارة أي مسؤولية عن سوء الاستخدام.`;
 
-    const warningText = `--[[\n\tWARNING: Heads up! This script has not been verified by scriptbot.cloud Use at your own risk!\n]]\n\n`;
-
-    function showCopyToast() {
-      copyToast.classList.add('show');
-      setTimeout(() => copyToast.classList.remove('show'), 2000);
-    }
-
-    // دالة لإنشاء الأزرار مع عدادات المشاهدات والتحميلات
-    function createButtons(finalCode, scriptName, views, downloads) {
+    function createButtons(finalCode, scriptName, views, downloads, publisherName) {
       const btnGroup = document.createElement('div');
       btnGroup.className = 'btn-group';
 
-      // مجموعة الأزرار الصغيرة للعدادات فوق زر الرجوع
+      // مجموعة الإحصائيات الصغيرة
       const backGroup = document.createElement('div');
       backGroup.className = 'btn-back-group';
 
       const statsGroup = document.createElement('div');
       statsGroup.className = 'btn-stats-group';
 
-      const viewsBtn = document.createElement('button');
-      viewsBtn.className = 'btn-small btn-small-viewers';
-      viewsBtn.textContent = `👁️ ${views || 0}`;
-      viewsBtn.disabled = true;
+      const viewersBtn = document.createElement('button');
+      viewersBtn.className = 'btn-small btn-small-viewers';
+      viewersBtn.textContent = `👁️ ${views || 0}`;
 
       const downloadsBtn = document.createElement('button');
       downloadsBtn.className = 'btn-small btn-small-downloads';
       downloadsBtn.textContent = `⬇️ ${downloads || 0}`;
-      downloadsBtn.disabled = true;
 
-      statsGroup.appendChild(viewsBtn);
+      statsGroup.appendChild(viewersBtn);
       statsGroup.appendChild(downloadsBtn);
 
+      // زر رجوع
       const backBtn = document.createElement('button');
       backBtn.className = 'btn-back';
       backBtn.textContent = "رجوع";
-      backBtn.onclick = () => {
-        window.history.back();
-      };
+      backBtn.onclick = () => window.history.back();
 
       backGroup.appendChild(statsGroup);
       backGroup.appendChild(backBtn);
@@ -326,7 +287,7 @@
       copyBtn.textContent = "نسخ السكربت";
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(finalCode).then(() => {
-          showCopyToast();
+          alert('تم نسخ السكربت!');
         });
       };
       btnGroup.appendChild(copyBtn);
@@ -349,6 +310,15 @@
         updateDownloads(scriptId, downloads + 1);
       };
       btnGroup.appendChild(downloadBtn);
+
+      // زر Discord
+      const discordBtn = document.createElement('button');
+      discordBtn.className = 'btn-discord';
+      discordBtn.textContent = "Discord";
+      discordBtn.onclick = () => {
+        window.open('https://discord.gg/YOUR_SERVER_INVITE', '_blank');
+      };
+      btnGroup.appendChild(discordBtn);
 
       container.appendChild(btnGroup);
     }
@@ -398,13 +368,14 @@
           <h1>${data.name}</h1>
           <p class="desc">${data.desc}</p>
           <p class="map">الخريطة: ${data.map}</p>
+          <p class="publisher">الناشر: ${data.publisher || "غير معروف"}</p>
           <img src="${data.imageURL || 'https://via.placeholder.com/720x220?text=No+Image'}" alt="صورة السكربت" class="script-image" draggable="false" />
           <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
           <pre id="codeBlock">${data.code}</pre>
         `;
 
-        // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات
-        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0);
+        // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات واسم الناشر
+        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0, data.publisher);
 
       } catch (error) {
         container.innerHTML = `<p class="error">خطأ في تحميل البيانات. حاول مرة أخرى لاحقًا.</p>`;
