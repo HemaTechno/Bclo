@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const statusRef = doc(db, "config", "maintenance");
+
+    const toggleButton = document.getElementById("toggleMaintenance");
+    const statusText = document.getElementById("statusText");
+
+    async function checkStatus() {
+      const docSnap = await getDoc(statusRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        statusText.textContent = data.enabled ? "مفعل ✅" : "متوقف ❌";
+        toggleButton.textContent = data.enabled ? "إيقاف الصيانة" : "تشغيل الصيانة";
+      }
+    }
+
+    toggleButton.addEventListener("click", async () => {
+      const docSnap = await getDoc(statusRef);
+      const current = docSnap.exists() ? docSnap.data().enabled : false;
+      await setDoc(statusRef, { enabled: !current });
+      checkStatus();
+    });
+
+    checkStatus();
+  </script>
+</head>
+<body style="font-family:'Cairo', sans-serif; text-align:center; margin-top:60px;">
+  <h1>لوحة تحكم الصيانة</h1>
+  <p>الحالة الحالية: <strong id="statusText">...</strong></p>
+  <button id="toggleMaintenance" style="padding: 12px 24px; font-size: 1.2rem; background-color: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+    ...
+  </button>
+</body>
+</html>
