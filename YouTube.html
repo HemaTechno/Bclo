@@ -49,13 +49,19 @@
     firebase.initializeApp(firebaseConfig);
 
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/youtube.readonly');
+    provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
 
     document.getElementById("loginBtn").addEventListener("click", () => {
       firebase.auth().signInWithPopup(provider).then(async (result) => {
         const token = result.credential.accessToken;
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true&access_token=${token}`);
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&mine=true&access_token=${token}`);
         const data = await res.json();
+
+        if (!data.items || data.items.length === 0) {
+          alert("لم يتم العثور على قناة مرتبطة بهذا الحساب.");
+          return;
+        }
+
         const channel = data.items[0];
 
         document.getElementById("channelImg").src = channel.snippet.thumbnails.default.url;
@@ -66,7 +72,6 @@
         document.getElementById("videos").innerText = channel.statistics.videoCount;
         document.getElementById("channelInfo").classList.remove("hidden");
 
-        const uploadsPlaylistId = channel.contentDetails?.relatedPlaylists?.uploads;
         const videoRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channel.id}&maxResults=5&order=date&type=video&access_token=${token}`);
         const videoData = await videoRes.json();
 
@@ -78,6 +83,9 @@
           li.innerHTML = `🎥 <strong>${video.snippet.title}</strong><br>🕒 ${video.snippet.publishedAt.split("T")[0]}`;
           videoList.appendChild(li);
         });
+      }).catch(err => {
+        console.error("فشل تسجيل الدخول أو جلب البيانات:", err);
+        alert("حدث خطأ في تسجيل الدخول أو تحميل البيانات");
       });
     });
   </script>
