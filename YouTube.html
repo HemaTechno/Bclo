@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تحليل قناة يوتيوب</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+  <div class="max-w-xl mx-auto text-center">
+    <h1 class="text-3xl font-bold text-blue-400 mb-6">تحليل قناة يوتيوب</h1>
+    <button id="loginBtn" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded text-white mb-6">تسجيل الدخول بجوجل</button>
+
+    <div id="channelInfo" class="hidden bg-gray-800 p-6 rounded-xl shadow-md text-right">
+      <img id="channelImg" class="w-24 h-24 rounded-full mb-4 mx-auto" />
+      <h2 id="channelTitle" class="text-xl font-bold text-blue-300"></h2>
+      <p id="channelDesc" class="text-sm text-gray-300 mt-2"></p>
+      <div class="grid grid-cols-3 gap-4 text-center mt-6">
+        <div>
+          <p id="subs" class="text-lg font-bold"></p>
+          <p class="text-sm text-gray-400">مشترك</p>
+        </div>
+        <div>
+          <p id="views" class="text-lg font-bold"></p>
+          <p class="text-sm text-gray-400">مشاهدة</p>
+        </div>
+        <div>
+          <p id="videos" class="text-lg font-bold"></p>
+          <p class="text-sm text-gray-400">فيديو</p>
+        </div>
+      </div>
+      <h3 class="mt-6 mb-2 text-lg font-semibold">أحدث الفيديوهات:</h3>
+      <ul id="videosList" class="space-y-2"></ul>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/youtube.readonly');
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      firebase.auth().signInWithPopup(provider).then(async (result) => {
+        const token = result.credential.accessToken;
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true&access_token=${token}`);
+        const data = await res.json();
+        const channel = data.items[0];
+
+        document.getElementById("channelImg").src = channel.snippet.thumbnails.default.url;
+        document.getElementById("channelTitle").innerText = channel.snippet.title;
+        document.getElementById("channelDesc").innerText = channel.snippet.description;
+        document.getElementById("subs").innerText = channel.statistics.subscriberCount;
+        document.getElementById("views").innerText = channel.statistics.viewCount;
+        document.getElementById("videos").innerText = channel.statistics.videoCount;
+        document.getElementById("channelInfo").classList.remove("hidden");
+
+        const uploadsPlaylistId = channel.contentDetails?.relatedPlaylists?.uploads;
+        const videoRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channel.id}&maxResults=5&order=date&type=video&access_token=${token}`);
+        const videoData = await videoRes.json();
+
+        const videoList = document.getElementById("videosList");
+        videoList.innerHTML = "";
+        videoData.items.forEach(video => {
+          const li = document.createElement("li");
+          li.className = "bg-gray-700 p-3 rounded";
+          li.innerHTML = `🎥 <strong>${video.snippet.title}</strong><br>🕒 ${video.snippet.publishedAt.split("T")[0]}`;
+          videoList.appendChild(li);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
