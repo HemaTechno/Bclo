@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>كل التطبيقات</title>
+  <meta name="description" content="عرض جميع التطبيقات مع فلترة حسب القسم" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem 1rem;
+      direction: rtl;
+    }
+    h1 {
+      text-align: center;
+      font-weight: 900;
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #2563eb;
+      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+      letter-spacing: 1.4px;
+    }
+    .filter-bar {
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    select, button {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 14px;
+      border: none;
+      box-shadow: 0 4px 10px rgba(59,130,246,0.3);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      background-color: #3b82f6;
+      color: white;
+      min-width: 160px;
+      text-align: center;
+    }
+    select:hover, button:hover {
+      background-color: #2563eb;
+    }
+    select:focus, button:focus {
+      outline: none;
+      box-shadow: 0 0 8px #2563eb;
+    }
+    .scripts-list {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+      gap: 1.4rem;
+    }
+    .script-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 1.2rem 1.5rem;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+    .script-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(37, 99, 235, 0.3);
+    }
+    .script-name {
+      font-weight: 900;
+      font-size: 1.3rem;
+      color: #1e40af;
+      margin-bottom: 0.3rem;
+    }
+    .script-desc {
+      color: #374151;
+      font-size: 0.9rem;
+      margin-bottom: 0.7rem;
+      flex-grow: 1;
+      line-height: 1.3;
+    }
+    .script-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .script-map {
+      background: #e0f2fe;
+      color: #2563eb;
+      font-weight: 700;
+      padding: 0.2rem 0.8rem;
+      border-radius: 12px;
+    }
+    .script-stats {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #3b82f6;
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    .script-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+    }
+    .script-image {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+    }
+    .no-scripts {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #9ca3af;
+      margin-top: 3rem;
+      font-weight: 700;
+    }
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>كل التطبيقات</h1>
+
+  <div class="filter-bar">
+    <select id="filter-map">
+      <option value="all">كل الأقسام</option>
+    </select>
+
+    <select id="filter-order">
+      <option value="newest">الأحدث أولاً</option>
+      <option value="oldest">الأقدم أولاً</option>
+    </select>
+
+    <button id="btn-reset">إعادة التصفية</button>
+  </div>
+
+  <section class="scripts-list" id="scripts-list">
+    <p>جارِ تحميل التطبيقات...</p>
+  </section>
+
+  <footer>© 2025 جميع الحقوق محفوظة.</footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const scriptsList = document.getElementById('scripts-list');
+    const filterMap = document.getElementById('filter-map');
+    const filterOrder = document.getElementById('filter-order');
+    const btnReset = document.getElementById('btn-reset');
+
+    let allApps = [];
+    let uniqueCategories = new Set();
+
+    async function fetchApps() {
+      try {
+        const snapshot = await db.collection('apps').get();
+        allApps = [];
+        uniqueCategories.clear();
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          if (data.category) uniqueCategories.add(data.category);
+          allApps.push(data);
+        });
+
+        populateCategoryFilter();
+        renderApps();
+
+      } catch (error) {
+        scriptsList.innerHTML = `<p class="no-scripts">حدث خطأ أثناء تحميل التطبيقات.</p>`;
+        console.error(error);
+      }
+    }
+
+    function populateCategoryFilter() {
+      filterMap.innerHTML = `<option value="all">كل الأقسام</option>`;
+      Array.from(uniqueCategories).sort().forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        filterMap.appendChild(option);
+      });
+    }
+
+    function renderApps() {
+      let filtered = [...allApps];
+      const selected = filterMap.value;
+      if (selected !== 'all') {
+        filtered = filtered.filter(app => app.category === selected);
+      }
+
+      const order = filterOrder.value;
+      if (order === 'newest') {
+        filtered.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+      } else {
+        filtered.sort((a, b) => a.createdAt?.seconds - b.createdAt?.seconds);
+      }
+
+      scriptsList.innerHTML = '';
+      if (!filtered.length) {
+        scriptsList.innerHTML = '<p class="no-scripts">لا يوجد تطبيقات مطابقة.</p>';
+        return;
+      }
+
+      filtered.forEach(app => {
+        const card = document.createElement('article');
+        card.className = 'script-card';
+        card.onclick = () => window.location.href = `app-view.html?id=${app.id}`;
+        const imageHTML = app.imageUrl ? `<img src="${app.imageUrl}" alt="صورة التطبيق" class="script-image" />` : '';
+        const shortDesc = app.desc?.length > 120 ? app.desc.slice(0,117) + '...' : app.desc || '';
+        card.innerHTML = `
+          ${imageHTML}
+          <h2 class="script-name">${app.name}</h2>
+          <p class="script-desc">${shortDesc}</p>
+          <div class="script-meta">
+            <span class="script-map">${app.category || 'غير محدد'}</span>
+            <div class="script-stats">
+              <span title="عدد المشاهدات">👁️ ${app.views || 0}</span>
+              <span title="عدد التحميلات">⬇️ ${app.downloads || 0}</span>
+            </div>
+          </div>
+        `;
+        scriptsList.appendChild(card);
+      });
+    }
+
+    btnReset.addEventListener('click', () => {
+      filterMap.value = 'all';
+      filterOrder.value = 'newest';
+      renderApps();
+    });
+
+    filterMap.addEventListener('change', renderApps);
+    filterOrder.addEventListener('change', renderApps);
+
+    fetchApps();
+  </script>
+</body>
+</html>
