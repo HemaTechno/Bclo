@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <script type="module" src="maintenance-check.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>رفع تطبيق</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .fade-in { animation: fadeIn 0.8s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    button:hover { transform: scale(1.05); transition: transform 0.3s ease; }
+    .custom-file-upload {
+      cursor: pointer; display: inline-block;
+      padding: 10px 20px; border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      color: white; font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    .custom-file-upload:hover {
+      background: linear-gradient(135deg, #4338ca, #2563eb);
+    }
+    .loader {
+      border: 5px solid #f3f3f3; border-top: 5px solid #3b82f6;
+      border-radius: 50%; width: 40px; height: 40px;
+      animation: spin 1s linear infinite; margin: auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .toast {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #3b82f6; color: white;
+      padding: 14px 20px; border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      opacity: 0; animation: fadeInUp 0.5s forwards;
+    }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(-10px); } }
+    .add-map-container { display: flex; gap: 8px; margin-top: 8px; }
+    .add-map-input {
+      flex-grow: 1; border: 1px solid #d1d5db;
+      border-radius: 0.5rem; padding: 0.5rem;
+    }
+    .add-map-btn {
+      background-color: #10b981; color: white;
+      border: none; border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    .add-map-btn:hover { background-color: #059669; }
+    .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; display: none; }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-blue-100 to-white min-h-screen flex items-center justify-center px-4">
+  <div id="loader" class="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center hidden z-50">
+    <div class="loader"></div>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg fade-in" id="mainContent" style="display:none;">
+    <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">📱 إضافة تطبيق جديد</h2>
+    <form id="appForm" class="space-y-6" autocomplete="off">
+      <div>
+        <label for="appName" class="block mb-1 font-semibold text-gray-700">اسم التطبيق</label>
+        <input id="appName" name="appName" type="text" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <div>
+        <label for="appDesc" class="block mb-1 font-semibold text-gray-700">الوصف</label>
+        <textarea id="appDesc" name="appDesc" rows="3" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      <div>
+        <label for="downloadLink" class="block mb-1 font-semibold text-gray-700">رابط التحميل</label>
+        <input id="downloadLink" name="downloadLink" type="url" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <div>
+        <label class="block mb-2 font-semibold text-gray-700">رفع صورة (إجباري)</label>
+        <label for="appImage" class="custom-file-upload">رفع صورة</label>
+        <input id="appImage" name="appImage" type="file" accept="image/*" required class="hidden" />
+        <div id="imageName" class="mt-2 text-sm text-gray-600"></div>
+      </div>
+      <div>
+        <label for="categorySelect" class="block mb-1 font-semibold text-gray-700">اختار القسم</label>
+        <select id="categorySelect" name="categorySelect" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">-- اختر قسم --</option>
+        </select>
+        <div class="add-map-container">
+          <input type="text" id="newCategoryName" placeholder="إضافة قسم جديد" class="add-map-input">
+          <button type="button" id="addCategoryBtn" class="add-map-btn">إضافة</button>
+        </div>
+        <div id="categoryError" class="error-message"></div>
+      </div>
+      <div class="g-recaptcha" data-sitekey="6LcUz1MrAAAAAHXX9VUHoA2jR2oGxjU87Jz8go7i"></div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition">إضافة التطبيق</button>
+    </form>
+    <div id="status" class="mt-4 text-center text-sm text-gray-600"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+    import { getFirestore, collection, addDoc, getDocs, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const appForm = document.getElementById('appForm');
+    const appImageInput = document.getElementById('appImage');
+    const imageNameDisplay = document.getElementById('imageName');
+    const loader = document.getElementById('loader');
+    const toast = document.getElementById('toast');
+    const status = document.getElementById('status');
+    const mainContent = document.getElementById('mainContent');
+    const categorySelect = document.getElementById('categorySelect');
+    const newCategoryName = document.getElementById('newCategoryName');
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const categoryError = document.getElementById('categoryError');
+
+    function showToast(message, success = true) {
+      toast.textContent = message;
+      toast.style.backgroundColor = success ? '#3b82f6' : '#ef4444';
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    async function loadCategories() {
+      try {
+        const catCollection = collection(db, "categories");
+        const snapshot = await getDocs(catCollection);
+        while (categorySelect.options.length > 1) categorySelect.remove(1);
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const opt = document.createElement("option");
+          opt.value = data.name;
+          opt.textContent = data.name;
+          categorySelect.appendChild(opt);
+        });
+      } catch (err) {
+        showToast("فشل تحميل الأقسام", false);
+      }
+    }
+
+    async function addNewCategory() {
+      const name = newCategoryName.value.trim();
+      if (!name) return showToast("أدخل اسم القسم", false);
+      const docId = name.replace(/\s+/g, '_').toLowerCase();
+      try {
+        const catRef = doc(db, "categories", docId);
+        const catSnap = await getDoc(catRef);
+        if (catSnap.exists()) return showToast("القسم موجود مسبقًا", false);
+        await setDoc(catRef, { name, createdAt: new Date() });
+        showToast("تمت إضافة القسم");
+        newCategoryName.value = "";
+        await loadCategories();
+        categorySelect.value = name;
+      } catch (e) {
+        categoryError.style.display = 'block';
+        categoryError.textContent = "خطأ في إضافة القسم: " + (e.message || "يرجى المحاولة لاحقًا");
+        showToast("فشل إضافة القسم", false);
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        mainContent.style.display = 'block';
+        await loadCategories();
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    appImageInput.addEventListener('change', () => {
+      if (appImageInput.files.length > 0) {
+        const file = appImageInput.files[0];
+        if (!file.type.startsWith('image/')) {
+          showToast("الملف ليس صورة", false);
+          appImageInput.value = '';
+          imageNameDisplay.textContent = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imageNameDisplay.innerHTML = `
+            <span class="block mt-2">تم اختيار: ${file.name}</span>
+            <img src="${e.target.result}" class="mt-2 rounded-lg w-full max-h-48 object-cover" />
+            <button class="mt-2 text-red-500 hover:underline" id="removeImage">حذف الصورة</button>
+          `;
+          document.getElementById('removeImage').onclick = () => {
+            if (confirm("هل أنت متأكد من حذف الصورة؟")) {
+              appImageInput.value = '';
+              imageNameDisplay.textContent = '';
+            }
+          };
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imageNameDisplay.textContent = '';
+      }
+    });
+
+    addCategoryBtn.addEventListener('click', addNewCategory);
+
+    appForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = '';
+
+      if (appImageInput.files.length === 0) return showToast("يرجى رفع صورة", false);
+      if (!grecaptcha.getResponse()) return showToast("يرجى تأكيد الكابتشا", false);
+      if (!categorySelect.value) return showToast("يرجى اختيار قسم", false);
+
+      loader.classList.remove('hidden');
+      try {
+        const user = auth.currentUser;
+        if (!user) return showToast("سجل دخول أولاً", false);
+
+        const file = appImageInput.files[0];
+        const fileRef = storageRef(storage, `apps_images/${Date.now()}_${file.name}`);
+        await uploadBytes(fileRef, file);
+        const imageUrl = await getDownloadURL(fileRef);
+
+        const docRef = await addDoc(collection(db, "apps"), {
+          name: appForm.appName.value,
+          desc: appForm.appDesc.value,
+          download: appForm.downloadLink.value,
+          category: categorySelect.value,
+          imageUrl,
+          userId: user.uid,
+          createdAt: new Date()
+        });
+
+        status.innerHTML = `
+          ✅ تم رفع التطبيق بنجاح!<br/>
+          معرف التطبيق: <b>${docRef.id}</b><br/>
+          <button id="copyLinkBtn" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">نسخ رابط التطبيق</button>
+        `;
+        const appLink = `${window.location.origin}/app-view.html?id=${docRef.id}`;
+        document.getElementById('copyLinkBtn').addEventListener('click', () => {
+          navigator.clipboard.writeText(appLink).then(() => alert("تم نسخ الرابط!"));
+        });
+
+        showToast("✅ تم رفع التطبيق بنجاح");
+        appForm.reset();
+        grecaptcha.reset();
+        imageNameDisplay.textContent = '';
+      } catch (err) {
+        showToast("فشل رفع التطبيق", false);
+      } finally {
+        loader.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
