@@ -158,8 +158,8 @@
             👁️ ${views || 0} &nbsp;&nbsp;⬇️ ${data.downloads || 0}
           </div>
           <div class="btn-group">
-            <button class="btn-download" onclick="downloadApp('${data.downloadLink}', '${id}', ${data.downloads || 0})">تحميل التطبيق</button>
-            <button class="btn-back" onclick="window.history.back()">رجوع</button>
+            <button class="btn-download" onclick="downloadApp('${data.download}', '${id}', ${data.downloads || 0})">تحميل التطبيق</button>
+ <button class="btn-back" onclick="window.history.back()">رجوع</button>
           </div>
         `;
       } catch (err) {
