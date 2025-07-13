@@ -2,19 +2,17 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>لوحة تحكم الإشعارات الفاخرة</title>
+  <title>لوحة تحكم الإشعارات</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary: #4361ee;
       --primary-dark: #3a56d4;
-      --secondary: #3f37c9;
       --light: #f8f9fa;
-      --dark: #212529;
-      --success: #4cc9f0;
-      --warning: #f8961e;
-      --danger: #f72585;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
     }
     
     * {
@@ -25,44 +23,40 @@
     }
     
     body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      background-color: #f5f7fa;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 1rem;
     }
     
     .dashboard-container {
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: 100%;
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       overflow: hidden;
+      margin: 0 auto;
     }
     
     .dashboard-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
-      padding: 1.5rem 2rem;
+      padding: 1.2rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     
     .dashboard-header h2 {
-      font-size: 1.8rem;
+      font-size: 1.4rem;
       font-weight: 700;
     }
     
-    .dashboard-header i {
-      font-size: 1.5rem;
-    }
-    
     .dashboard-body {
-      padding: 2rem;
+      padding: 1.5rem;
     }
     
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
     }
     
     .form-label {
@@ -70,45 +64,88 @@
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: var(--dark);
-      font-size: 1.1rem;
+      font-size: 0.95rem;
     }
     
     .form-control {
       width: 100%;
-      padding: 0.8rem 1rem;
-      border: 2px solid #e9ecef;
+      padding: 0.8rem;
+      border: 1px solid #e9ecef;
       border-radius: 10px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      background-color: #f8f9fa;
     }
     
     .form-control:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
       outline: none;
+      background-color: white;
     }
     
     textarea.form-control {
-      min-height: 120px;
+      min-height: 100px;
       resize: vertical;
     }
     
-    .checkbox-group {
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+      margin-left: 10px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 34px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    
+    .checkbox-container {
       display: flex;
       align-items: center;
       margin-bottom: 1rem;
     }
     
-    .checkbox-group input {
-      margin-left: 10px;
-      width: 20px;
-      height: 20px;
-      accent-color: var(--primary);
-    }
-    
     .btn {
-      display: inline-block;
-      padding: 0.8rem 1.8rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem;
       background: var(--primary);
       color: white;
       border: none;
@@ -116,67 +153,69 @@
       font-size: 1rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(67, 97, 238, 0.2);
+      width: 100%;
+      gap: 8px;
     }
     
     .btn:hover {
       background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-block {
-      display: block;
-      width: 100%;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
     }
     
     .preview-section {
-      margin-top: 2rem;
-      padding: 1.5rem;
+      margin-top: 1.5rem;
+      padding: 1.2rem;
       background: #f8f9fa;
-      border-radius: 15px;
+      border-radius: 12px;
       border: 1px dashed #dee2e6;
     }
     
     .preview-title {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
       color: var(--dark);
       display: flex;
       align-items: center;
+      font-weight: 600;
     }
     
     .preview-title i {
       margin-left: 8px;
       color: var(--primary);
+      font-size: 1.1rem;
     }
     
     .notification-preview {
       background: var(--primary);
       color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+      box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+      font-size: 0.9rem;
     }
     
     .notification-content {
       flex-grow: 1;
-      padding: 0 1rem;
+      padding: 0 0.8rem;
     }
     
     .notification-action {
       background: rgba(255, 255, 255, 0.2);
       color: white;
-      padding: 0.5rem 1.2rem;
-      border-radius: 20px;
+      padding: 0.4rem 0.8rem;
+      border-radius: 16px;
       text-decoration: none;
       font-weight: 500;
       transition: all 0.2s ease;
       white-space: nowrap;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
     }
     
     .notification-action:hover {
@@ -187,31 +226,48 @@
       background: none;
       border: none;
       color: white;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       cursor: pointer;
-      padding: 0 0.5rem;
-      margin-right: -0.5rem;
+      padding: 0 0.3rem;
+      line-height: 1;
     }
     
     .hidden {
       display: none !important;
     }
     
-    @media (max-width: 768px) {
+    /* تحسينات للشاشات الكبيرة */
+    @media (min-width: 768px) {
       body {
-        padding: 1rem;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
       }
       
       .dashboard-container {
-        border-radius: 15px;
+        max-width: 600px;
+        width: 100%;
       }
       
       .dashboard-header {
-        padding: 1rem 1.5rem;
+        padding: 1.5rem 2rem;
+      }
+      
+      .dashboard-header h2 {
+        font-size: 1.6rem;
       }
       
       .dashboard-body {
-        padding: 1.5rem;
+        padding: 2rem;
+      }
+      
+      .btn {
+        padding: 0.8rem 1.5rem;
+        width: auto;
+        margin: 0 auto;
+        display: inline-flex;
       }
     }
   </style>
@@ -225,9 +281,12 @@
     
     <div class="dashboard-body">
       <div class="form-group">
-        <div class="checkbox-group">
+        <div class="checkbox-container">
           <label for="enabled" class="form-label">تفعيل الإشعار</label>
-          <input type="checkbox" id="enabled" class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" id="enabled">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
       
@@ -237,13 +296,16 @@
       </div>
       
       <div class="form-group">
-        <div class="checkbox-group">
+        <div class="checkbox-container">
           <label for="showButton" class="form-label">إظهار زر إضافي</label>
-          <input type="checkbox" id="showButton" class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" id="showButton">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
       
-      <div id="buttonSettings">
+      <div id="buttonSettings" class="hidden">
         <div class="form-group">
           <label for="buttonText" class="form-label">نص الزر</label>
           <input type="text" id="buttonText" class="form-control" placeholder="مثال: انقر هنا">
@@ -251,11 +313,11 @@
         
         <div class="form-group">
           <label for="buttonLink" class="form-label">رابط الزر</label>
-          <input type="text" id="buttonLink" class="form-control" placeholder="مثال: https://example.com">
+          <input type="url" id="buttonLink" class="form-control" placeholder="مثال: https://example.com">
         </div>
       </div>
       
-      <button id="saveBtn" class="btn btn-block">
+      <button id="saveBtn" class="btn">
         <i class="fas fa-save"></i> حفظ التغييرات
       </button>
       
@@ -272,7 +334,7 @@
     </div>
   </div>
 
-  <!-- Firebase SDK + Firestore -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   
@@ -327,9 +389,9 @@
     // تبديل إظهار إعدادات الزر
     function toggleButtonSettings() {
       if (showButtonCheckbox.checked) {
-        buttonSettings.style.display = 'block';
+        buttonSettings.classList.remove('hidden');
       } else {
-        buttonSettings.style.display = 'none';
+        buttonSettings.classList.add('hidden');
       }
       updatePreview();
     }
