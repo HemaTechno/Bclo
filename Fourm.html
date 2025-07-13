@@ -137,6 +137,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       position: relative;
       overflow: hidden;
+      cursor: pointer;
     }
     
     .post-header {
@@ -253,75 +254,58 @@
       margin-top: 1rem;
       padding-top: 1rem;
       border-top: 1px solid #e9ecef;
+      display: none;
+    }
+    
+    .comment {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .comment-author {
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    .comment-date {
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+    
+    .comment-text {
+      line-height: 1.5;
     }
     
     .comment-form {
       display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
+      gap: 10px;
+      margin-top: 15px;
     }
     
     .comment-input {
       flex: 1;
-      padding: 0.8rem;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      font-size: 0.9rem;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
     
     .comment-submit {
       background: var(--primary);
       color: white;
       border: none;
-      border-radius: 8px;
-      padding: 0 1.2rem;
+      padding: 0 15px;
+      border-radius: 4px;
       cursor: pointer;
-      font-weight: 500;
-    }
-    
-    .comment {
-      display: flex;
-      gap: 0.8rem;
-      margin-top: 1rem;
-      padding: 0.8rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-    
-    .comment-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #e9ecef;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      color: var(--primary);
-      flex-shrink: 0;
-    }
-    
-    .comment-content {
-      flex: 1;
-    }
-    
-    .comment-user {
-      font-weight: 600;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .comment-text {
-      margin-top: 0.3rem;
-      font-size: 0.9rem;
-    }
-    
-    .comment-time {
-      font-size: 0.7rem;
-      color: var(--gray);
-      margin-top: 0.3rem;
     }
     
     .loading {
@@ -565,7 +549,8 @@
           countryName,
           message,
           imageUrl,
-          likesCount: 0, // عدد الإعجابات المبدئي
+          likesCount: 0,
+          commentsCount: 0,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           expiresAt: expiryDate
         });
@@ -586,6 +571,97 @@
       } finally {
         postBtn.disabled = false;
         postBtn.innerHTML = '<i class="fas fa-paper-plane"></i> نشر المشاركة';
+      }
+    }
+    
+    // عرض التعليقات
+    async function displayComments(postId) {
+      const commentsSection = document.getElementById(`comments-${postId}`);
+      const commentsList = document.getElementById(`comments-list-${postId}`) || document.createElement('div');
+      commentsList.id = `comments-list-${postId}`;
+      commentsList.className = 'comments-list';
+      
+      commentsList.innerHTML = '<p>جاري تحميل التعليقات...</p>';
+      commentsSection.appendChild(commentsList);
+      commentsSection.style.display = 'block';
+      
+      try {
+        const querySnapshot = await db.collection('comments')
+          .where('postId', '==', postId)
+          .orderBy('createdAt', 'asc')
+          .get();
+        
+        if (querySnapshot.empty) {
+          commentsList.innerHTML = '<p>لا توجد تعليقات بعد</p>';
+          return;
+        }
+        
+        commentsList.innerHTML = '';
+        querySnapshot.forEach(doc => {
+          const comment = doc.data();
+          const commentDate = comment.createdAt?.toDate() || new Date();
+          
+          const commentElement = document.createElement('div');
+          commentElement.className = 'comment';
+          commentElement.innerHTML = `
+            <div class="comment-header">
+              <span class="comment-author">${comment.username}</span>
+              <span class="comment-date">${commentDate.toLocaleString('ar-EG')}</span>
+            </div>
+            <div class="comment-text">${comment.text}</div>
+          `;
+          commentsList.appendChild(commentElement);
+        });
+      } catch (error) {
+        console.error('Error loading comments:', error);
+        commentsList.innerHTML = '<p>حدث خطأ في تحميل التعليقات</p>';
+      }
+    }
+    
+    // إضافة تعليق جديد
+    async function addComment(postId) {
+      const commentInput = document.querySelector(`.comment-input[data-post-id="${postId}"]`);
+      const commentText = commentInput.value.trim();
+      
+      if (!commentText) return;
+      
+      try {
+        const username = localStorage.getItem('username') || 'زائر';
+        const countryCode = localStorage.getItem('countryCode') || 'eg';
+        
+        await db.collection('comments').add({
+          postId,
+          text: commentText,
+          username,
+          countryCode,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // تحديث عدد التعليقات في المشاركة
+        const commentsCount = await db.collection('comments')
+          .where('postId', '==', postId)
+          .get()
+          .then(snap => snap.size);
+        
+        await db.collection('posts').doc(postId).update({
+          commentsCount: commentsCount
+        });
+        
+        commentInput.value = '';
+        await displayComments(postId);
+        
+        // تحديث عدد التعليقات في الواجهة
+        document.querySelector(`#post-${postId} .comment-count`).textContent = commentsCount;
+        
+        // إرسال إشعار إلى Discord
+        const postDoc = await db.collection('posts').doc(postId).get();
+        const post = postDoc.data();
+        const discordMessage = `💬 رد جديد من ${username} على مشاركة ${post.username}:\n${commentText.substring(0, 200)}${commentText.length > 200 ? '...' : ''}`;
+        await sendDiscordNotification(discordMessage);
+        
+      } catch (error) {
+        console.error('Error adding comment:', error);
+        alert('حدث خطأ في إضافة التعليق');
       }
     }
     
@@ -655,7 +731,7 @@
                 <i class="fas fa-thumbs-up"></i> <span class="like-count">${post.likesCount || 0}</span>
               </div>
               <div class="action-btn comment-btn" data-post-id="${postId}">
-                <i class="fas fa-comment"></i> <span class="comment-count">0</span>
+                <i class="fas fa-comment"></i> <span class="comment-count">${post.commentsCount || 0}</span>
               </div>
               <div class="action-btn share-btn" data-post-id="${postId}">
                 <i class="fas fa-share"></i> مشاركة
@@ -664,182 +740,104 @@
             <div class="comments-section" id="comments-${postId}">
               <div class="comment-form">
                 <input type="text" class="comment-input" placeholder="اكتب ردك..." data-post-id="${postId}">
-                <button class="comment-submit comment-btn">إرسال</button>
+                <button class="comment-submit" data-post-id="${postId}">إرسال</button>
               </div>
+              <div class="comments-list" id="comments-list-${postId}"></div>
             </div>
           `;
           
           postsContainer.appendChild(postElement);
           
-          // تحميل التعليقات لهذه المشاركة
-          loadComments(postId);
+          // إضافة مستمعي الأحداث للمشاركة الجديدة
+          setupPostEventListeners(postId);
         });
         
-        // إضافة مستمعي الأحداث بعد تحميل جميع المشاركات
-        addEventListeners();
       } catch (error) {
         console.error('Error loading posts:', error);
         postsContainer.innerHTML = '<p class="error">حدث خطأ أثناء تحميل المشاركات</p>';
       }
     }
     
-    // تحميل التعليقات لمشاركة معينة
-    async function loadComments(postId) {
-      try {
-        const commentsSnapshot = await db.collection('comments')
-          .where('postId', '==', postId)
-          .orderBy('createdAt', 'asc')
-          .get();
-        
-        const commentsSection = document.getElementById(`comments-${postId}`);
-        const commentCountElement = document.querySelector(`#post-${postId} .comment-count`);
-        
-        commentCountElement.textContent = commentsSnapshot.size;
-        
-        if (commentsSnapshot.empty) {
-          return;
-        }
-        
-        let commentsHTML = '';
-        
-        commentsSnapshot.forEach(commentDoc => {
-          const comment = commentDoc.data();
-          const commentDate = comment.createdAt?.toDate() || new Date();
-          
-          commentsHTML += `
-            <div class="comment">
-              <div class="comment-avatar">
-                <i class="fas fa-user"></i>
-              </div>
-              <div class="comment-content">
-                <div class="comment-user">
-                  <span class="fi fi-${comment.countryCode}"></span>
-                  ${comment.username}
-                </div>
-                <div class="comment-text">${comment.text}</div>
-                <div class="comment-time">${commentDate.toLocaleString('ar-EG')}</div>
-              </div>
-            </div>
-          `;
-        });
-        
-        commentsSection.insertAdjacentHTML('afterbegin', commentsHTML);
-      } catch (error) {
-        console.error('Error loading comments:', error);
-      }
-    }
-    
-    // إضافة مستمعي الأحداث
-    function addEventListeners() {
-      // الإعجابات
-      document.querySelectorAll('.like-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
-          const postId = this.getAttribute('data-post-id');
-          const userId = getUserId();
-          const likeRef = db.collection('likes').doc(`${userId}_${postId}`);
-          const postRef = db.collection('posts').doc(postId);
-          
-          try {
-            const likeDoc = await likeRef.get();
-            const postDoc = await postRef.get();
-            const currentLikes = postDoc.data().likesCount || 0;
-            
-            if (likeDoc.exists) {
-              // إزالة الإعجاب
-              await likeRef.delete();
-              await postRef.update({
-                likesCount: currentLikes - 1
-              });
-              this.classList.remove('liked');
-            } else {
-              // إضافة إعجاب
-              await likeRef.set({
-                postId,
-                userId,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-              });
-              await postRef.update({
-                likesCount: currentLikes + 1
-              });
-              this.classList.add('liked');
-            }
-            
-            // تحديث عدد الإعجابات
-            const updatedPostDoc = await postRef.get();
-            this.querySelector('.like-count').textContent = updatedPostDoc.data().likesCount || 0;
-          } catch (error) {
-            console.error('Error toggling like:', error);
-          }
-        });
-      });
-      
-      // التعليقات
-      document.querySelectorAll('.comment-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const postId = this.getAttribute('data-post-id');
+    // إعداد مستمعي الأحداث للمشاركة
+    function setupPostEventListeners(postId) {
+      // فتح/إغلاق التعليقات عند النقر على المشاركة
+      document.getElementById(`post-${postId}`).addEventListener('click', function(e) {
+        if (!e.target.closest('.post-actions') && !e.target.closest('.comment-form')) {
           const commentsSection = document.getElementById(`comments-${postId}`);
-          commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block';
-        });
+          if (commentsSection.style.display === 'block') {
+            commentsSection.style.display = 'none';
+          } else {
+            displayComments(postId);
+          }
+        }
       });
       
-      // إرسال التعليقات
-      document.querySelectorAll('.comment-submit').forEach(btn => {
-        btn.addEventListener('click', async function() {
-          const postId = this.parentElement.querySelector('.comment-input').getAttribute('data-post-id');
-          const commentText = this.parentElement.querySelector('.comment-input').value.trim();
+      // الإعجاب
+      document.querySelector(`#post-${postId} .like-btn`).addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const postId = this.getAttribute('data-post-id');
+        const userId = getUserId();
+        const likeRef = db.collection('likes').doc(`${userId}_${postId}`);
+        const postRef = db.collection('posts').doc(postId);
+        
+        try {
+          const likeDoc = await likeRef.get();
+          const postDoc = await postRef.get();
+          const currentLikes = postDoc.data().likesCount || 0;
           
-          if (!commentText) return;
-          
-          const username = localStorage.getItem('username') || 'زائر';
-          const countryCode = localStorage.getItem('countryCode') || 'eg';
-          const countryName = countries.find(c => c.code === countryCode)?.name || 'مصر';
-          
-          try {
-            // إرسال التعليق
-            await db.collection('comments').add({
+          if (likeDoc.exists) {
+            // إزالة الإعجاب
+            await likeRef.delete();
+            await postRef.update({
+              likesCount: currentLikes - 1
+            });
+            this.classList.remove('liked');
+          } else {
+            // إضافة إعجاب
+            await likeRef.set({
               postId,
-              text: commentText,
-              username,
-              countryCode,
-              countryName,
+              userId,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            
-            // إرسال إشعار إلى Discord
-            const postDoc = await db.collection('posts').doc(postId).get();
-            const post = postDoc.data();
-            const discordMessage = `💬 رد جديد من ${username} على مشاركة ${post.username}:\n${commentText.substring(0, 200)}${commentText.length > 200 ? '...' : ''}`;
-            await sendDiscordNotification(discordMessage);
-            
-            // مسح حقل التعليق
-            this.parentElement.querySelector('.comment-input').value = '';
-            
-            // إعادة تحميل التعليقات
-            await loadComments(postId);
-            
-            // تحديث عدد التعليقات
-            const commentsSnapshot = await db.collection('comments')
-              .where('postId', '==', postId)
-              .get();
-            
-            document.querySelector(`#post-${postId} .comment-count`).textContent = commentsSnapshot.size;
-          } catch (error) {
-            console.error('Error adding comment:', error);
+            await postRef.update({
+              likesCount: currentLikes + 1
+            });
+            this.classList.add('liked');
           }
-        });
+          
+          // تحديث عدد الإعجابات
+          const updatedPostDoc = await postRef.get();
+          this.querySelector('.like-count').textContent = updatedPostDoc.data().likesCount || 0;
+        } catch (error) {
+          console.error('Error toggling like:', error);
+        }
       });
       
-      // المشاركة
-      document.querySelectorAll('.share-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+      // إرسال تعليق عند النقر على زر الإرسال
+      document.querySelector(`#post-${postId} .comment-submit`).addEventListener('click', async function(e) {
+        e.stopPropagation();
+        const postId = this.getAttribute('data-post-id');
+        await addComment(postId);
+      });
+      
+      // إرسال تعليق عند الضغط على Enter
+      document.querySelector(`#post-${postId} .comment-input`).addEventListener('keypress', async function(e) {
+        if (e.key === 'Enter') {
+          e.stopPropagation();
           const postId = this.getAttribute('data-post-id');
-          const postUrl = `${window.location.origin}${window.location.pathname}?post=${postId}`;
-          
-          navigator.clipboard.writeText(postUrl).then(() => {
-            alert('تم نسخ رابط المشاركة إلى الحافظة!');
-          }).catch(() => {
-            prompt('انسخ الرابط التالي:', postUrl);
-          });
+          await addComment(postId);
+        }
+      });
+      
+      // مشاركة المشاركة
+      document.querySelector(`#post-${postId} .share-btn`).addEventListener('click', function(e) {
+        e.stopPropagation();
+        const postUrl = `${window.location.origin}${window.location.pathname}?post=${postId}`;
+        
+        navigator.clipboard.writeText(postUrl).then(() => {
+          alert('تم نسخ رابط المشاركة إلى الحافظة!');
+        }).catch(() => {
+          prompt('انسخ الرابط التالي:', postUrl);
         });
       });
     }
@@ -902,7 +900,7 @@
           const postElement = document.getElementById(`post-${postId}`);
           if (postElement) {
             postElement.scrollIntoView({ behavior: 'smooth' });
-            document.getElementById(`comments-${postId}`).style.display = 'block';
+            displayComments(postId);
           }
         }, 1000);
       }
