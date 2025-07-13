@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منتدى هيما</title>
+  <title>منتدى العالم</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/6.11.0/css/flag-icons.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -253,7 +253,6 @@
       margin-top: 1rem;
       padding-top: 1rem;
       border-top: 1px solid #e9ecef;
-      display: none;
     }
     
     .comment-form {
@@ -357,7 +356,7 @@
   <div class="container">
     <header>
       <h1>
-        <i class="fas fa-globe"></i> منتدى هيما
+        <i class="fas fa-globe"></i> منتدى العالم
       </h1>
     </header>
     
@@ -421,6 +420,9 @@
     const db = firebase.firestore();
     const storage = firebase.storage();
     
+    // رابط ويب هوك Discord
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1378736811714809876/D-de1bRq4yzMKC3I8BXLGg7KZMOrhLWkVKOTF9HQDjl-phV3aFo5vz-a68NPfJfVSoky";
+    
     // قائمة الدول مع رموز الأعلام
     const countries = [
       { name: "مصر", code: "eg" },
@@ -468,6 +470,25 @@
         localStorage.setItem('userId', userId);
       }
       return userId;
+    }
+    
+    // إرسال إشعار إلى Discord
+    async function sendDiscordNotification(content) {
+      try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: content,
+            username: "منتدى العالم",
+            avatar_url: "https://example.com/logo.png"
+          }),
+        });
+      } catch (error) {
+        console.error('Error sending Discord notification:', error);
+      }
     }
     
     // ملء قائمة الدول
@@ -548,6 +569,10 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           expiresAt: expiryDate
         });
+        
+        // إرسال إشعار إلى Discord
+        const discordMessage = `📢 مشاركة جديدة من ${username} (${countryName}):\n${message.substring(0, 200)}${message.length > 200 ? '...' : ''}`;
+        await sendDiscordNotification(discordMessage);
         
         // مسح الحقول
         messageInput.value = '';
@@ -779,6 +804,12 @@
               countryName,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+            
+            // إرسال إشعار إلى Discord
+            const postDoc = await db.collection('posts').doc(postId).get();
+            const post = postDoc.data();
+            const discordMessage = `💬 رد جديد من ${username} على مشاركة ${post.username}:\n${commentText.substring(0, 200)}${commentText.length > 200 ? '...' : ''}`;
+            await sendDiscordNotification(discordMessage);
             
             // مسح حقل التعليق
             this.parentElement.querySelector('.comment-input').value = '';
