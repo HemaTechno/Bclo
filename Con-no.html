@@ -1,26 +1,284 @@
-<!-- Firebase SDK + Firestore -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة تحكم الإشعارات الفاخرة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #3f37c9;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #f72585;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    
+    .dashboard-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .dashboard-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    
+    .dashboard-header i {
+      font-size: 1.5rem;
+    }
+    
+    .dashboard-body {
+      padding: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 1.1rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      outline: none;
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .checkbox-group input {
+      margin-left: 10px;
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 1.8rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    
+    .preview-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 15px;
+      border: 1px dashed #dee2e6;
+    }
+    
+    .preview-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+    }
+    
+    .preview-title i {
+      margin-left: 8px;
+      color: var(--primary);
+    }
+    
+    .notification-preview {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+    
+    .notification-content {
+      flex-grow: 1;
+      padding: 0 1rem;
+    }
+    
+    .notification-action {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    .notification-action:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .notification-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0 0.5rem;
+      margin-right: -0.5rem;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .dashboard-container {
+        border-radius: 15px;
+      }
+      
+      .dashboard-header {
+        padding: 1rem 1.5rem;
+      }
+      
+      .dashboard-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2><i class="fas fa-bell"></i> لوحة تحكم الإشعارات</h2>
+      <i class="fas fa-cog"></i>
+    </div>
+    
+    <div class="dashboard-body">
+      <div class="form-group">
+        <div class="checkbox-group">
+          <label for="enabled" class="form-label">تفعيل الإشعار</label>
+          <input type="checkbox" id="enabled" class="toggle-switch">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="message" class="form-label">محتوى الإشعار</label>
+        <textarea id="message" class="form-control" placeholder="اكتب محتوى الإشعار هنا..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <div class="checkbox-group">
+          <label for="showButton" class="form-label">إظهار زر إضافي</label>
+          <input type="checkbox" id="showButton" class="toggle-switch">
+        </div>
+      </div>
+      
+      <div id="buttonSettings">
+        <div class="form-group">
+          <label for="buttonText" class="form-label">نص الزر</label>
+          <input type="text" id="buttonText" class="form-control" placeholder="مثال: انقر هنا">
+        </div>
+        
+        <div class="form-group">
+          <label for="buttonLink" class="form-label">رابط الزر</label>
+          <input type="text" id="buttonLink" class="form-control" placeholder="مثال: https://example.com">
+        </div>
+      </div>
+      
+      <button id="saveBtn" class="btn btn-block">
+        <i class="fas fa-save"></i> حفظ التغييرات
+      </button>
+      
+      <div class="preview-section">
+        <div class="preview-title">
+          <i class="fas fa-eye"></i> معاينة الإشعار
+        </div>
+        <div class="notification-preview" id="notificationPreview">
+          <button class="notification-close">&times;</button>
+          <div class="notification-content" id="previewContent">الإشعار سيظهر هنا</div>
+          <a href="#" class="notification-action hidden" id="previewAction">زر الإجراء</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<h2>لوحة تحكم الإشعارات</h2>
-
-<label>
-  <input type="checkbox" id="enabled" /> تفعيل الإشعار
-</label><br><br>
-
-<textarea id="message" placeholder="محتوى الإشعار" rows="4" cols="50"></textarea><br><br>
-
-<label>
-  <input type="checkbox" id="showButton" /> إظهار زر في الإشعار
-</label><br><br>
-
-<input type="text" id="buttonText" placeholder="نص الزر" /><br><br>
-<input type="text" id="buttonLink" placeholder="رابط الزر" /><br><br>
-
-<button onclick="saveSettings()">حفظ التغييرات</button>
-
-<script>
-  const firebaseConfig = {
+  <!-- Firebase SDK + Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // تكوين Firebase
+    const firebaseConfig = {
       apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
       authDomain: "hhhhhh-d4fb8.firebaseapp.com",
       projectId: "hhhhhh-d4fb8",
@@ -29,32 +287,111 @@
       appId: "1:24512338206:web:dfe045db59bd3434a2110f",
       measurementId: "G-HD4R7GNQ5H"
     };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const docRef = db.collection("config").doc("siteNotification");
-
-  // تحميل البيانات الحالية
-  docRef.get().then(doc => {
-    if (doc.exists) {
-      const data = doc.data();
-      document.getElementById("enabled").checked = data.enabled || false;
-      document.getElementById("message").value = data.message || "";
-      document.getElementById("showButton").checked = data.showButton || false;
-      document.getElementById("buttonText").value = data.buttonText || "";
-      document.getElementById("buttonLink").value = data.buttonLink || "";
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const docRef = db.collection("config").doc("siteNotification");
+    
+    // عناصر DOM
+    const enabledCheckbox = document.getElementById('enabled');
+    const messageTextarea = document.getElementById('message');
+    const showButtonCheckbox = document.getElementById('showButton');
+    const buttonTextInput = document.getElementById('buttonText');
+    const buttonLinkInput = document.getElementById('buttonLink');
+    const buttonSettings = document.getElementById('buttonSettings');
+    const saveBtn = document.getElementById('saveBtn');
+    const previewContent = document.getElementById('previewContent');
+    const previewAction = document.getElementById('previewAction');
+    const notificationPreview = document.getElementById('notificationPreview');
+    
+    // تحميل البيانات
+    function loadSettings() {
+      docRef.get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          enabledCheckbox.checked = data.enabled || false;
+          messageTextarea.value = data.message || "";
+          showButtonCheckbox.checked = data.showButton || false;
+          buttonTextInput.value = data.buttonText || "";
+          buttonLinkInput.value = data.buttonLink || "";
+          
+          toggleButtonSettings();
+          updatePreview();
+        }
+      }).catch(error => {
+        console.error("Error loading settings:", error);
+      });
     }
-  });
-
-  function saveSettings() {
-    const newData = {
-      enabled: document.getElementById("enabled").checked,
-      message: document.getElementById("message").value,
-      showButton: document.getElementById("showButton").checked,
-      buttonText: document.getElementById("buttonText").value,
-      buttonLink: document.getElementById("buttonLink").value,
-    };
-    docRef.set(newData).then(() => {
-      alert("تم الحفظ بنجاح");
-    });
-  }
-</script>
+    
+    // تبديل إظهار إعدادات الزر
+    function toggleButtonSettings() {
+      if (showButtonCheckbox.checked) {
+        buttonSettings.style.display = 'block';
+      } else {
+        buttonSettings.style.display = 'none';
+      }
+      updatePreview();
+    }
+    
+    // تحديث معاينة الإشعار
+    function updatePreview() {
+      if (enabledCheckbox.checked) {
+        notificationPreview.style.display = 'flex';
+        previewContent.textContent = messageTextarea.value || "الإشعار سيظهر هنا";
+        
+        if (showButtonCheckbox.checked && buttonTextInput.value) {
+          previewAction.textContent = buttonTextInput.value;
+          previewAction.href = buttonLinkInput.value || "#";
+          previewAction.classList.remove('hidden');
+        } else {
+          previewAction.classList.add('hidden');
+        }
+      } else {
+        notificationPreview.style.display = 'none';
+      }
+    }
+    
+    // حفظ الإعدادات
+    function saveSettings() {
+      const newData = {
+        enabled: enabledCheckbox.checked,
+        message: messageTextarea.value,
+        showButton: showButtonCheckbox.checked,
+        buttonText: buttonTextInput.value,
+        buttonLink: buttonLinkInput.value,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+      saveBtn.disabled = true;
+      
+      docRef.set(newData)
+        .then(() => {
+          saveBtn.innerHTML = '<i class="fas fa-check"></i> تم الحفظ بنجاح';
+          setTimeout(() => {
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> حفظ التغييرات';
+          }, 2000);
+        })
+        .catch(error => {
+          console.error("Error saving settings:", error);
+          saveBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> خطأ في الحفظ';
+        })
+        .finally(() => {
+          saveBtn.disabled = false;
+        });
+    }
+    
+    // إضافة مستمعين للأحداث
+    enabledCheckbox.addEventListener('change', updatePreview);
+    messageTextarea.addEventListener('input', updatePreview);
+    showButtonCheckbox.addEventListener('change', toggleButtonSettings);
+    buttonTextInput.addEventListener('input', updatePreview);
+    buttonLinkInput.addEventListener('input', updatePreview);
+    saveBtn.addEventListener('click', saveSettings);
+    
+    // تحميل الإعدادات عند بدء التشغيل
+    document.addEventListener('DOMContentLoaded', loadSettings);
+  </script>
+</body>
+</html>
