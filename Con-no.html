@@ -1,179 +1,57 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>لوحة تحكم الإشعارات</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: #f5f7fa;
-    }
-    .notification-preview {
-      background: #2563eb;
-      color: white;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  </style>
-</head>
-<body class="bg-gray-50 min-h-screen p-6">
-  <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
-    <h1 class="text-3xl font-bold text-blue-800 mb-6 text-center">لوحة تحكم الإشعارات</h1>
-    
-    <div id="notificationForm" class="space-y-6">
-      <div class="flex items-center">
-        <input type="checkbox" id="enableNotification" class="h-5 w-5 text-blue-600">
-        <label for="enableNotification" class="mr-2 block text-lg font-medium text-gray-700">تفعيل الإشعار</label>
-      </div>
-      
-      <div>
-        <label for="notificationMessage" class="block text-lg font-medium text-gray-700">نص الإشعار</label>
-        <textarea id="notificationMessage" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-      </div>
-      
-      <div class="flex items-center">
-        <input type="checkbox" id="showButton" class="h-5 w-5 text-blue-600">
-        <label for="showButton" class="mr-2 block text-lg font-medium text-gray-700">إظهار زر إضافي</label>
-      </div>
-      
-      <div id="buttonSettings" class="space-y-4 hidden">
-        <div>
-          <label for="buttonText" class="block text-lg font-medium text-gray-700">نص الزر</label>
-          <input type="text" id="buttonText" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
-        </div>
-        
-        <div>
-          <label for="buttonLink" class="block text-lg font-medium text-gray-700">رابط الزر</label>
-          <input type="url" id="buttonLink" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
-        </div>
-      </div>
-      
-      <div class="notification-preview hidden" id="notificationPreview">
-        <div id="previewContent">هذا نموذج معاينة للإشعار</div>
-        <a href="#" id="previewButton" class="text-white underline font-bold mr-3 hidden">زر الإجراء</a>
-        <button class="text-white text-xl">&times;</button>
-      </div>
-      
-      <button id="saveButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
-        حفظ الإعدادات
-      </button>
-    </div>
-  </div>
+<!-- Firebase SDK + Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-  <script>
-    // تكوين Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
-      projectId: "hhhhhh-d4fb8",
-      storageBucket: "hhhhhh-d4fb8.appspot.com",
-      messagingSenderId: "24512338206",
-      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
-      measurementId: "G-HD4R7GNQ5H"
+<h2>لوحة تحكم الإشعارات</h2>
+
+<label>
+  <input type="checkbox" id="enabled" /> تفعيل الإشعار
+</label><br><br>
+
+<textarea id="message" placeholder="محتوى الإشعار" rows="4" cols="50"></textarea><br><br>
+
+<label>
+  <input type="checkbox" id="showButton" /> إظهار زر في الإشعار
+</label><br><br>
+
+<input type="text" id="buttonText" placeholder="نص الزر" /><br><br>
+<input type="text" id="buttonLink" placeholder="رابط الزر" /><br><br>
+
+<button onclick="saveSettings()">حفظ التغييرات</button>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const docRef = db.collection("config").doc("siteNotification");
+
+  // تحميل البيانات الحالية
+  docRef.get().then(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      document.getElementById("enabled").checked = data.enabled || false;
+      document.getElementById("message").value = data.message || "";
+      document.getElementById("showButton").checked = data.showButton || false;
+      document.getElementById("buttonText").value = data.buttonText || "";
+      document.getElementById("buttonLink").value = data.buttonLink || "";
+    }
+  });
+
+  function saveSettings() {
+    const newData = {
+      enabled: document.getElementById("enabled").checked,
+      message: document.getElementById("message").value,
+      showButton: document.getElementById("showButton").checked,
+      buttonText: document.getElementById("buttonText").value,
+      buttonLink: document.getElementById("buttonLink").value,
     };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    
-    // عناصر DOM
-    const enableNotification = document.getElementById('enableNotification');
-    const notificationMessage = document.getElementById('notificationMessage');
-    const showButton = document.getElementById('showButton');
-    const buttonSettings = document.getElementById('buttonSettings');
-    const buttonText = document.getElementById('buttonText');
-    const buttonLink = document.getElementById('buttonLink');
-    const notificationPreview = document.getElementById('notificationPreview');
-    const previewContent = document.getElementById('previewContent');
-    const previewButton = document.getElementById('previewButton');
-    const saveButton = document.getElementById('saveButton');
-    
-    // تحميل الإعدادات الحالية
-    async function loadSettings() {
-      try {
-        const doc = await db.collection('notifications').doc('current').get();
-        if (doc.exists) {
-          const data = doc.data();
-          
-          enableNotification.checked = data.enabled || false;
-          notificationMessage.value = data.message || '';
-          showButton.checked = data.showButton || false;
-          buttonText.value = data.buttonText || '';
-          buttonLink.value = data.buttonLink || '';
-          
-          toggleButtonSettings();
-          updatePreview();
-        }
-      } catch (error) {
-        console.error('Error loading settings:', error);
-      }
-    }
-    
-    // تبديل إظهار إعدادات الزر
-    function toggleButtonSettings() {
-      if (showButton.checked) {
-        buttonSettings.classList.remove('hidden');
-      } else {
-        buttonSettings.classList.add('hidden');
-      }
-      updatePreview();
-    }
-    
-    // تحديث معاينة الإشعار
-    function updatePreview() {
-      if (!enableNotification.checked) {
-        notificationPreview.classList.add('hidden');
-        return;
-      }
-      
-      notificationPreview.classList.remove('hidden');
-      previewContent.textContent = notificationMessage.value || 'هذا نموذج معاينة للإشعار';
-      
-      if (showButton.checked && buttonText.value) {
-        previewButton.textContent = buttonText.value;
-        previewButton.href = buttonLink.value || '#';
-        previewButton.classList.remove('hidden');
-      } else {
-        previewButton.classList.add('hidden');
-      }
-    }
-    
-    // حفظ الإعدادات
-    async function saveSettings() {
-      try {
-        const notificationData = {
-          enabled: enableNotification.checked,
-          message: notificationMessage.value,
-          showButton: showButton.checked,
-          buttonText: buttonText.value,
-          buttonLink: buttonLink.value,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
-        await db.collection('notifications').doc('current').set(notificationData);
-        alert('تم حفظ الإعدادات بنجاح!');
-      } catch (error) {
-        console.error('Error saving settings:', error);
-        alert('حدث خطأ أثناء حفظ الإعدادات');
-      }
-    }
-    
-    // إضافة مستمعين للأحداث
-    showButton.addEventListener('change', toggleButtonSettings);
-    enableNotification.addEventListener('change', updatePreview);
-    notificationMessage.addEventListener('input', updatePreview);
-    buttonText.addEventListener('input', updatePreview);
-    buttonLink.addEventListener('input', updatePreview);
-    saveButton.addEventListener('click', saveSettings);
-    
-    // تحميل الإعدادات عند بدء التشغيل
-    document.addEventListener('DOMContentLoaded', loadSettings);
-  </script>
-</body>
-</html>
+    docRef.set(newData).then(() => {
+      alert("تم الحفظ بنجاح");
+    });
+  }
+</script>
