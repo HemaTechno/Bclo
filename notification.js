@@ -15,58 +15,77 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// تحميل خط Cairo الجميل
+const loadFont = () => {
+  const link = document.createElement('link');
+  link.href = 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap';
+  link.rel = 'stylesheet';
+  document.head.appendChild(link);
+};
+
+loadFont();
+
 // إنشاء عنصر الإشعار
-const notification = document.createElement("div");
-notification.id = "global-notification";
-notification.style.cssText = `
-  position: fixed;
-  top: -100px;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
-  color: white;
-  padding: 15px 20px;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(67, 97, 238, 0.3);
-  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
-  font-family: 'Tajawal', sans-serif;
-  opacity: 0;
-`;
-
-notification.innerHTML = `
-  <div id="notification-content" style="flex: 1; text-align: center; padding: 0 15px;"></div>
-  <a id="notification-action" href="#" target="_blank" style="
-    display: none;
-    margin-left: 12px;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.2);
+const createNotification = () => {
+  const notification = document.createElement("div");
+  notification.id = "global-notification";
+  notification.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
-    text-decoration: none;
-    border-radius: 24px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  "></a>
-  <button id="notification-close" style="
-    background: none;
-    border: none;
-    color: white;
-    font-size: 22px;
-    cursor: pointer;
-    padding: 0 8px;
-    margin-left: 8px;
-    line-height: 1;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-  ">&times;</button>
-`;
+    padding: 14px 20px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Cairo', sans-serif;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease-out;
+  `;
 
-document.body.prepend(notification);
+  notification.innerHTML = `
+    <div id="notification-content" style="
+      flex: 1;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 0 10px;
+    "></div>
+    <a id="notification-action" href="#" target="_blank" style="
+      display: none;
+      margin-right: 12px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+    "></a>
+    <button id="notification-close" style="
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 8px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    ">&times;</button>
+  `;
 
-// إضافة تأثير hover لزر الإجراء
+  document.body.prepend(notification);
+  return notification;
+};
+
+const notification = createNotification();
+
+// تأثيرات التفاعل
 const actionBtn = document.getElementById("notification-action");
 actionBtn.addEventListener("mouseenter", () => {
   actionBtn.style.background = "rgba(255, 255, 255, 0.3)";
@@ -75,10 +94,8 @@ actionBtn.addEventListener("mouseleave", () => {
   actionBtn.style.background = "rgba(255, 255, 255, 0.2)";
 });
 
-// إغلاق الإشعار
 document.getElementById("notification-close").addEventListener("click", () => {
   notification.style.transform = "translateY(-100%)";
-  notification.style.opacity = "0";
 });
 
 // متابعة التحديثات من Firebase
@@ -90,8 +107,8 @@ onSnapshot(docRef, (docSnap) => {
     const content = document.getElementById("notification-content");
     const action = document.getElementById("notification-action");
 
-    if (data.enabled) {
-      content.textContent = data.message || "";
+    if (data.enabled && data.message) {
+      content.textContent = data.message;
       
       if (data.showButton && data.buttonText) {
         action.style.display = "inline-block";
@@ -101,40 +118,30 @@ onSnapshot(docRef, (docSnap) => {
         action.style.display = "none";
       }
       
-      // عرض الإشعار بتحريك من الأعلى
+      // عرض الإشعار
       setTimeout(() => {
         notification.style.transform = "translateY(0)";
-        notification.style.opacity = "1";
       }, 100);
       
     } else {
-      // إخفاء الإشعار إذا كان معطلاً
+      // إخفاء الإشعار
       notification.style.transform = "translateY(-100%)";
-      notification.style.opacity = "0";
     }
   }
 });
 
-// إضافة خط Tajawal إذا لم يكن موجوداً
-if (!document.querySelector('link[href*="Tajawal"]')) {
-  const fontLink = document.createElement("link");
-  fontLink.href = "https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap";
-  fontLink.rel = "stylesheet";
-  document.head.appendChild(fontLink);
-}
-
-// تحسينات للهواتف
-const updateMobileStyles = () => {
+// تكييف التصميم للهواتف
+const adaptForMobile = () => {
   if (window.innerWidth < 768) {
-    notification.style.padding = "12px 15px";
-    notification.style.flexWrap = "wrap";
-    document.getElementById("notification-action").style.marginTop = "8px";
+    notification.style.flexDirection = "column";
+    notification.style.padding = "12px";
+    action.style.margin = "8px 0 0 0";
   } else {
-    notification.style.padding = "15px 20px";
-    notification.style.flexWrap = "nowrap";
-    document.getElementById("notification-action").style.marginTop = "0";
+    notification.style.flexDirection = "row";
+    notification.style.padding = "14px 20px";
+    action.style.margin = "0 12px 0 0";
   }
 };
 
-window.addEventListener("resize", updateMobileStyles);
-updateMobileStyles();
+window.addEventListener("resize", adaptForMobile);
+adaptForMobile();
