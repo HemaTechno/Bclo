@@ -250,6 +250,9 @@
 
     const warningText = `تحذير: استخدم السكربت بحذر.\nلا تتحمل الإدارة أي مسؤولية عن سوء الاستخدام.`;
 
+    // متغير لتخزين محتوى السكربت
+    let scriptContent = '';
+
     function createButtons(finalCode, scriptName, views, downloads, publisherName) {
       const btnGroup = document.createElement('div');
       btnGroup.className = 'btn-group';
@@ -287,10 +290,19 @@
       const copyBtn = document.createElement('button');
       copyBtn.className = 'btn-copy';
       copyBtn.textContent = "نسخ السكربت";
-      copyBtn.onclick = () => {
-        navigator.clipboard.writeText(finalCode).then(() => {
+      copyBtn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(scriptContent);
           alert('تم نسخ السكربت!');
-        });
+          // زيادة عدد التحميلات عند النسخ
+          const newDownloads = (downloads || 0) + 1;
+          await updateDownloads(scriptId, newDownloads);
+          // تحديث العدد المعروض
+          downloadsBtn.textContent = `⬇️ ${newDownloads}`;
+        } catch (error) {
+          console.error('Error copying text: ', error);
+          alert('حدث خطأ أثناء نسخ السكربت');
+        }
       };
       btnGroup.appendChild(copyBtn);
 
@@ -298,18 +310,27 @@
       const downloadBtn = document.createElement('button');
       downloadBtn.className = 'btn-download';
       downloadBtn.textContent = "تحميل السكربت";
-      downloadBtn.onclick = () => {
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${scriptName}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        // تحديث عدد التحميلات في Firebase
-        updateDownloads(scriptId, downloads + 1);
+      downloadBtn.onclick = async () => {
+        try {
+          const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${scriptName}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          
+          // تحديث عدد التحميلات في Firebase
+          const newDownloads = (downloads || 0) + 1;
+          await updateDownloads(scriptId, newDownloads);
+          // تحديث العدد المعروض
+          downloadsBtn.textContent = `⬇️ ${newDownloads}`;
+        } catch (error) {
+          console.error('Error downloading file: ', error);
+          alert('حدث خطأ أثناء تحميل السكربت');
+        }
       };
       btnGroup.appendChild(downloadBtn);
 
@@ -362,29 +383,33 @@
         }
 
         const data = docSnap.data();
+        scriptContent = data.content; // تخزين محتوى السكربت في المتغير
 
         // زيادة عدد المشاهدات
         const updatedViews = await updateViews(id, data.views);
 
-      if (data.publisher) {
-      // جلب بيانات الناشر من مجموعة users
-      const userDoc = await db.collection('users').doc(data.publisher).get();
-      if (userDoc.exists) {
-        const userData = userDoc.data();
-        publisherName = userData.name || "غير معروف";  // افترض أن اسم المستخدم في الحقل 'name'
-      }
-      }
+        let publisherName = "غير معروف";
+        if (data.publisher) {
+          // جلب بيانات الناشر من مجموعة users
+          const userDoc = await db.collection('users').doc(data.publisher).get();
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            publisherName = userData.name || "غير معروف";
+          }
+        }
+
         container.innerHTML = `
           <h1>${data.name}</h1>
           <p class="desc">${data.desc}</p>
           <p class="map">الخريطة: ${data.map}</p>
-           <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
-            <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
+          <p class="publisher">الناشر: ${publisherName}</p>
+          <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
+          <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
           <pre id="codeBlock">${data.content}</pre>
         `;
 
         // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات واسم الناشر
-        createButtons(warningText + data.code, data.name, updatedViews, data.downloads || 0, data.publisher);
+        createButtons(data.content, data.name, updatedViews, data.downloads || 0, publisherName);
 
       } catch (error) {
         container.innerHTML = `<p class="error">خطأ في تحميل البيانات. حاول مرة أخرى لاحقًا.</p>`;
