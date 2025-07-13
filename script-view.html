@@ -299,7 +299,7 @@
       downloadBtn.className = 'btn-download';
       downloadBtn.textContent = "تحميل السكربت";
       downloadBtn.onclick = () => {
-        const blob = new Blob([finalCode], { type: 'text/plain;charset=utf-8' });
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -318,7 +318,7 @@
       discordBtn.className = 'btn-discord';
       discordBtn.textContent = "Discord";
       discordBtn.onclick = () => {
-        window.open('https://discord.gg/YOUR_SERVER_INVITE', '_blank');
+        window.open('https://discord.gg/hema1', '_blank');
       };
       btnGroup.appendChild(discordBtn);
 
