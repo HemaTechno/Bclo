@@ -14,6 +14,8 @@
       --light: #f8f9fa;
       --dark: #212529;
       --gray: #6c757d;
+      --success: #10b981;
+      --danger: #ef4444;
     }
     
     * {
@@ -201,10 +203,19 @@
       color: var(--gray);
       cursor: pointer;
       transition: all 0.2s ease;
+      user-select: none;
     }
     
     .action-btn:hover {
       color: var(--primary);
+    }
+    
+    .like-btn.liked {
+      color: var(--success);
+    }
+    
+    .like-btn.liked i {
+      color: var(--success);
     }
     
     .expiry-badge {
@@ -238,6 +249,94 @@
       font-family: 'Tajawal', sans-serif;
     }
     
+    .comments-section {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e9ecef;
+      display: none;
+    }
+    
+    .comment-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .comment-input {
+      flex: 1;
+      padding: 0.8rem;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .comment-submit {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0 1.2rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .comment {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .comment-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    
+    .comment-content {
+      flex: 1;
+    }
+    
+    .comment-user {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .comment-text {
+      margin-top: 0.3rem;
+      font-size: 0.9rem;
+    }
+    
+    .comment-time {
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-top: 0.3rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+    }
+    
+    .no-posts {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+    }
+    
     @media (max-width: 768px) {
       .container {
         padding: 1rem;
@@ -246,6 +345,10 @@
       .post-header {
         flex-direction: column;
         align-items: flex-start;
+      }
+      
+      .post-actions {
+        flex-wrap: wrap;
       }
     }
   </style>
@@ -291,7 +394,7 @@
       </div>
       
       <div class="posts-container" id="postsContainer">
-        <!-- سيتم ملؤها بواسطة JavaScript -->
+        <p class="loading">جاري تحميل المشاركات...</p>
       </div>
     </div>
   </div>
@@ -352,21 +455,61 @@
     const postsContainer = document.getElementById('postsContainer');
     const selectedFlag = document.getElementById('selected-flag');
     
+    // توليد معرف فريد للمستخدم
+    function generateUserId() {
+      return 'user_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // الحصول على معرف المستخدم أو إنشاء واحد جديد
+    function getUserId() {
+      let userId = localStorage.getItem('userId');
+      if (!userId) {
+        userId = generateUserId();
+        localStorage.setItem('userId', userId);
+      }
+      return userId;
+    }
+    
     // ملء قائمة الدول
-    countries.forEach(country => {
-      const option = document.createElement('option');
-      option.value = country.code;
-      option.textContent = country.name;
-      countrySelect.appendChild(option);
-    });
+    function populateCountries() {
+      countries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country.code;
+        option.textContent = country.name;
+        countrySelect.appendChild(option);
+      });
+      
+      // استعادة الدولة المحفوظة إذا وجدت
+      const savedCountry = localStorage.getItem('countryCode');
+      if (savedCountry) {
+        countrySelect.value = savedCountry;
+        selectedFlag.className = `fi fi-${savedCountry}`;
+      }
+    }
     
     // تحديث العلم عند تغيير الدولة
-    countrySelect.addEventListener('change', () => {
-      selectedFlag.className = `fi fi-${countrySelect.value}`;
-    });
+    function setupCountryFlag() {
+      countrySelect.addEventListener('change', () => {
+        const countryCode = countrySelect.value;
+        selectedFlag.className = `fi fi-${countryCode}`;
+        localStorage.setItem('countryCode', countryCode);
+      });
+    }
+    
+    // حفظ بيانات المستخدم
+    function setupUserData() {
+      const savedUsername = localStorage.getItem('username');
+      if (savedUsername) {
+        usernameInput.value = savedUsername;
+      }
+      
+      usernameInput.addEventListener('change', () => {
+        localStorage.setItem('username', usernameInput.value.trim());
+      });
+    }
     
     // نشر مشاركة جديدة
-    postBtn.addEventListener('click', async () => {
+    async function createPost() {
       const username = usernameInput.value.trim();
       const countryCode = countrySelect.value;
       const countryName = countrySelect.options[countrySelect.selectedIndex].text;
@@ -395,12 +538,13 @@
         expiryDate.setHours(expiryDate.getHours() + 48);
         
         // حفظ المشاركة في Firestore
-        await db.collection('posts').add({
+        const postRef = await db.collection('posts').add({
           username,
           countryCode,
           countryName,
           message,
           imageUrl,
+          likesCount: 0, // عدد الإعجابات المبدئي
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           expiresAt: expiryDate
         });
@@ -409,7 +553,8 @@
         messageInput.value = '';
         imageInput.value = '';
         
-        loadPosts();
+        // تحميل المشاركات الجديدة
+        await loadPosts();
       } catch (error) {
         console.error('Error posting:', error);
         alert('حدث خطأ أثناء نشر المشاركة');
@@ -417,7 +562,7 @@
         postBtn.disabled = false;
         postBtn.innerHTML = '<i class="fas fa-paper-plane"></i> نشر المشاركة';
       }
-    });
+    }
     
     // تحميل المشاركات
     async function loadPosts() {
@@ -427,7 +572,7 @@
         // جلب المشاركات التي لم تنته صلاحيتها بعد
         const querySnapshot = await db.collection('posts')
           .where('expiresAt', '>', new Date())
-          .orderBy('expiresAt', 'asc')
+          .orderBy('createdAt', 'desc')
           .get();
         
         postsContainer.innerHTML = '';
@@ -437,15 +582,27 @@
           return;
         }
         
+        const userId = getUserId();
+        
+        // جلب جميع الإعجابات الخاصة بالمستخدم الحالي
+        const userLikesSnapshot = await db.collection('likes')
+          .where('userId', '==', userId)
+          .get();
+        
+        const userLikedPosts = userLikesSnapshot.docs.map(doc => doc.data().postId);
+        
         querySnapshot.forEach(doc => {
           const post = doc.data();
+          const postId = doc.id;
           const postDate = post.createdAt?.toDate() || new Date();
           const expiryDate = post.expiresAt?.toDate() || new Date();
           
           const timeRemaining = Math.floor((expiryDate - new Date()) / (1000 * 60 * 60));
+          const isLiked = userLikedPosts.includes(postId);
           
           const postElement = document.createElement('div');
           postElement.className = 'post-card';
+          postElement.id = `post-${postId}`;
           postElement.innerHTML = `
             <div class="expiry-badge">
               <i class="fas fa-clock"></i> ${timeRemaining} ساعة متبقية
@@ -469,24 +626,191 @@
             </div>
             ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image" alt="صورة المشاركة">` : ''}
             <div class="post-actions">
-              <div class="action-btn">
-                <i class="fas fa-thumbs-up"></i> أعجبني
+              <div class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-post-id="${postId}">
+                <i class="fas fa-thumbs-up"></i> <span class="like-count">${post.likesCount || 0}</span>
               </div>
-              <div class="action-btn">
-                <i class="fas fa-comment"></i> تعليق
+              <div class="action-btn comment-btn" data-post-id="${postId}">
+                <i class="fas fa-comment"></i> <span class="comment-count">0</span>
               </div>
-              <div class="action-btn">
+              <div class="action-btn share-btn" data-post-id="${postId}">
                 <i class="fas fa-share"></i> مشاركة
+              </div>
+            </div>
+            <div class="comments-section" id="comments-${postId}">
+              <div class="comment-form">
+                <input type="text" class="comment-input" placeholder="اكتب ردك..." data-post-id="${postId}">
+                <button class="comment-submit comment-btn">إرسال</button>
               </div>
             </div>
           `;
           
           postsContainer.appendChild(postElement);
+          
+          // تحميل التعليقات لهذه المشاركة
+          loadComments(postId);
         });
+        
+        // إضافة مستمعي الأحداث بعد تحميل جميع المشاركات
+        addEventListeners();
       } catch (error) {
         console.error('Error loading posts:', error);
         postsContainer.innerHTML = '<p class="error">حدث خطأ أثناء تحميل المشاركات</p>';
       }
+    }
+    
+    // تحميل التعليقات لمشاركة معينة
+    async function loadComments(postId) {
+      try {
+        const commentsSnapshot = await db.collection('comments')
+          .where('postId', '==', postId)
+          .orderBy('createdAt', 'asc')
+          .get();
+        
+        const commentsSection = document.getElementById(`comments-${postId}`);
+        const commentCountElement = document.querySelector(`#post-${postId} .comment-count`);
+        
+        commentCountElement.textContent = commentsSnapshot.size;
+        
+        if (commentsSnapshot.empty) {
+          return;
+        }
+        
+        let commentsHTML = '';
+        
+        commentsSnapshot.forEach(commentDoc => {
+          const comment = commentDoc.data();
+          const commentDate = comment.createdAt?.toDate() || new Date();
+          
+          commentsHTML += `
+            <div class="comment">
+              <div class="comment-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="comment-content">
+                <div class="comment-user">
+                  <span class="fi fi-${comment.countryCode}"></span>
+                  ${comment.username}
+                </div>
+                <div class="comment-text">${comment.text}</div>
+                <div class="comment-time">${commentDate.toLocaleString('ar-EG')}</div>
+              </div>
+            </div>
+          `;
+        });
+        
+        commentsSection.insertAdjacentHTML('afterbegin', commentsHTML);
+      } catch (error) {
+        console.error('Error loading comments:', error);
+      }
+    }
+    
+    // إضافة مستمعي الأحداث
+    function addEventListeners() {
+      // الإعجابات
+      document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const postId = this.getAttribute('data-post-id');
+          const userId = getUserId();
+          const likeRef = db.collection('likes').doc(`${userId}_${postId}`);
+          const postRef = db.collection('posts').doc(postId);
+          
+          try {
+            const likeDoc = await likeRef.get();
+            const postDoc = await postRef.get();
+            const currentLikes = postDoc.data().likesCount || 0;
+            
+            if (likeDoc.exists) {
+              // إزالة الإعجاب
+              await likeRef.delete();
+              await postRef.update({
+                likesCount: currentLikes - 1
+              });
+              this.classList.remove('liked');
+            } else {
+              // إضافة إعجاب
+              await likeRef.set({
+                postId,
+                userId,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+              await postRef.update({
+                likesCount: currentLikes + 1
+              });
+              this.classList.add('liked');
+            }
+            
+            // تحديث عدد الإعجابات
+            const updatedPostDoc = await postRef.get();
+            this.querySelector('.like-count').textContent = updatedPostDoc.data().likesCount || 0;
+          } catch (error) {
+            console.error('Error toggling like:', error);
+          }
+        });
+      });
+      
+      // التعليقات
+      document.querySelectorAll('.comment-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const postId = this.getAttribute('data-post-id');
+          const commentsSection = document.getElementById(`comments-${postId}`);
+          commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block';
+        });
+      });
+      
+      // إرسال التعليقات
+      document.querySelectorAll('.comment-submit').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const postId = this.parentElement.querySelector('.comment-input').getAttribute('data-post-id');
+          const commentText = this.parentElement.querySelector('.comment-input').value.trim();
+          
+          if (!commentText) return;
+          
+          const username = localStorage.getItem('username') || 'زائر';
+          const countryCode = localStorage.getItem('countryCode') || 'eg';
+          const countryName = countries.find(c => c.code === countryCode)?.name || 'مصر';
+          
+          try {
+            // إرسال التعليق
+            await db.collection('comments').add({
+              postId,
+              text: commentText,
+              username,
+              countryCode,
+              countryName,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // مسح حقل التعليق
+            this.parentElement.querySelector('.comment-input').value = '';
+            
+            // إعادة تحميل التعليقات
+            await loadComments(postId);
+            
+            // تحديث عدد التعليقات
+            const commentsSnapshot = await db.collection('comments')
+              .where('postId', '==', postId)
+              .get();
+            
+            document.querySelector(`#post-${postId} .comment-count`).textContent = commentsSnapshot.size;
+          } catch (error) {
+            console.error('Error adding comment:', error);
+          }
+        });
+      });
+      
+      // المشاركة
+      document.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const postId = this.getAttribute('data-post-id');
+          const postUrl = `${window.location.origin}${window.location.pathname}?post=${postId}`;
+          
+          navigator.clipboard.writeText(postUrl).then(() => {
+            alert('تم نسخ رابط المشاركة إلى الحافظة!');
+          }).catch(() => {
+            prompt('انسخ الرابط التالي:', postUrl);
+          });
+        });
+      });
     }
     
     // حذف المشاركات المنتهية الصلاحية
@@ -499,6 +823,30 @@
         const batch = db.batch();
         querySnapshot.forEach(doc => {
           batch.delete(doc.ref);
+          
+          // حذف الإعجابات المرتبطة
+          db.collection('likes')
+            .where('postId', '==', doc.id)
+            .get()
+            .then(snapshot => {
+              const likeBatch = db.batch();
+              snapshot.forEach(likeDoc => {
+                likeBatch.delete(likeDoc.ref);
+              });
+              return likeBatch.commit();
+            });
+          
+          // حذف التعليقات المرتبطة
+          db.collection('comments')
+            .where('postId', '==', doc.id)
+            .get()
+            .then(snapshot => {
+              const commentBatch = db.batch();
+              snapshot.forEach(commentDoc => {
+                commentBatch.delete(commentDoc.ref);
+              });
+              return commentBatch.commit();
+            });
           
           // حذف الصورة إذا وجدت
           if (doc.data().imageUrl) {
@@ -513,17 +861,47 @@
       }
     }
     
+    // تحميل مشاركة محددة عند فتح الرابط
+    function loadSpecificPost() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const postId = urlParams.get('post');
+      
+      if (postId) {
+        setTimeout(() => {
+          const postElement = document.getElementById(`post-${postId}`);
+          if (postElement) {
+            postElement.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(`comments-${postId}`).style.display = 'block';
+          }
+        }, 1000);
+      }
+    }
+    
     // تحديث المشاركات كل دقيقة
     setInterval(() => {
       loadPosts();
       deleteExpiredPosts();
     }, 60000);
     
-    // تحميل المشاركات عند بدء التشغيل
-    document.addEventListener('DOMContentLoaded', () => {
-      loadPosts();
-      deleteExpiredPosts();
-    });
+    // تهيئة التطبيق
+    function initApp() {
+      populateCountries();
+      setupCountryFlag();
+      setupUserData();
+      
+      postBtn.addEventListener('click', createPost);
+      
+      // تحميل المشاركات عند بدء التشغيل
+      document.addEventListener('DOMContentLoaded', () => {
+        loadPosts().then(() => {
+          loadSpecificPost();
+        });
+        deleteExpiredPosts();
+      });
+    }
+    
+    // بدء التطبيق
+    initApp();
   </script>
 </body>
 </html>
