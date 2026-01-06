@@ -3,7 +3,7 @@
 <head>
   <!-- Meta Tags للتحسين الشامل في SEO -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="monetag" content="2e726ac676b1744331273176c3082972">
   
   <!-- كلمات مفتاحية شاملة لسكربتات روبلوكس -->
@@ -70,6 +70,7 @@
       font-family: 'Cairo', sans-serif;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       min-height: 100vh;
+      overflow-x: hidden;
     }
     
     .glass-card {
@@ -160,6 +161,95 @@
       border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem !important;
+      }
+      
+      .stat-number {
+        font-size: 1.75rem !important;
+      }
+      
+      .stat-label {
+        font-size: 0.75rem !important;
+      }
+      
+      .section-title {
+        font-size: 2rem !important;
+      }
+      
+      .script-card {
+        padding: 1rem !important;
+      }
+      
+      .game-card {
+        padding: 0.75rem !important;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 2rem !important;
+      }
+      
+      .section-title {
+        font-size: 1.75rem !important;
+      }
+      
+      .btn-large {
+        padding: 0.75rem 1.5rem !important;
+        font-size: 1rem !important;
+      }
+      
+      .header-logo-text {
+        font-size: 1.25rem !important;
+      }
+      
+      .mobile-menu-btn {
+        display: block !important;
+      }
+      
+      .desktop-nav {
+        display: none !important;
+      }
+      
+      .mobile-nav {
+        display: block !important;
+      }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .tablet-adjust {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+      
+      .hero-title {
+        font-size: 3rem !important;
+      }
+    }
+    
+    /* Mobile Menu */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+    
     /* Scrollbar styling */
     ::-webkit-scrollbar {
       width: 8px;
@@ -193,6 +283,19 @@
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+    
+    /* Touch-friendly buttons */
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
+    /* Prevent text size adjustment on orientation change */
+    html {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
   </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col">
@@ -203,116 +306,168 @@
       <div class="glass-card p-4 flex justify-between items-center">
         <div class="flex items-center space-x-3 space-x-reverse">
           <div class="relative">
-            <img src="/logo.png" alt="ScriptBot Logo" class="w-12 h-12 rounded-xl pulse">
-            <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+            <img src="/logo.png" alt="ScriptBot Logo" class="w-10 h-10 md:w-12 md:h-12 rounded-xl pulse">
+            <div class="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div>
           </div>
           <div>
-            <h1 class="text-2xl font-bold gradient-text">ScriptBot<span class="text-blue-600">.cloud</span></h1>
-            <p class="text-xs text-gray-500">سكربتات روبلوكس مجانية وآمنة</p>
+            <h1 class="text-xl md:text-2xl font-bold gradient-text header-logo-text">ScriptBot<span class="text-blue-600">.cloud</span></h1>
+            <p class="text-xs text-gray-500 hidden md:block">سكربتات روبلوكس مجانية وآمنة</p>
           </div>
         </div>
         
-        <div class="flex items-center space-x-4 space-x-reverse">
-          <!-- Search Bar -->
-          <div class="relative hidden md:block">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow">
+          <i class="fas fa-bars text-gray-700"></i>
+        </button>
+        
+        <!-- Desktop Navigation -->
+        <div class="desktop-nav hidden md:flex items-center space-x-4 space-x-reverse">
+          <!-- Search Bar for Desktop -->
+          <div class="relative">
             <input 
               type="text" 
               placeholder="ابحث عن سكربت..." 
-              class="search-bar pl-12 pr-4 py-3 rounded-2xl w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="search-bar pl-12 pr-4 py-2 md:py-3 rounded-2xl w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
             <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           </div>
           
-          <!-- Auth Buttons -->
-          <div id="auth-buttons" class="flex space-x-2 space-x-reverse">
-            <button onclick="login()" class="bg-white text-blue-600 px-5 py-2 rounded-xl font-medium border border-blue-200 hover:bg-blue-50 transition">
-              <i class="fas fa-sign-in-alt ml-2"></i> تسجيل الدخول
-            </button>
-            <a href="scripts.html" class="gradient-bg text-white px-5 py-2 rounded-xl font-medium btn-glow">
-              <i class="fas fa-code ml-2"></i> السكربتات
+          <!-- Navigation Buttons -->
+          <div class="flex space-x-2 space-x-reverse">
+            <a href="scripts.html" class="gradient-bg text-white px-4 md:px-5 py-2 rounded-xl font-medium btn-glow text-sm md:text-base">
+              <i class="fas fa-code ml-2"></i> <span class="hidden md:inline">السكربتات</span>
             </a>
-          </div>
-          
-          <!-- User Info -->
-          <div id="user-info" class="hidden items-center space-x-3 space-x-reverse">
-            <div class="text-right">
-              <p id="user-name" class="font-medium text-sm"></p>
-              <p class="text-xs text-gray-500">مستوى: محترف</p>
-            </div>
-            <img id="user-pic" class="w-10 h-10 rounded-full border-2 border-blue-400 cursor-pointer" src="" alt="صورة المستخدم">
+            <a href="Apps.html" class="bg-white text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium border border-blue-200 hover:bg-blue-50 transition text-sm md:text-base">
+              <i class="fas fa-download ml-2"></i> <span class="hidden md:inline">التطبيقات</span>
+            </a>
           </div>
         </div>
       </div>
     </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-50 p-6 md:hidden">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-xl font-bold gradient-text">القائمة</h2>
+        <button id="close-menu" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+          <i class="fas fa-times text-gray-700"></i>
+        </button>
+      </div>
+      
+      <!-- Mobile Search -->
+      <div class="relative mb-6">
+        <input 
+          type="text" 
+          placeholder="ابحث عن سكربت..." 
+          class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+      </div>
+      
+      <!-- Mobile Navigation Links -->
+      <nav class="space-y-4">
+        <a href="index.html" class="flex items-center p-3 rounded-xl bg-blue-50 text-blue-700">
+          <i class="fas fa-home ml-3"></i>
+          <span>الرئيسية</span>
+        </a>
+        <a href="scripts.html" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+          <i class="fas fa-code ml-3"></i>
+          <span>السكربتات</span>
+        </a>
+        <a href="Apps.html" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+          <i class="fas fa-download ml-3"></i>
+          <span>التطبيقات</span>
+        </a>
+        <a href="about.txt" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+          <i class="fas fa-info-circle ml-3"></i>
+          <span>من نحن</span>
+        </a>
+        <a href="privacy.txt" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+          <i class="fas fa-shield-alt ml-3"></i>
+          <span>سياسة الخصوصية</span>
+        </a>
+        <a href="https://discord.gg/hema1" class="flex items-center p-3 rounded-xl bg-indigo-50 text-indigo-700 mt-8">
+          <i class="fab fa-discord ml-3"></i>
+          <span>الدعم على Discord</span>
+        </a>
+      </nav>
+      
+      <div class="absolute bottom-6 right-6 left-6">
+        <p class="text-xs text-gray-500 text-center">ScriptBot.cloud © 2025</p>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
   </header>
 
   <!-- Hero Section -->
-  <section class="py-12 px-4">
+  <section class="py-8 md:py-12 px-4">
     <div class="container mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
         <div class="slide-up">
-          <div class="mb-6">
-            <span class="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-4">
+          <div class="mb-4 md:mb-6">
+            <span class="inline-block bg-blue-100 text-blue-800 px-3 md:px-4 py-1 md:py-2 rounded-full text-xs md:text-sm font-medium mb-3 md:mb-4">
               <i class="fas fa-star ml-1"></i> #1 موقع سكربتات روبلوكس عربي
             </span>
-            <h1 class="text-5xl font-bold mb-6">
+            <h1 class="text-3xl md:text-5xl font-bold mb-4 md:mb-6 hero-title">
               <span class="gradient-text">أكبر مكتبة</span> 
-              <br>
+              <br class="hidden md:block">
               <span class="text-gray-800">سكربتات وهاكات</span>
-              <br>
+              <br class="hidden md:block">
               <span class="text-blue-600">Roblox مجانية</span>
             </h1>
-            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+            <p class="text-base md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed hero-subtitle">
               موقع ScriptBot يوفر أحدث وأقوى السكربتات والهاكات لأشهر ألعاب Roblox مثل 
               <span class="font-semibold text-blue-700">Blox Fruits، Da Hood، Pet Simulator X، BedWars، Brookhaven</span> 
               والمزيد. تحديثات يومية، سكربتات آمنة، واجهة سهلة، ودعم فني متواصل.
             </p>
           </div>
           
-          <div class="flex flex-wrap gap-4">
-            <a href="scripts.html" class="gradient-bg text-white px-8 py-4 rounded-2xl font-bold text-lg flex items-center btn-glow pulse">
+          <div class="flex flex-wrap gap-3 md:gap-4 mb-8 md:mb-0">
+            <a href="scripts.html" class="gradient-bg text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold text-base md:text-lg flex items-center btn-glow pulse btn-large">
               <i class="fas fa-rocket ml-3"></i> استكشف السكربتات
             </a>
-            <a href="https://discord.gg/hema1" class="ios-card px-8 py-4 rounded-2xl font-bold text-lg flex items-center border border-gray-200 hover:shadow-lg transition">
-              <i class="fab fa-discord ml-3 text-indigo-600"></i> انضم للدعم
+            <a href="https://discord.gg/hema1" class="ios-card px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold text-base md:text-lg flex items-center border border-gray-200 hover:shadow-lg transition">
+              <i class="fab fa-discord ml-3 text-indigo-600"></i> <span class="mr-1">الدعم</span>
             </a>
           </div>
           
-          <div class="mt-10 flex items-center space-x-6 space-x-reverse">
+          <div class="mt-6 md:mt-10 flex items-center justify-between md:justify-start md:space-x-6 space-x-reverse">
             <div class="text-center">
-              <div class="text-3xl font-bold gradient-text">2,500+</div>
-              <div class="text-gray-600 text-sm">سكربت مجاني</div>
+              <div class="text-2xl md:text-3xl font-bold gradient-text stat-number">2,500+</div>
+              <div class="text-gray-600 text-xs md:text-sm stat-label">سكربت مجاني</div>
             </div>
             <div class="text-center">
-              <div class="text-3xl font-bold gradient-text">150+</div>
-              <div class="text-gray-600 text-sm">لعبة مدعومة</div>
+              <div class="text-2xl md:text-3xl font-bold gradient-text stat-number">150+</div>
+              <div class="text-gray-600 text-xs md:text-sm stat-label">لعبة مدعومة</div>
             </div>
             <div class="text-center">
-              <div class="text-3xl font-bold gradient-text">50K+</div>
-              <div class="text-gray-600 text-sm">مستخدم نشط</div>
+              <div class="text-2xl md:text-3xl font-bold gradient-text stat-number">50K+</div>
+              <div class="text-gray-600 text-xs md:text-sm stat-label">مستخدم نشط</div>
             </div>
           </div>
         </div>
         
-        <div class="relative">
-          <div class="ios-card p-8 floating">
+        <div class="relative mt-8 md:mt-0">
+          <div class="ios-card p-6 md:p-8 floating">
             <lottie-player 
               src="https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json" 
               background="transparent" 
               speed="1" 
-              style="width: 100%; height: 400px;" 
+              style="width: 100%; height: 300px; min-height: 300px;" 
               loop 
               autoplay>
             </lottie-player>
           </div>
           
-          <!-- Floating Elements -->
-          <div class="absolute -top-4 -right-4 ios-card p-4 w-24 h-24 flex flex-col items-center justify-center">
+          <!-- Floating Elements for Desktop only -->
+          <div class="hidden md:block absolute -top-4 -right-4 ios-card p-4 w-24 h-24 flex flex-col items-center justify-center">
             <i class="fas fa-shield-alt text-green-500 text-2xl mb-2"></i>
             <span class="text-xs font-bold text-gray-700">آمن 100%</span>
           </div>
           
-          <div class="absolute -bottom-4 -left-4 ios-card p-4 w-24 h-24 flex flex-col items-center justify-center">
+          <div class="hidden md:block absolute -bottom-4 -left-4 ios-card p-4 w-24 h-24 flex flex-col items-center justify-center">
             <i class="fas fa-bolt text-yellow-500 text-2xl mb-2"></i>
             <span class="text-xs font-bold text-gray-700">سريع</span>
           </div>
@@ -322,237 +477,239 @@
   </section>
 
   <!-- Script Categories -->
-  <section class="py-12 px-4">
-    <div class="container mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">أشهر سكربتات <span class="gradient-text">Roblox</span></h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">تصفح أفضل السكربتات المجمعة حسب الألعاب الأكثر شعبية في مجتمع روبلوكس</p>
+  <section class="py-8 md:py-12 px-4">
+    <div class="container mx-auto tablet-adjust">
+      <div class="text-center mb-8 md:mb-12">
+        <h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4 section-title">أشهر سكربتات <span class="gradient-text">Roblox</span></h2>
+        <p class="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">تصفح أفضل السكربتات المجمعة حسب الألعاب الأكثر شعبية في مجتمع روبلوكس</p>
       </div>
       
-      <!-- Category Tabs -->
-      <div class="flex flex-wrap justify-center gap-2 mb-10">
-        <button class="tab-active px-6 py-3 rounded-xl font-medium transition">الكل</button>
-        <button class="bg-white px-6 py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition">Blox Fruits</button>
-        <button class="bg-white px-6 py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition">Da Hood</button>
-        <button class="bg-white px-6 py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition">Pet Simulator X</button>
-        <button class="bg-white px-6 py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition">BedWars</button>
-        <button class="bg-white px-6 py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition">Brookhaven</button>
+      <!-- Category Tabs with Scroll on Mobile -->
+      <div class="mb-8 md:mb-10">
+        <div class="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap justify-start md:justify-center gap-2 no-scrollbar">
+          <button class="tab-active px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium text-sm md:text-base whitespace-nowrap">الكل</button>
+          <button class="bg-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition text-sm md:text-base whitespace-nowrap">Blox Fruits</button>
+          <button class="bg-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition text-sm md:text-base whitespace-nowrap">Da Hood</button>
+          <button class="bg-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition text-sm md:text-base whitespace-nowrap">Pet Simulator X</button>
+          <button class="bg-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition text-sm md:text-base whitespace-nowrap">BedWars</button>
+          <button class="bg-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-medium border border-gray-200 hover:shadow transition text-sm md:text-base whitespace-nowrap">Brookhaven</button>
+        </div>
       </div>
       
       <!-- Scripts Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <!-- Script Card 1 -->
-        <div class="ios-card p-6 hover:shadow-xl transition-all duration-300 fade-in">
-          <div class="flex justify-between items-start mb-4">
+        <div class="ios-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 fade-in script-card">
+          <div class="flex justify-between items-start mb-3 md:mb-4">
             <div>
-              <h3 class="font-bold text-xl text-gray-800">Blox Fruits Script v7.5</h3>
-              <p class="text-gray-500 text-sm">Auto Farm, Auto Buy, Teleport</p>
+              <h3 class="font-bold text-lg md:text-xl text-gray-800">Blox Fruits Script v7.5</h3>
+              <p class="text-gray-500 text-xs md:text-sm">Auto Farm, Auto Buy, Teleport</p>
             </div>
-            <span class="script-badge">NEW</span>
+            <span class="script-badge text-xs">NEW</span>
           </div>
           
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <div class="flex items-center mb-2">
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div class="gradient-bg h-2 rounded-full" style="width: 95%"></div>
               </div>
               <span class="text-sm font-bold text-gray-700 mr-2">9.5</span>
             </div>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Auto Farm</span>
-              <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">Teleport</span>
-              <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">ESP</span>
+            <div class="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
+              <span class="px-2 md:px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Auto Farm</span>
+              <span class="px-2 md:px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">Teleport</span>
+              <span class="px-2 md:px-3 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">ESP</span>
             </div>
-            <p class="text-gray-600 text-sm mb-4">سكربت كامل يحتوي على جميع الميزات لأفضل تجربة في لعبة Blox Fruits. مجرب وآمن.</p>
+            <p class="text-gray-600 text-xs md:text-sm mb-3 md:mb-4">سكربت كامل يحتوي على جميع الميزات لأفضل تجربة في لعبة Blox Fruits. مجرب وآمن.</p>
           </div>
           
           <div class="flex justify-between items-center">
-            <a href="#" class="gradient-bg text-white px-5 py-2 rounded-lg font-medium text-sm btn-glow">
-              <i class="fas fa-download ml-2"></i> تحميل السكربت
+            <a href="#" class="gradient-bg text-white px-3 md:px-5 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm btn-glow">
+              <i class="fas fa-download ml-1 md:ml-2"></i> تحميل
             </a>
             <div class="text-xs text-gray-500">
-              <i class="fas fa-calendar-alt ml-1"></i> تم التحديث: 24/03/2025
+              <i class="fas fa-calendar-alt ml-1"></i> 24/03/2025
             </div>
           </div>
         </div>
         
         <!-- Script Card 2 -->
-        <div class="ios-card p-6 hover:shadow-xl transition-all duration-300 fade-in">
-          <div class="flex justify-between items-start mb-4">
+        <div class="ios-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 fade-in script-card">
+          <div class="flex justify-between items-start mb-3 md:mb-4">
             <div>
-              <h3 class="font-bold text-xl text-gray-800">Da Hood Hack v3.2</h3>
-              <p class="text-gray-500 text-sm">Aimbot, ESP, Money Hack</p>
+              <h3 class="font-bold text-lg md:text-xl text-gray-800">Da Hood Hack v3.2</h3>
+              <p class="text-gray-500 text-xs md:text-sm">Aimbot, ESP, Money Hack</p>
             </div>
-            <span class="script-badge" style="background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">POPULAR</span>
+            <span class="script-badge text-xs" style="background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">شائع</span>
           </div>
           
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <div class="flex items-center mb-2">
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div class="gradient-bg h-2 rounded-full" style="width: 90%"></div>
               </div>
               <span class="text-sm font-bold text-gray-700 mr-2">9.0</span>
             </div>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="px-3 py-1 bg-red-100 text-red-800 text-xs rounded-full">Aimbot</span>
-              <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">ESP</span>
-              <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Money</span>
+            <div class="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
+              <span class="px-2 md:px-3 py-1 bg-red-100 text-red-800 text-xs rounded-full">Aimbot</span>
+              <span class="px-2 md:px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">ESP</span>
+              <span class="px-2 md:px-3 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Money</span>
             </div>
-            <p class="text-gray-600 text-sm mb-4">هاك شامل للعبة Da Hood مع خاصية التصويب التلقائي ورؤية الأعداء من خلال الحوائط.</p>
+            <p class="text-gray-600 text-xs md:text-sm mb-3 md:mb-4">هاك شامل للعبة Da Hood مع خاصية التصويب التلقائي ورؤية الأعداء من خلال الحوائط.</p>
           </div>
           
           <div class="flex justify-between items-center">
-            <a href="#" class="gradient-bg text-white px-5 py-2 rounded-lg font-medium text-sm btn-glow">
-              <i class="fas fa-download ml-2"></i> تحميل السكربت
+            <a href="#" class="gradient-bg text-white px-3 md:px-5 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm btn-glow">
+              <i class="fas fa-download ml-1 md:ml-2"></i> تحميل
             </a>
             <div class="text-xs text-gray-500">
-              <i class="fas fa-calendar-alt ml-1"></i> تم التحديث: 22/03/2025
+              <i class="fas fa-calendar-alt ml-1"></i> 22/03/2025
             </div>
           </div>
         </div>
         
         <!-- Script Card 3 -->
-        <div class="ios-card p-6 hover:shadow-xl transition-all duration-300 fade-in">
-          <div class="flex justify-between items-start mb-4">
+        <div class="ios-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 fade-in script-card">
+          <div class="flex justify-between items-start mb-3 md:mb-4">
             <div>
-              <h3 class="font-bold text-xl text-gray-800">Pet Simulator X v9.1</h3>
-              <p class="text-gray-500 text-sm">Auto Farm, Auto Hatch, Dupe</p>
+              <h3 class="font-bold text-lg md:text-xl text-gray-800">Pet Simulator X v9.1</h3>
+              <p class="text-gray-500 text-xs md:text-sm">Auto Farm, Auto Hatch, Dupe</p>
             </div>
-            <span class="script-badge" style="background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">UPDATED</span>
+            <span class="script-badge text-xs" style="background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">محدث</span>
           </div>
           
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <div class="flex items-center mb-2">
               <div class="w-full bg-gray-200 rounded-full h-2">
                 <div class="gradient-bg h-2 rounded-full" style="width: 88%"></div>
               </div>
               <span class="text-sm font-bold text-gray-700 mr-2">8.8</span>
             </div>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">Auto Farm</span>
-              <span class="px-3 py-1 bg-pink-100 text-pink-800 text-xs rounded-full">Auto Hatch</span>
-              <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full">Dupe</span>
+            <div class="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
+              <span class="px-2 md:px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">Auto Farm</span>
+              <span class="px-2 md:px-3 py-1 bg-pink-100 text-pink-800 text-xs rounded-full">Auto Hatch</span>
+              <span class="px-2 md:px-3 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full">Dupe</span>
             </div>
-            <p class="text-gray-600 text-sm mb-4">سكربت متكامل للعبة Pet Simulator X مع خاصية الفقس التلقائي والزراعة التلقائية.</p>
+            <p class="text-gray-600 text-xs md:text-sm mb-3 md:mb-4">سكربت متكامل للعبة Pet Simulator X مع خاصية الفقس التلقائي والزراعة التلقائية.</p>
           </div>
           
           <div class="flex justify-between items-center">
-            <a href="#" class="gradient-bg text-white px-5 py-2 rounded-lg font-medium text-sm btn-glow">
-              <i class="fas fa-download ml-2"></i> تحميل السكربت
+            <a href="#" class="gradient-bg text-white px-3 md:px-5 py-1.5 md:py-2 rounded-lg font-medium text-xs md:text-sm btn-glow">
+              <i class="fas fa-download ml-1 md:ml-2"></i> تحميل
             </a>
             <div class="text-xs text-gray-500">
-              <i class="fas fa-calendar-alt ml-1"></i> تم التحديث: 20/03/2025
+              <i class="fas fa-calendar-alt ml-1"></i> 20/03/2025
             </div>
           </div>
         </div>
       </div>
       
-      <div class="text-center mt-10">
-        <a href="scripts.html" class="secondary-gradient-bg text-white px-8 py-3 rounded-xl font-bold text-lg inline-flex items-center btn-glow">
-          <i class="fas fa-arrow-left ml-3"></i> عرض جميع السكربتات (2,500+)
+      <div class="text-center mt-8 md:mt-10">
+        <a href="scripts.html" class="secondary-gradient-bg text-white px-6 md:px-8 py-3 md:py-3 rounded-xl font-bold text-base md:text-lg inline-flex items-center btn-glow">
+          <i class="fas fa-arrow-left ml-2 md:ml-3"></i> عرض جميع السكربتات (2,500+)
         </a>
       </div>
     </div>
   </section>
 
   <!-- Features Section -->
-  <section class="py-16 px-4 bg-gradient-to-br from-white to-blue-50">
+  <section class="py-8 md:py-16 px-4 bg-gradient-to-br from-white to-blue-50">
     <div class="container mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">لماذا <span class="gradient-text">ScriptBot</span>؟</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">نقدم لكم أفضل تجربة لتحميل واستخدام سكربتات روبلوكس</p>
+      <div class="text-center mb-8 md:mb-12">
+        <h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4 section-title">لماذا <span class="gradient-text">ScriptBot</span>؟</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">نقدم لكم أفضل تجربة لتحميل واستخدام سكربتات روبلوكس</p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="ios-card p-6 text-center hover:shadow-xl transition">
-          <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-shield-alt text-white text-2xl"></i>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div class="ios-card p-4 md:p-6 text-center hover:shadow-xl transition">
+          <div class="w-12 h-12 md:w-16 md:h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <i class="fas fa-shield-alt text-white text-xl md:text-2xl"></i>
           </div>
-          <h3 class="font-bold text-xl mb-2">سكربتات آمنة</h3>
-          <p class="text-gray-600">جميع السكربتات مجربة وآمنة 100% بدون فيروسات أو برمجيات خبيثة</p>
+          <h3 class="font-bold text-lg md:text-xl mb-1 md:mb-2">سكربتات آمنة</h3>
+          <p class="text-gray-600 text-sm md:text-base">جميع السكربتات مجربة وآمنة 100% بدون فيروسات أو برمجيات خبيثة</p>
         </div>
         
-        <div class="ios-card p-6 text-center hover:shadow-xl transition">
-          <div class="w-16 h-16 secondary-gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-sync-alt text-white text-2xl"></i>
+        <div class="ios-card p-4 md:p-6 text-center hover:shadow-xl transition">
+          <div class="w-12 h-12 md:w-16 md:h-16 secondary-gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <i class="fas fa-sync-alt text-white text-xl md:text-2xl"></i>
           </div>
-          <h3 class="font-bold text-xl mb-2">تحديثات يومية</h3>
-          <p class="text-gray-600">نقوم بتحديث السكربتات باستمرار مع كل تحديث جديد للألعاب</p>
+          <h3 class="font-bold text-lg md:text-xl mb-1 md:mb-2">تحديثات يومية</h3>
+          <p class="text-gray-600 text-sm md:text-base">نقوم بتحديث السكربتات باستمرار مع كل تحديث جديد للألعاب</p>
         </div>
         
-        <div class="ios-card p-6 text-center hover:shadow-xl transition">
-          <div class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-bolt text-white text-2xl"></i>
+        <div class="ios-card p-4 md:p-6 text-center hover:shadow-xl transition">
+          <div class="w-12 h-12 md:w-16 md:h-16 gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <i class="fas fa-bolt text-white text-xl md:text-2xl"></i>
           </div>
-          <h3 class="font-bold text-xl mb-2">تحميل سريع</h3>
-          <p class="text-gray-600">خوادم سريعة لتحميل السكربتات بدون انتظار أو حدود سرعة</p>
+          <h3 class="font-bold text-lg md:text-xl mb-1 md:mb-2">تحميل سريع</h3>
+          <p class="text-gray-600 text-sm md:text-base">خوادم سريعة لتحميل السكربتات بدون انتظار أو حدود سرعة</p>
         </div>
         
-        <div class="ios-card p-6 text-center hover:shadow-xl transition">
-          <div class="w-16 h-16 secondary-gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-headset text-white text-2xl"></i>
+        <div class="ios-card p-4 md:p-6 text-center hover:shadow-xl transition">
+          <div class="w-12 h-12 md:w-16 md:h-16 secondary-gradient-bg rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <i class="fas fa-headset text-white text-xl md:text-2xl"></i>
           </div>
-          <h3 class="font-bold text-xl mb-2">دعم فني 24/7</h3>
-          <p class="text-gray-600">فريق دعم فني متواجد على مدار الساعة للإجابة على استفساراتكم</p>
+          <h3 class="font-bold text-lg md:text-xl mb-1 md:mb-2">دعم فني 24/7</h3>
+          <p class="text-gray-600 text-sm md:text-base">فريق دعم فني متواجد على مدار الساعة للإجابة على استفساراتكم</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Popular Games -->
-  <section class="py-16 px-4">
+  <section class="py-8 md:py-16 px-4">
     <div class="container mx-auto">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">أشهر ألعاب <span class="gradient-text">Roblox</span></h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">نوفر سكربتات لأكثر الألعاب شعبية على منصة روبلوكس</p>
+      <div class="text-center mb-8 md:mb-12">
+        <h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4 section-title">أشهر ألعاب <span class="gradient-text">Roblox</span></h2>
+        <p class="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">نوفر سكربتات لأكثر الألعاب شعبية على منصة روبلوكس</p>
       </div>
       
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div class="ios-card p-4 text-center hover:shadow-lg transition transform hover:-translate-y-2">
-          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-apple-alt text-white text-2xl"></i>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+        <div class="ios-card p-3 md:p-4 text-center hover:shadow-lg transition transform hover:-translate-y-1 md:hover:-translate-y-2 game-card">
+          <div class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-3 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-apple-alt text-white text-lg md:text-2xl"></i>
           </div>
-          <h4 class="font-bold">Blox Fruits</h4>
+          <h4 class="font-bold text-sm md:text-base">Blox Fruits</h4>
           <p class="text-xs text-gray-500">85 سكربت</p>
         </div>
         
-        <div class="ios-card p-4 text-center hover:shadow-lg transition transform hover:-translate-y-2">
-          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-home text-white text-2xl"></i>
+        <div class="ios-card p-3 md:p-4 text-center hover:shadow-lg transition transform hover:-translate-y-1 md:hover:-translate-y-2 game-card">
+          <div class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-3 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-home text-white text-lg md:text-2xl"></i>
           </div>
-          <h4 class="font-bold">Da Hood</h4>
+          <h4 class="font-bold text-sm md:text-base">Da Hood</h4>
           <p class="text-xs text-gray-500">62 سكربت</p>
         </div>
         
-        <div class="ios-card p-4 text-center hover:shadow-lg transition transform hover:-translate-y-2">
-          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-green-400 to-teal-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-paw text-white text-2xl"></i>
+        <div class="ios-card p-3 md:p-4 text-center hover:shadow-lg transition transform hover:-translate-y-1 md:hover:-translate-y-2 game-card">
+          <div class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-3 bg-gradient-to-br from-green-400 to-teal-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-paw text-white text-lg md:text-2xl"></i>
           </div>
-          <h4 class="font-bold">Pet Simulator X</h4>
+          <h4 class="font-bold text-sm md:text-base">Pet Simulator X</h4>
           <p class="text-xs text-gray-500">47 سكربت</p>
         </div>
         
-        <div class="ios-card p-4 text-center hover:shadow-lg transition transform hover:-translate-y-2">
-          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-red-400 to-pink-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-bed text-white text-2xl"></i>
+        <div class="ios-card p-3 md:p-4 text-center hover:shadow-lg transition transform hover:-translate-y-1 md:hover:-translate-y-2 game-card">
+          <div class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-3 bg-gradient-to-br from-red-400 to-pink-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-bed text-white text-lg md:text-2xl"></i>
           </div>
-          <h4 class="font-bold">BedWars</h4>
+          <h4 class="font-bold text-sm md:text-base">BedWars</h4>
           <p class="text-xs text-gray-500">53 سكربت</p>
         </div>
         
-        <div class="ios-card p-4 text-center hover:shadow-lg transition transform hover:-translate-y-2">
-          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-city text-white text-2xl"></i>
+        <div class="ios-card p-3 md:p-4 text-center hover:shadow-lg transition transform hover:-translate-y-1 md:hover:-translate-y-2 game-card">
+          <div class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-3 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-city text-white text-lg md:text-2xl"></i>
           </div>
-          <h4 class="font-bold">Brookhaven</h4>
+          <h4 class="font-bold text-sm md:text-base">Brookhaven</h4>
           <p class="text-xs text-gray-500">38 سكربت</p>
         </div>
         
-        <div class="ios-card p-4 text-center hover:shadow-lg transition transform hover:-translate-y-2">
-          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
-            <i class="fas fa-fist-raised text-white text-2xl"></i>
+        <div class="ios-card p-3 md:p-4 text-center hover:shadow-lg transition transform hover:-translate-y-1 md:hover:-translate-y-2 game-card">
+          <div class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-fist-raised text-white text-lg md:text-2xl"></i>
           </div>
-          <h4 class="font-bold">King Legacy</h4>
+          <h4 class="font-bold text-sm md:text-base">King Legacy</h4>
           <p class="text-xs text-gray-500">41 سكربت</p>
         </div>
       </div>
@@ -560,128 +717,118 @@
   </section>
 
   <!-- FAQ Section -->
-  <section class="py-16 px-4 bg-gradient-to-br from-blue-50 to-white">
+  <section class="py-8 md:py-16 px-4 bg-gradient-to-br from-blue-50 to-white">
     <div class="container mx-auto max-w-4xl">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">أسئلة <span class="gradient-text">شائعة</span></h2>
-        <p class="text-gray-600">إجابات على أكثر الأسئلة شيوعاً حول سكربتات روبلوكس</p>
+      <div class="text-center mb-8 md:mb-12">
+        <h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4 section-title">أسئلة <span class="gradient-text">شائعة</span></h2>
+        <p class="text-gray-600 text-sm md:text-base">إجابات على أكثر الأسئلة شيوعاً حول سكربتات روبلوكس</p>
       </div>
       
-      <div class="space-y-4">
-        <div class="ios-card p-6">
-          <h3 class="font-bold text-lg mb-2 flex items-center">
-            <i class="fas fa-question-circle text-blue-500 ml-3"></i>
+      <div class="space-y-3 md:space-y-4">
+        <div class="ios-card p-4 md:p-6">
+          <h3 class="font-bold text-base md:text-lg mb-1 md:mb-2 flex items-center">
+            <i class="fas fa-question-circle text-blue-500 ml-2 md:ml-3 text-sm md:text-base"></i>
             هل سكربتات موقع ScriptBot آمنة؟
           </h3>
-          <p class="text-gray-600">نعم، جميع السكربتات على موقعنا مجربة وآمنة 100% ولا تحتوي على فيروسات أو برمجيات خبيثة. نقوم بفحص كل سكربت قبل رفعه على الموقع.</p>
+          <p class="text-gray-600 text-sm md:text-base">نعم، جميع السكربتات على موقعنا مجربة وآمنة 100% ولا تحتوي على فيروسات أو برمجيات خبيثة. نقوم بفحص كل سكربت قبل رفعه على الموقع.</p>
         </div>
         
-        <div class="ios-card p-6">
-          <h3 class="font-bold text-lg mb-2 flex items-center">
-            <i class="fas fa-question-circle text-blue-500 ml-3"></i>
+        <div class="ios-card p-4 md:p-6">
+          <h3 class="font-bold text-base md:text-lg mb-1 md:mb-2 flex items-center">
+            <i class="fas fa-question-circle text-blue-500 ml-2 md:ml-3 text-sm md:text-base"></i>
             كيف أقوم بتشغيل سكربتات روبلوكس؟
           </h3>
-          <p class="text-gray-600">تحتاج إلى برنامج executor مثل Krnl, Synapse X, أو Script-Ware. بعد تثبيت الـ executor، افتح اللعبة ثم البرنامج والصق السكربت واضغط على زر التشغيل.</p>
+          <p class="text-gray-600 text-sm md:text-base">تحتاج إلى برنامج executor مثل Krnl, Synapse X, أو Script-Ware. بعد تثبيت الـ executor، افتح اللعبة ثم البرنامج والصق السكربت واضغط على زر التشغيل.</p>
         </div>
         
-        <div class="ios-card p-6">
-          <h3 class="font-bold text-lg mb-2 flex items-center">
-            <i class="fas fa-question-circle text-blue-500 ml-3"></i>
+        <div class="ios-card p-4 md:p-6">
+          <h3 class="font-bold text-base md:text-lg mb-1 md:mb-2 flex items-center">
+            <i class="fas fa-question-circle text-blue-500 ml-2 md:ml-3 text-sm md:text-base"></i>
             هل يمكنني الحصول على بان إذا استخدمت السكربتات؟
           </h3>
-          <p class="text-gray-600">احتمالية البان ضعيفة جداً إذا استخدمت السكربتات بحكمة. ننصح بعدم استخدام ميزات واضحة جداً مثل السرعة الكبيرة أو الطيران أمام اللاعبين الآخرين.</p>
-        </div>
-        
-        <div class="ios-card p-6">
-          <h3 class="font-bold text-lg mb-2 flex items-center">
-            <i class="fas fa-question-circle text-blue-500 ml-3"></i>
-            ما هي أفضل برامج executor لسكربتات روبلوكس؟
-          </h3>
-          <p class="text-gray-600">أشهر البرامج هي: Synapse X (مدفوع)، Krnl (مجاني)، Script-Ware (مدفوع)، و Fluxus (مجاني). يمكنك تحميلها من قسم التطبيقات في موقعنا.</p>
+          <p class="text-gray-600 text-sm md:text-base">احتمالية البان ضعيفة جداً إذا استخدمت السكربتات بحكمة. ننصح بعدم استخدام ميزات واضحة جداً مثل السرعة الكبيرة أو الطيران أمام اللاعبين الآخرين.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="mt-auto pt-12 pb-6 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+  <footer class="mt-auto pt-8 md:pt-12 pb-4 md:pb-6 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
     <div class="container mx-auto">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 mb-6 md:mb-8 footer-grid">
         <div>
-          <div class="flex items-center mb-4">
-            <img src="/logo.png" alt="logo" class="w-10 h-10 mr-3">
-            <h2 class="text-2xl font-bold">ScriptBot<span class="text-blue-400">.cloud</span></h2>
+          <div class="flex items-center mb-3 md:mb-4">
+            <img src="/logo.png" alt="logo" class="w-8 h-8 md:w-10 md:h-10 mr-2 md:mr-3">
+            <h2 class="text-xl md:text-2xl font-bold">ScriptBot<span class="text-blue-400">.cloud</span></h2>
           </div>
-          <p class="text-gray-400 mb-4">أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة. تحديثات يومية ودعم فني متواصل.</p>
-          <div class="flex space-x-3 space-x-reverse">
-            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
-              <i class="fab fa-discord"></i>
+          <p class="text-gray-400 mb-3 md:mb-4 text-sm md:text-base">أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة. تحديثات يومية ودعم فني متواصل.</p>
+          <div class="flex space-x-2 md:space-x-3 space-x-reverse">
+            <a href="#" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
+              <i class="fab fa-discord text-sm md:text-base"></i>
             </a>
-            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-400 transition">
-              <i class="fab fa-telegram"></i>
+            <a href="#" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-400 transition">
+              <i class="fab fa-telegram text-sm md:text-base"></i>
             </a>
-            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-red-500 transition">
-              <i class="fab fa-youtube"></i>
+            <a href="#" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-red-500 transition">
+              <i class="fab fa-youtube text-sm md:text-base"></i>
             </a>
           </div>
         </div>
         
         <div>
-          <h3 class="font-bold text-lg mb-4">روابط سريعة</h3>
-          <ul class="space-y-2">
-            <li><a href="scripts.html" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات</a></li>
-            <li><a href="Apps.html" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left ml-2 text-xs"></i> التطبيقات</a></li>
-            <li><a href="about.txt" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left ml-2 text-xs"></i> من نحن</a></li>
-            <li><a href="privacy.txt" class="text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left ml-2 text-xs"></i> سياسة الخصوصية</a></li>
+          <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">روابط سريعة</h3>
+          <ul class="space-y-1 md:space-y-2">
+            <li><a href="scripts.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات</a></li>
+            <li><a href="Apps.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> التطبيقات</a></li>
+            <li><a href="about.txt" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> من نحن</a></li>
+            <li><a href="privacy.txt" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> سياسة الخصوصية</a></li>
           </ul>
         </div>
         
         <div>
-          <h3 class="font-bold text-lg mb-4">أشهر الألعاب</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-gamepad ml-2 text-xs"></i> Blox Fruits</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-gamepad ml-2 text-xs"></i> Da Hood</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-gamepad ml-2 text-xs"></i> Pet Simulator X</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-gamepad ml-2 text-xs"></i> BedWars</a></li>
+          <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">أشهر الألعاب</h3>
+          <ul class="space-y-1 md:space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Blox Fruits</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Da Hood</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Pet Simulator X</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> BedWars</a></li>
           </ul>
         </div>
         
         <div>
-          <h3 class="font-bold text-lg mb-4">النشرة البريدية</h3>
-          <p class="text-gray-400 mb-4">اشترك ليصلك جديد السكربتات والتحديثات أولاً بأول</p>
+          <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">النشرة البريدية</h3>
+          <p class="text-gray-400 mb-2 md:mb-4 text-sm">اشترك ليصلك جديد السكربتات والتحديثات أولاً بأول</p>
           <div class="flex">
-            <input type="email" placeholder="بريدك الإلكتروني" class="flex-1 px-4 py-2 rounded-r-lg bg-gray-700 text-white focus:outline-none">
-            <button class="gradient-bg px-4 py-2 rounded-l-lg font-medium">
+            <input type="email" placeholder="بريدك الإلكتروني" class="flex-1 px-3 md:px-4 py-2 rounded-r-lg bg-gray-700 text-white focus:outline-none text-sm">
+            <button class="gradient-bg px-3 md:px-4 py-2 rounded-l-lg font-medium">
               <i class="fas fa-paper-plane"></i>
             </button>
           </div>
         </div>
       </div>
       
-      <div class="pt-8 border-t border-gray-700 text-center text-gray-400">
-        <div class="flex flex-wrap justify-center gap-4 mb-4">
+      <div class="pt-6 md:pt-8 border-t border-gray-700 text-center text-gray-400">
+        <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-3 md:mb-4 text-xs md:text-sm">
           <a href="about.txt" class="hover:text-white transition">من نحن</a>
-          <span>•</span>
+          <span class="hidden md:inline">•</span>
           <a href="privacy.txt" class="hover:text-white transition">سياسة الخصوصية</a>
-          <span>•</span>
+          <span class="hidden md:inline">•</span>
           <a href="contact.txt" class="hover:text-white transition">تواصل معنا</a>
-          <span>•</span>
+          <span class="hidden md:inline">•</span>
           <a href="terms.txt" class="hover:text-white transition">شروط الاستخدام</a>
-          <span>•</span>
-          <a href="sitemap.xml" class="hover:text-white transition">خريطة الموقع</a>
         </div>
-        <div class="mb-2">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</div>
-        <div class="text-sm">هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</div>
+        <div class="mb-1 md:mb-2 text-sm">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</div>
+        <div class="text-xs md:text-sm">هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</div>
       </div>
     </div>
   </footer>
 
   <!-- Back to Top Button -->
-  <button id="back-to-top" class="fixed bottom-6 left-6 w-12 h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden">
+  <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40">
     <i class="fas fa-arrow-up"></i>
   </button>
 
-  <!-- Firebase Auth -->
+  <!-- Firebase Initialization (without auth) -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
@@ -693,29 +840,37 @@
       measurementId: "G-HD4R7GNQ5H"
     };
     
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Auth State Listener
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("user-info").classList.remove("hidden");
-        document.getElementById("auth-buttons").classList.add("hidden");
-        document.getElementById("user-name").textContent = user.displayName || "مستخدم";
-        document.getElementById("user-pic").src = user.photoURL || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff";
-        document.getElementById("user-pic").addEventListener('click', () => {
-          window.location.href = '/profile.html';
-        });
-      } else {
-        document.getElementById("auth-buttons").classList.remove("hidden");
-        document.getElementById("user-info").classList.add("hidden");
-      }
-    });
-
-    function login() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider);
+    // Initialize Firebase only for analytics/other purposes (no auth)
+    if (typeof firebase !== 'undefined') {
+      firebase.initializeApp(firebaseConfig);
     }
+
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const closeMenuBtn = document.getElementById('close-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    
+    function openMobileMenu() {
+      mobileMenu.classList.add('active');
+      menuOverlay.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('active');
+      menuOverlay.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+    
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMenuBtn.addEventListener('click', closeMobileMenu);
+    menuOverlay.addEventListener('click', closeMobileMenu);
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+      link.addEventListener('click', closeMobileMenu);
+    });
 
     // Back to Top Button
     const backToTopButton = document.getElementById('back-to-top');
@@ -733,10 +888,10 @@
     });
 
     // Tab switching functionality
-    document.querySelectorAll('.flex-wrap button').forEach(button => {
+    document.querySelectorAll('.flex-wrap button, .overflow-x-auto button').forEach(button => {
       button.addEventListener('click', function() {
         // Remove active class from all buttons
-        document.querySelectorAll('.flex-wrap button').forEach(btn => {
+        document.querySelectorAll('.flex-wrap button, .overflow-x-auto button').forEach(btn => {
           btn.classList.remove('tab-active');
           btn.classList.add('bg-white', 'border', 'border-gray-200');
         });
@@ -747,25 +902,99 @@
       });
     });
 
-    // Simulate script ratings
+    // Card hover effects
     document.querySelectorAll('.ios-card').forEach(card => {
       card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-8px)';
+        if (window.innerWidth > 768) {
+          this.style.transform = 'translateY(-8px)';
+        }
       });
       
       card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
+        if (window.innerWidth > 768) {
+          this.style.transform = 'translateY(0)';
+        }
+      });
+      
+      // Touch feedback for mobile
+      card.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.98)';
+      });
+      
+      card.addEventListener('touchend', function() {
+        this.style.transform = 'scale(1)';
       });
     });
 
-    // Initialize tooltips
+    // Initialize animations
     document.addEventListener('DOMContentLoaded', function() {
-      // Add animation to elements with fade-in class
+      // Add animation delay to fade-in elements
       const fadeElements = document.querySelectorAll('.fade-in');
       fadeElements.forEach((el, index) => {
         el.style.animationDelay = `${index * 0.1}s`;
       });
+      
+      // Handle search functionality
+      const searchInput = document.querySelector('input[type="text"]');
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            const searchTerm = this.value.trim();
+            if (searchTerm) {
+              // Redirect to scripts page with search parameter
+              window.location.href = `scripts.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+          }
+        });
+      }
+      
+      // Prevent horizontal scroll on mobile
+      document.body.addEventListener('touchmove', function(e) {
+        if (e.target.classList.contains('overflow-x-auto')) {
+          return;
+        }
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
     });
+
+    // Adjust layout for tablet
+    function adjustForTablet() {
+      const width = window.innerWidth;
+      const tabletAdjustElements = document.querySelectorAll('.tablet-adjust');
+      
+      if (width >= 769 && width <= 1024) {
+        tabletAdjustElements.forEach(el => {
+          el.style.paddingLeft = '1rem';
+          el.style.paddingRight = '1rem';
+        });
+      }
+    }
+    
+    // Run on load and resize
+    window.addEventListener('load', adjustForTablet);
+    window.addEventListener('resize', adjustForTablet);
+    
+    // Touch device detection
+    function isTouchDevice() {
+      return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+    }
+    
+    if (isTouchDevice()) {
+      document.body.classList.add('touch-device');
+      
+      // Increase tap target sizes for mobile
+      document.querySelectorAll('button, a').forEach(el => {
+        if (el.offsetWidth < 44 || el.offsetHeight < 44) {
+          el.style.minHeight = '44px';
+          el.style.minWidth = '44px';
+          el.style.display = 'inline-flex';
+          el.style.alignItems = 'center';
+          el.style.justifyContent = 'center';
+        }
+      });
+    }
   </script>
   
   <!-- External Scripts -->
