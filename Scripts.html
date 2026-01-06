@@ -30,29 +30,82 @@
     
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
         
         body {
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
             min-height: 100vh;
             margin: 0;
             padding: 0;
             direction: rtl;
             overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(240, 147, 251, 0.05) 0%, transparent 50%);
+            z-index: -1;
         }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05), 0 5px 15px rgba(0, 0, 0, 0.03);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.1),
+                0 5px 15px rgba(0, 0, 0, 0.07),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+            z-index: -1;
+            border-radius: inherit;
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .glass-select {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
         
         .gradient-text {
@@ -64,22 +117,40 @@
         
         .gradient-bg {
             background: var(--primary-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(102, 126, 234, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .secondary-gradient-bg {
+            background: var(--secondary-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(240, 147, 251, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .btn-glow {
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 
+                0 4px 15px rgba(102, 126, 234, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
         
         .btn-glow:hover {
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            box-shadow: 
+                0 6px 25px rgba(102, 126, 234, 0.5),
+                0 4px 6px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
         
         .tab-active {
             background: var(--primary-gradient);
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 
+                0 4px 15px rgba(102, 126, 234, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .script-badge {
@@ -92,7 +163,12 @@
             padding: 4px 10px;
             border-radius: 12px;
             font-weight: bold;
-            box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);
+            box-shadow: 
+                0 4px 10px rgba(255, 65, 108, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         /* Responsive adjustments */
@@ -142,6 +218,7 @@
             background-color: rgba(255, 235, 59, 0.3);
             padding: 0 2px;
             border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         /* Custom scrollbar */
@@ -157,16 +234,32 @@
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { 
+                opacity: 0; 
+                transform: translateY(10px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
         
         .fade-in {
             animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
         }
         
         /* Loading animation */
@@ -179,14 +272,66 @@
             animation: pulse 1.5s ease-in-out infinite;
         }
         
+        /* Shine effect on cards */
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: transform 0.6s;
+        }
+        
+        .shine-effect:hover::after {
+            transform: rotate(30deg) translate(100%, 100%);
+        }
+        
         /* Mobile menu */
         .mobile-menu {
             transform: translateX(100%);
             transition: transform 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .mobile-menu.active {
             transform: translateX(0);
+        }
+        
+        /* Line clamp for text */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Game badge styles */
+        .game-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -199,7 +344,9 @@
                 <div class="flex items-center space-x-3 space-x-reverse">
                     <a href="index.html" class="flex items-center space-x-3 space-x-reverse">
                         <div class="relative">
-                            <img src="/logo.png" alt="ScriptBot Logo" class="w-10 h-10 md:w-12 md:h-12 rounded-xl">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                                <i class="fas fa-code text-white text-xl"></i>
+                            </div>
                             <div class="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div>
                         </div>
                         <div>
@@ -210,7 +357,7 @@
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow">
+                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-xl glass-input flex items-center justify-center">
                     <i class="fas fa-bars text-gray-700"></i>
                 </button>
                 
@@ -222,17 +369,17 @@
                             id="search-input"
                             type="text" 
                             placeholder="ابحث عن سكربت..." 
-                            class="glass-card pl-12 pr-4 py-2 md:py-3 rounded-2xl w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="glass-input pl-12 pr-4 py-2 md:py-3 rounded-2xl w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                         >
-                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                     </div>
                     
                     <!-- Navigation Buttons -->
                     <div class="flex space-x-2 space-x-reverse">
-                        <a href="index.html" class="bg-white text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium border border-blue-200 hover:bg-blue-50 transition">
+                        <a href="index.html" class="glass-input text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium hover:bg-white transition">
                             <i class="fas fa-home ml-2"></i> الرئيسية
                         </a>
-                        <a href="Apps.html" class="bg-white text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium border border-blue-200 hover:bg-blue-50 transition">
+                        <a href="Apps.html" class="glass-input text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium hover:bg-white transition">
                             <i class="fas fa-download ml-2"></i> التطبيقات
                         </a>
                     </div>
@@ -241,10 +388,10 @@
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-50 p-6 md:hidden">
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 shadow-2xl z-50 p-6 md:hidden">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-xl font-bold gradient-text">القائمة</h2>
-                <button id="close-menu" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                <button id="close-menu" class="w-10 h-10 rounded-full glass-input flex items-center justify-center">
                     <i class="fas fa-times text-gray-700"></i>
                 </button>
             </div>
@@ -255,34 +402,34 @@
                     id="mobile-search-input"
                     type="text" 
                     placeholder="ابحث عن سكربت..." 
-                    class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full pl-12 pr-4 py-3 rounded-xl glass-input focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
             </div>
             
             <!-- Mobile Navigation Links -->
             <nav class="space-y-4">
-                <a href="index.html" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                <a href="index.html" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
                     <i class="fas fa-home ml-3"></i>
                     <span>الرئيسية</span>
                 </a>
-                <a href="scripts.html" class="flex items-center p-3 rounded-xl bg-blue-50 text-blue-700">
+                <a href="scripts.html" class="flex items-center p-3 rounded-xl bg-blue-50/50 text-blue-700">
                     <i class="fas fa-code ml-3"></i>
                     <span>السكربتات</span>
                 </a>
-                <a href="Apps.html" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                <a href="Apps.html" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
                     <i class="fas fa-download ml-3"></i>
                     <span>التطبيقات</span>
                 </a>
-                <a href="about.txt" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                <a href="about.txt" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
                     <i class="fas fa-info-circle ml-3"></i>
                     <span>من نحن</span>
                 </a>
-                <a href="privacy.txt" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                <a href="privacy.txt" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
                     <i class="fas fa-shield-alt ml-3"></i>
                     <span>سياسة الخصوصية</span>
                 </a>
-                <a href="https://discord.gg/hema1" class="flex items-center p-3 rounded-xl bg-indigo-50 text-indigo-700 mt-8">
+                <a href="https://discord.gg/hema1" class="flex items-center p-3 rounded-xl bg-indigo-50/50 text-indigo-700 mt-8">
                     <i class="fab fa-discord ml-3"></i>
                     <span>الدعم على Discord</span>
                 </a>
@@ -301,6 +448,9 @@
     <section class="py-8 md:py-12 px-4">
         <div class="container mx-auto">
             <div class="text-center mb-8 md:mb-12">
+                <div class="inline-block p-6 glass-card floating mb-6">
+                    <i class="fas fa-code text-4xl md:text-5xl gradient-text"></i>
+                </div>
                 <h1 class="text-3xl md:text-4xl font-bold mb-4 md:mb-6 section-title hero-title">
                     مكتبة <span class="gradient-text">سكربتات Roblox</span> الكاملة
                 </h1>
@@ -315,24 +465,24 @@
                             id="hero-search-input"
                             type="text" 
                             placeholder="ابحث عن سكربت أو لعبة..." 
-                            class="glass-card pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="glass-input pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                         >
-                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                     </div>
                 </div>
                 
                 <!-- Quick Stats -->
                 <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-6">
-                    <div class="text-center">
-                        <div class="text-2xl md:text-3xl font-bold gradient-text">2,500+</div>
+                    <div class="text-center glass-card p-4 min-w-[120px]">
+                        <div class="text-2xl md:text-3xl font-bold gradient-text" id="total-scripts-count">0</div>
                         <div class="text-gray-600 text-sm">سكربت متاح</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-2xl md:text-3xl font-bold gradient-text">150+</div>
+                    <div class="text-center glass-card p-4 min-w-[120px]">
+                        <div class="text-2xl md:text-3xl font-bold gradient-text" id="total-games-count">0</div>
                         <div class="text-gray-600 text-sm">لعبة مدعومة</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-2xl md:text-3xl font-bold gradient-text">50K+</div>
+                    <div class="text-center glass-card p-4 min-w-[120px]">
+                        <div class="text-2xl md:text-3xl font-bold gradient-text" id="total-downloads-count">0</div>
                         <div class="text-gray-600 text-sm">تحميل يومي</div>
                     </div>
                 </div>
@@ -352,37 +502,29 @@
                             id="main-search-input"
                             type="text" 
                             placeholder="ابحث بالسكربت أو الوصف أو اللعبة..." 
-                            class="glass-card pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 search-bar"
+                            class="glass-input pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 search-bar"
                         >
-                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <button id="clear-search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <button id="clear-search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 hidden">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     
                     <!-- Filters -->
                     <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-                        <select id="filter-game" class="glass-card px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
+                        <select id="filter-game" class="glass-select px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
                             <option value="all">جميع الألعاب</option>
-                            <option value="Blox Fruits">Blox Fruits</option>
-                            <option value="Da Hood">Da Hood</option>
-                            <option value="Pet Simulator X">Pet Simulator X</option>
-                            <option value="BedWars">BedWars</option>
-                            <option value="Brookhaven">Brookhaven</option>
-                            <option value="King Legacy">King Legacy</option>
-                            <option value="Shindo Life">Shindo Life</option>
-                            <option value="Project Slayers">Project Slayers</option>
-                            <option value="Arsenal">Arsenal</option>
+                            <!-- Games will be loaded dynamically from database -->
                         </select>
                         
-                        <select id="filter-sort" class="glass-card px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
+                        <select id="filter-sort" class="glass-select px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
                             <option value="newest">الأحدث أولاً</option>
                             <option value="popular">الأكثر شهرة</option>
                             <option value="downloads">الأكثر تحميلاً</option>
                             <option value="views">الأكثر مشاهدة</option>
                         </select>
                         
-                        <button id="reset-filters" class="glass-card px-4 py-3 rounded-xl hover:bg-gray-50 transition font-medium">
+                        <button id="reset-filters" class="glass-input px-4 py-3 rounded-xl hover:bg-white transition font-medium">
                             <i class="fas fa-redo ml-2"></i> إعادة التعيين
                         </button>
                     </div>
@@ -428,91 +570,85 @@
                 
                 <!-- Load More Button -->
                 <div class="text-center mt-8" id="load-more-container">
-                    <button id="load-more" class="glass-card px-8 py-3 rounded-xl font-medium hover:bg-gray-50 transition hidden">
+                    <button id="load-more" class="glass-input px-8 py-3 rounded-xl font-medium hover:bg-white transition hidden">
                         <i class="fas fa-sync-alt ml-2"></i> تحميل المزيد
                     </button>
                 </div>
             </div>
             
             <!-- Popular Games Quick Access -->
-            <div class="glass-card p-6 mb-8">
+            <div class="glass-card p-6 mb-8" id="popular-games-section">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">استكشف حسب اللعبة</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                    <button class="game-filter-btn p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition text-center" data-game="Blox Fruits">
-                        <i class="fas fa-apple-alt mb-2 text-lg"></i>
-                        <div class="font-medium">Blox Fruits</div>
-                    </button>
-                    <button class="game-filter-btn p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition text-center" data-game="Da Hood">
-                        <i class="fas fa-home mb-2 text-lg"></i>
-                        <div class="font-medium">Da Hood</div>
-                    </button>
-                    <button class="game-filter-btn p-3 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition text-center" data-game="Pet Simulator X">
-                        <i class="fas fa-paw mb-2 text-lg"></i>
-                        <div class="font-medium">Pet Simulator X</div>
-                    </button>
-                    <button class="game-filter-btn p-3 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 transition text-center" data-game="BedWars">
-                        <i class="fas fa-bed mb-2 text-lg"></i>
-                        <div class="font-medium">BedWars</div>
-                    </button>
-                    <button class="game-filter-btn p-3 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition text-center" data-game="Brookhaven">
-                        <i class="fas fa-city mb-2 text-lg"></i>
-                        <div class="font-medium">Brookhaven</div>
-                    </button>
+                <div id="popular-games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <!-- Popular games will be loaded dynamically from database -->
+                    <div class="text-center">
+                        <p class="text-gray-500">جارٍ تحميل الألعاب...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="mt-auto pt-8 md:pt-12 pb-4 md:pb-6 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+    <footer class="mt-auto pt-8 md:pt-12 pb-4 md:pb-6 px-4">
         <div class="container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
-                <div>
-                    <div class="flex items-center mb-3 md:mb-4">
-                        <img src="/logo.png" alt="logo" class="w-8 h-8 md:w-10 md:h-10 mr-2 md:mr-3">
-                        <h2 class="text-xl md:text-2xl font-bold">ScriptBot<span class="text-blue-400">.cloud</span></h2>
+            <div class="glass-card p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
+                    <div>
+                        <div class="flex items-center mb-3 md:mb-4">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center mr-2 md:mr-3">
+                                <i class="fas fa-code text-white"></i>
+                            </div>
+                            <h2 class="text-xl md:text-2xl font-bold gradient-text">ScriptBot<span class="text-blue-400">.cloud</span></h2>
+                        </div>
+                        <p class="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة.</p>
+                        <div class="flex space-x-2 md:space-x-3 space-x-reverse">
+                            <a href="https://discord.gg/hema1" class="w-8 h-8 md:w-10 md:h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fab fa-discord text-blue-600 text-sm md:text-base"></i>
+                            </a>
+                            <a href="#" class="w-8 h-8 md:w-10 md:h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
+                                <i class="fab fa-telegram text-blue-600 text-sm md:text-base"></i>
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-gray-400 mb-3 md:mb-4 text-sm md:text-base">أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة.</p>
-                    <div class="flex space-x-2 md:space-x-3 space-x-reverse">
-                        <a href="https://discord.gg/hema1" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
-                            <i class="fab fa-discord text-sm md:text-base"></i>
-                        </a>
-                        <a href="#" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-400 transition">
-                            <i class="fab fa-telegram text-sm md:text-base"></i>
-                        </a>
+                    
+                    <div>
+                        <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4 text-gray-800">روابط سريعة</h3>
+                        <ul class="space-y-1 md:space-y-2">
+                            <li><a href="index.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
+                                <i class="fas fa-arrow-left ml-2 text-xs"></i> الرئيسية
+                            </a></li>
+                            <li><a href="scripts.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
+                                <i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات
+                            </a></li>
+                            <li><a href="Apps.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
+                                <i class="fas fa-arrow-left ml-2 text-xs"></i> التطبيقات
+                            </a></li>
+                            <li><a href="privacy.txt" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
+                                <i class="fas fa-arrow-left ml-2 text-xs"></i> سياسة الخصوصية
+                            </a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4 text-gray-800">أشهر الألعاب</h3>
+                        <ul class="space-y-1 md:space-y-2" id="footer-games-list">
+                            <!-- Games will be loaded dynamically -->
+                            <li><span class="text-gray-500 text-sm">جارٍ التحميل...</span></li>
+                        </ul>
                     </div>
                 </div>
                 
-                <div>
-                    <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">روابط سريعة</h3>
-                    <ul class="space-y-1 md:space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> الرئيسية</a></li>
-                        <li><a href="scripts.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات</a></li>
-                        <li><a href="Apps.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> التطبيقات</a></li>
-                        <li><a href="privacy.txt" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> سياسة الخصوصية</a></li>
-                    </ul>
+                <div class="pt-6 md:pt-8 border-t border-gray-200 text-center text-gray-600">
+                    <div class="mb-1 md:mb-2 text-sm">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</div>
+                    <div class="text-xs md:text-sm">هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</div>
                 </div>
-                
-                <div>
-                    <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">أشهر الألعاب</h3>
-                    <ul class="space-y-1 md:space-y-2">
-                        <li><a href="?game=Blox+Fruits" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Blox Fruits</a></li>
-                        <li><a href="?game=Da+Hood" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Da Hood</a></li>
-                        <li><a href="?game=Pet+Simulator+X" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Pet Simulator X</a></li>
-                        <li><a href="?game=BedWars" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> BedWars</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="pt-6 md:pt-8 border-t border-gray-700 text-center text-gray-400">
-                <div class="mb-1 md:mb-2 text-sm">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</div>
-                <div class="text-xs md:text-sm">هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</div>
             </div>
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40">
+    <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40 btn-glow">
         <i class="fas fa-arrow-up"></i>
     </button>
 
@@ -547,6 +683,11 @@
         const loadMoreContainer = document.getElementById('load-more-container');
         const resetSearchBtn = document.getElementById('reset-search');
         
+        // Stats elements
+        const totalScriptsCount = document.getElementById('total-scripts-count');
+        const totalGamesCount = document.getElementById('total-games-count');
+        const totalDownloadsCount = document.getElementById('total-downloads-count');
+        
         // Search and Filter Elements
         const searchInputs = [
             document.getElementById('search-input'),
@@ -560,11 +701,15 @@
         const filterSort = document.getElementById('filter-sort');
         const resetFiltersBtn = document.getElementById('reset-filters');
         const activeFiltersContainer = document.getElementById('active-filters');
-        const gameFilterBtns = document.querySelectorAll('.game-filter-btn');
+        
+        // Games sections
+        const popularGamesGrid = document.getElementById('popular-games-grid');
+        const footerGamesList = document.getElementById('footer-games-list');
 
         // State
         let allScripts = [];
         let filteredScripts = [];
+        let allGames = new Set(); // Use Set to avoid duplicates
         let currentPage = 1;
         const scriptsPerPage = 12;
         let currentSearchTerm = '';
@@ -576,8 +721,8 @@
             initMobileMenu();
             initSearch();
             initFilters();
-            fetchScripts();
             initBackToTop();
+            fetchScripts();
             
             // Check for URL parameters
             checkUrlParams();
@@ -675,17 +820,6 @@
             
             // Reset filters
             resetFiltersBtn?.addEventListener('click', resetAllFilters);
-            
-            // Quick game filter buttons
-            gameFilterBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const game = this.getAttribute('data-game');
-                    filterGame.value = game;
-                    currentGameFilter = game;
-                    updateActiveFilters();
-                    filterScripts();
-                });
-            });
         }
         
         function updateActiveFilters() {
@@ -713,7 +847,7 @@
                 
                 filters.forEach(filter => {
                     const filterElement = document.createElement('div');
-                    filterElement.className = 'inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm';
+                    filterElement.className = 'inline-flex items-center bg-blue-100/50 backdrop-blur-sm border border-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm';
                     filterElement.innerHTML = `
                         ${filter.label}
                         <button type="button" class="mr-2 text-blue-600 hover:text-blue-800" data-type="${filter.type}">
@@ -792,12 +926,40 @@
                 
                 const querySnapshot = await db.collection('scripts').get();
                 allScripts = [];
+                allGames.clear();
+                
+                let totalDownloads = 0;
                 
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     data.id = doc.id;
+                    
+                    // Add to all scripts
                     allScripts.push(data);
+                    
+                    // Add game to games list (using 'map' or 'game' field)
+                    const gameName = data.map || data.game;
+                    if (gameName) {
+                        allGames.add(gameName);
+                    }
+                    
+                    // Calculate total downloads
+                    totalDownloads += data.downloads || 0;
                 });
+                
+                // Update stats
+                totalScriptsCount.textContent = allScripts.length;
+                totalGamesCount.textContent = allGames.size;
+                totalDownloadsCount.textContent = formatNumber(totalDownloads);
+                
+                // Update filter dropdown with games from database
+                updateGameFilter();
+                
+                // Update popular games grid
+                updatePopularGames();
+                
+                // Update footer games list
+                updateFooterGames();
                 
                 // Update counts
                 totalCount.textContent = allScripts.length;
@@ -822,6 +984,106 @@
             }
         }
 
+        // Update Game Filter Dropdown with games from database
+        function updateGameFilter() {
+            if (!filterGame) return;
+            
+            // Clear existing options except first one
+            filterGame.innerHTML = '<option value="all">جميع الألعاب</option>';
+            
+            // Sort games alphabetically
+            const sortedGames = Array.from(allGames).sort();
+            
+            // Add games from database
+            sortedGames.forEach(game => {
+                const option = document.createElement('option');
+                option.value = game;
+                option.textContent = game;
+                filterGame.appendChild(option);
+            });
+        }
+
+        // Update Popular Games Grid
+        function updatePopularGames() {
+            if (!popularGamesGrid) return;
+            
+            popularGamesGrid.innerHTML = '';
+            
+            // Count script frequency per game
+            const gameCounts = {};
+            allScripts.forEach(script => {
+                const gameName = script.map || script.game;
+                if (gameName) {
+                    gameCounts[gameName] = (gameCounts[gameName] || 0) + 1;
+                }
+            });
+            
+            // Sort games by count (most scripts first)
+            const sortedGames = Object.entries(gameCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 10) // Top 10 games
+                .map(([game]) => game);
+            
+            // Create game buttons
+            sortedGames.forEach((game, index) => {
+                const button = document.createElement('button');
+                button.className = 'game-filter-btn glass-input p-3 rounded-xl hover:bg-white transition text-center';
+                button.setAttribute('data-game', game);
+                button.setAttribute('title', `${game} (${gameCounts[game]} سكربت)`);
+                
+                // Different colors for different positions
+                const colors = [
+                    'text-orange-600 hover:bg-orange-50',
+                    'text-purple-600 hover:bg-purple-50',
+                    'text-blue-600 hover:bg-blue-50',
+                    'text-green-600 hover:bg-green-50',
+                    'text-red-600 hover:bg-red-50'
+                ];
+                const colorClass = colors[index % colors.length];
+                
+                // Get game icon
+                const gameIcon = getGameIcon(game);
+                
+                button.innerHTML = `
+                    <div class="${colorClass}">
+                        ${gameIcon}
+                        <div class="font-medium mt-2">${game}</div>
+                        <div class="text-xs text-gray-500 mt-1">${gameCounts[game]} سكربت</div>
+                    </div>
+                `;
+                
+                button.addEventListener('click', function() {
+                    const game = this.getAttribute('data-game');
+                    filterGame.value = game;
+                    currentGameFilter = game;
+                    updateActiveFilters();
+                    filterScripts();
+                });
+                
+                popularGamesGrid.appendChild(button);
+            });
+        }
+
+        // Update Footer Games List
+        function updateFooterGames() {
+            if (!footerGamesList) return;
+            
+            footerGamesList.innerHTML = '';
+            
+            // Take first 6 games
+            const gamesToShow = Array.from(allGames).slice(0, 6);
+            
+            gamesToShow.forEach(game => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a href="?game=${encodeURIComponent(game)}" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
+                        <i class="fas fa-gamepad ml-2 text-xs"></i> ${game}
+                    </a>
+                `;
+                footerGamesList.appendChild(li);
+            });
+        }
+
         // Filter and Sort Scripts
         function filterScripts() {
             currentPage = 1;
@@ -834,17 +1096,20 @@
                     return (
                         (script.name && script.name.toLowerCase().includes(searchTerm)) ||
                         (script.description && script.description.toLowerCase().includes(searchTerm)) ||
+                        (script.map && script.map.toLowerCase().includes(searchTerm)) ||
                         (script.game && script.game.toLowerCase().includes(searchTerm)) ||
-                        (script.tags && script.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
+                        (script.tags && Array.isArray(script.tags) && 
+                         script.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
                     );
                 });
             }
             
             // Apply game filter
             if (currentGameFilter !== 'all') {
-                filteredScripts = filteredScripts.filter(script => 
-                    script.game === currentGameFilter
-                );
+                filteredScripts = filteredScripts.filter(script => {
+                    const gameName = script.map || script.game;
+                    return gameName === currentGameFilter;
+                });
             }
             
             // Apply sorting
@@ -931,8 +1196,11 @@
         // Create Script Card Element
         function createScriptCard(script) {
             const card = document.createElement('div');
-            card.className = 'script-card glass-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 cursor-pointer';
+            card.className = 'script-card glass-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 cursor-pointer shine-effect';
             card.setAttribute('data-id', script.id);
+            
+            // Get game name from either map or game field
+            const gameName = script.map || script.game || 'عام';
             
             // Highlight search term in name and description
             const highlightedName = highlightSearchTerm(script.name || 'بدون اسم', currentSearchTerm);
@@ -941,21 +1209,21 @@
             // Format numbers
             const views = script.views || 0;
             const downloads = script.downloads || 0;
-            const formattedViews = views >= 1000 ? `${(views/1000).toFixed(1)}K` : views;
-            const formattedDownloads = downloads >= 1000 ? `${(downloads/1000).toFixed(1)}K` : downloads;
+            const formattedViews = formatNumber(views);
+            const formattedDownloads = formatNumber(downloads);
             
             // Determine badge based on script data
             let badgeHTML = '';
-            if (script.isNew) {
+            if (script.isNew || script.status === 'new') {
                 badgeHTML = '<span class="script-badge">جديد</span>';
-            } else if (script.isUpdated) {
+            } else if (script.isUpdated || script.status === 'updated') {
                 badgeHTML = '<span class="script-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">محدث</span>';
             } else if (downloads > 1000) {
                 badgeHTML = '<span class="script-badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">شائع</span>';
             }
             
             // Get game icon
-            const gameIcon = getGameIcon(script.game);
+            const gameIcon = getGameIcon(gameName);
             
             card.innerHTML = `
                 ${badgeHTML}
@@ -963,9 +1231,9 @@
                     <div class="flex-1">
                         <h3 class="font-bold text-lg md:text-xl text-gray-800 mb-2">${highlightedName}</h3>
                         <div class="flex items-center text-sm text-gray-600">
-                            <span class="inline-flex items-center bg-gray-100 px-2 py-1 rounded-lg">
+                            <span class="game-badge">
                                 ${gameIcon}
-                                <span class="mr-1">${script.game || 'عام'}</span>
+                                <span class="mr-1">${gameName}</span>
                             </span>
                         </div>
                     </div>
@@ -985,7 +1253,7 @@
                                 <span>${formattedDownloads}</span>
                             </span>
                         </div>
-                        <span class="text-xs">${formatDate(script.createdAt)}</span>
+                        <span class="text-xs">${formatDate(script.createdAt || script.date)}</span>
                     </div>
                     
                     <button class="w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base">
@@ -1015,15 +1283,32 @@
                 'Blox Fruits': '<i class="fas fa-apple-alt text-orange-500"></i>',
                 'Da Hood': '<i class="fas fa-home text-purple-500"></i>',
                 'Pet Simulator X': '<i class="fas fa-paw text-green-500"></i>',
+                'Pet Simulator': '<i class="fas fa-paw text-green-500"></i>',
                 'BedWars': '<i class="fas fa-bed text-red-500"></i>',
+                'Bed Wars': '<i class="fas fa-bed text-red-500"></i>',
                 'Brookhaven': '<i class="fas fa-city text-indigo-500"></i>',
                 'King Legacy': '<i class="fas fa-crown text-yellow-500"></i>',
                 'Shindo Life': '<i class="fas fa-fist-raised text-blue-500"></i>',
                 'Project Slayers': '<i class="fas fa-skull text-gray-700"></i>',
-                'Arsenal': '<i class="fas fa-gun text-gray-600"></i>'
+                'Arsenal': '<i class="fas fa-gun text-gray-600"></i>',
+                'MM2': '<i class="fas fa-user-secret text-gray-600"></i>',
+                'Murder Mystery 2': '<i class="fas fa-user-secret text-gray-600"></i>',
+                'Anime Fighters': '<i class="fas fa-user-ninja text-pink-500"></i>'
             };
             
-            return icons[gameName] || '<i class="fas fa-gamepad text-gray-500"></i>';
+            // Check for exact match first
+            if (icons[gameName]) {
+                return icons[gameName];
+            }
+            
+            // Check for partial matches
+            for (const [key, icon] of Object.entries(icons)) {
+                if (gameName.toLowerCase().includes(key.toLowerCase())) {
+                    return icon;
+                }
+            }
+            
+            return '<i class="fas fa-gamepad text-gray-500"></i>';
         }
 
         function formatDate(timestamp) {
@@ -1039,6 +1324,15 @@
             } catch (e) {
                 return 'تاريخ غير معروف';
             }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
         }
 
         // Load More Functionality
