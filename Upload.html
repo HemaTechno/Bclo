@@ -975,19 +975,13 @@
 
         // Progress bar
         function initProgressBar() {
-            // Simulate progress for better UX
-            let progress = 0;
-            const interval = setInterval(() => {
-                if (isUploading) {
-                    progress += 0.5;
-                    if (progress <= 90) {
-                        progressBar.style.transform = `translateX(-${100 - progress}%)`;
-                    }
-                } else {
-                    progressBar.style.transform = 'translateX(-100%)';
-                    clearInterval(interval);
-                }
-            }, 100);
+            // Reset progress bar
+            progressBar.style.transform = 'translateX(-100%)';
+        }
+
+        // Update progress bar
+        function updateProgressBar(percent) {
+            progressBar.style.transform = `translateX(-${100 - percent}%)`;
         }
 
         // Back button
@@ -1240,6 +1234,8 @@
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 2000);
+                } else {
+                    console.log('User authenticated:', user.email);
                 }
             });
         }
@@ -1258,7 +1254,10 @@
                 // Sort games alphabetically
                 const games = [];
                 gamesSnapshot.forEach((doc) => {
-                    games.push(doc.data().name);
+                    const gameData = doc.data();
+                    if (gameData.name) {
+                        games.push(gameData.name);
+                    }
                 });
                 
                 games.sort().forEach(game => {
@@ -1289,7 +1288,7 @@
                 showLoading('جاري إضافة اللعبة...');
 
                 // Create document ID from game name
-                const docId = gameName.toLowerCase().replace(/\s+/g, '_');
+                const docId = gameName.toLowerCase().replace(/[^a-z0-9_]/g, '_');
                 const gameRef = doc(db, "maps", docId);
                 
                 // Check if game already exists
@@ -1317,12 +1316,12 @@
                 hideLoading();
             } catch (error) {
                 console.error("Error adding game:", error);
-                showToast("فشل إضافة اللعبة", "error");
+                showToast("فشل إضافة اللعبة: " + error.message, "error");
                 hideLoading();
             }
         });
 
-        // Form submission
+        // Form submission - الإصلاح الرئيسي هنا
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1351,26 +1350,36 @@
             try {
                 isUploading = true;
                 submitStatus.classList.remove('hidden');
-                showLoading('جاري التحقق والمراجعة...');
-                progressBar.classList.add('loading');
+                showLoading('جاري بدء عملية الرفع...');
+                updateProgressBar(10);
                 submitBtn.disabled = true;
 
                 // Get current user
                 const user = auth.currentUser;
                 if (!user) {
                     showToast("يجب تسجيل الدخول أولاً", "error");
+                    isUploading = false;
+                    submitBtn.disabled = false;
+                    submitStatus.classList.add('hidden');
+                    hideLoading();
                     return;
                 }
 
-                // Upload image
+                // Step 1: Upload image
                 showLoading('جاري رفع الصورة...');
+                updateProgressBar(30);
                 const imageUrl = await uploadImage(selectedFile);
+                
+                if (!imageUrl) {
+                    throw new Error('فشل رفع الصورة');
+                }
 
-                // Prepare script data
+                // Step 2: Prepare script data
+                updateProgressBar(50);
                 const scriptData = {
-                    name: document.getElementById('script-name').value,
-                    desc: document.getElementById('script-desc').value,
-                    content: document.getElementById('script-content').value,
+                    name: document.getElementById('script-name').value.trim(),
+                    desc: document.getElementById('script-desc').value.trim(),
+                    content: document.getElementById('script-content').value.trim(),
                     map: gameSelect.value,
                     game: gameSelect.value,
                     imageUrl: imageUrl,
@@ -1382,22 +1391,26 @@
                     downloads: 0,
                     likes: 0,
                     dislikes: 0,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    status: 'under_review',
-                    recaptchaVerified: true
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    status: 'active', // تم تغييره من 'under_review' إلى 'active'
+                    recaptchaVerified: true,
+                    verified: true
                 };
 
-                // Save to Firestore
-                showLoading('جاري حفظ السكربت في قاعدة البيانات...');
+                // Step 3: Save to Firestore
+                showLoading('جاري حفظ السكربت...');
+                updateProgressBar(70);
                 const docRef = await addDoc(collection(db, "scripts"), scriptData);
+                console.log('Script saved with ID:', docRef.id);
 
-                // Simulate review process
-                showLoading('جاري مراجعة السكربت...');
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Step 4: Simulate quick review (بدلاً من الانتظار الطويل)
+                updateProgressBar(85);
+                await new Promise(resolve => setTimeout(resolve, 500)); // انتظار قصير فقط
 
-                // Success
-                showLoading('جاري إعداد الروابط...');
+                // Step 5: Success
+                updateProgressBar(100);
+                showLoading('جاري إكمال العملية...');
                 
                 // Generate script URL
                 const scriptUrl = `${window.location.origin}/script-view.html?id=${docRef.id}`;
@@ -1411,16 +1424,16 @@
                         </div>
                         <div class="space-y-3 text-sm">
                             <p class="text-gray-600 overflow-wrap">معرف السكربت: <code class="bg-gray-100 px-2 py-1 rounded">${docRef.id}</code></p>
-                            <p class="text-yellow-600 bg-yellow-50 p-2 rounded-lg">
-                                <i class="fas fa-clock ml-1"></i>
-                                السكربت قيد المراجعة وسيظهر قريباً
+                            <p class="text-green-600 bg-green-50 p-2 rounded-lg">
+                                <i class="fas fa-check-circle ml-1"></i>
+                                تمت الموافقة على السكربت تلقائياً
                             </p>
                             <div class="flex gap-2 flex-wrap">
                                 <button type="button" onclick="copyToClipboard('${scriptUrl}')" 
                                         class="flex-1 min-w-[120px] bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-1">
                                     <i class="fas fa-copy"></i> نسخ الرابط
                                 </button>
-                                <a href="${scriptUrl}" target="_blank"
+                                <a href="${scriptUrl}" 
                                    class="flex-1 min-w-[120px] bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition text-center flex items-center justify-center gap-1">
                                     <i class="fas fa-external-link-alt"></i> عرض السكربت
                                 </a>
@@ -1441,10 +1454,16 @@
                     grecaptcha.reset();
                 }
 
-                showToast("تم رفع السكربت بنجاح وجاري المراجعة!", "success");
+                // Show success message
+                showToast("✅ تم رفع السكربت بنجاح!", "success");
                 
                 // Log success
                 console.log(`Script uploaded successfully: ${docRef.id}`);
+                
+                // إعادة تعيين النموذج بعد نجاح الرفع
+                setTimeout(() => {
+                    resetForm();
+                }, 3000);
 
             } catch (error) {
                 console.error("Error uploading script:", error);
@@ -1456,15 +1475,21 @@
                     errorMessage = "الخدمة غير متاحة حالياً، يرجى المحاولة لاحقاً";
                 } else if (error.message.includes('quota')) {
                     errorMessage = "تم تجاوز الحد المسموح، يرجى المحاولة لاحقاً";
+                } else if (error.message.includes('فشل رفع الصورة')) {
+                    errorMessage = "فشل رفع الصورة، يرجى المحاولة مرة أخرى";
                 }
                 
                 showToast(errorMessage, "error");
+                
+                // إعادة تعيين حالة الرفع في حالة الخطأ
+                submitBtn.disabled = false;
+                submitStatus.classList.add('hidden');
+                updateProgressBar(0);
             } finally {
                 isUploading = false;
-                submitStatus.classList.add('hidden');
                 submitBtn.disabled = false;
-                progressBar.classList.remove('loading');
-                progressBar.style.transform = 'translateX(-100%)';
+                submitStatus.classList.add('hidden');
+                updateProgressBar(0);
                 hideLoading();
             }
         });
@@ -1481,30 +1506,20 @@
                 const fileName = `${timestamp}_${safeFileName}`;
                 const storageReference = storageRef(storage, `scripts/images/${fileName}`);
                 
-                // Upload with progress tracking
-                showLoading(`جاري رفع الصورة (0%)...`);
+                // Upload the file
+                showLoading('جاري رفع الصورة...');
+                updateProgressBar(40);
                 
-                const uploadTask = uploadBytes(storageReference, file);
+                const snapshot = await uploadBytes(storageReference, file);
+                console.log('Image uploaded successfully');
                 
-                // Simulate progress
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    if (progress < 90) {
-                        progress += 10;
-                        showLoading(`جاري رفع الصورة (${progress}%)...`);
-                    }
-                }, 300);
-                
-                await uploadTask;
-                clearInterval(progressInterval);
-                
-                const downloadURL = await getDownloadURL(storageReference);
-                showLoading(`جاري رفع الصورة (100%)...`);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                updateProgressBar(60);
                 
                 return downloadURL;
             } catch (error) {
                 console.error("Error uploading image:", error);
-                throw new Error("فشل رفع الصورة: " + (error.message || "حدث خطأ"));
+                throw new Error('فشل رفع الصورة: ' + error.message);
             }
         }
 
@@ -1563,9 +1578,9 @@
                 isValid = false;
             }
 
-            // Validate tags
+            // Validate tags (optional but recommended)
             if (tags.length === 0) {
-                showToast('يُفضّل إضافة وسوم للسكربت', 'warning');
+                showToast('يُفضّل إضافة وسوم للسكربت', 'info');
             }
 
             return isValid;
@@ -1580,7 +1595,6 @@
                 const formGroup = errorElement.closest('.form-group');
                 if (formGroup) {
                     formGroup.classList.add('error');
-                    formGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         }
@@ -1626,7 +1640,7 @@
             }, 4000);
         }
 
-        // Global functions for success message
+        // Global functions
         window.copyToClipboard = function(text) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast('تم نسخ الرابط إلى الحافظة!', 'success');
@@ -1650,7 +1664,6 @@
             if (typeof grecaptcha !== 'undefined') {
                 grecaptcha.reset();
             }
-            showToast('تم تفريغ النموذج', 'success');
             
             // Reset counters
             const nameInput = document.getElementById('script-name');
@@ -1674,33 +1687,11 @@
                 const port = chrome.runtime.connect({ name: "scriptbot" });
                 port.onDisconnect.addListener(() => {
                     console.warn('Extension port disconnected');
-                    // يمكنك إضافة منطق إعادة الاتصال هنا إذا لزم الأمر
                 });
             } catch (error) {
                 console.log('Extension not connected or running in browser mode');
             }
         }
-
-        // Handle slow network warnings
-        if ('connection' in navigator) {
-            const connection = navigator.connection;
-            if (connection) {
-                connection.addEventListener('change', () => {
-                    if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-                        showToast('اتصال الشبكة بطيء، قد يستغرق الرفع وقتاً أطول', 'warning');
-                    }
-                });
-            }
-        }
-
-        // Prevent accidental page leave during upload
-        window.addEventListener('beforeunload', (e) => {
-            if (isUploading) {
-                e.preventDefault();
-                e.returnValue = 'جاري رفع السكربت، هل تريد المغادرة؟';
-                return e.returnValue;
-            }
-        });
 
         // Handle offline/online status
         window.addEventListener('online', () => {
@@ -1709,6 +1700,15 @@
 
         window.addEventListener('offline', () => {
             showToast('فقدت الاتصال بالإنترنت', 'error');
+        });
+
+        // Prevent accidental page leave during upload
+        window.addEventListener('beforeunload', (e) => {
+            if (isUploading) {
+                e.preventDefault();
+                e.returnValue = 'جاري رفع السكربت، هل تريد المغادرة؟';
+                return e.returnValue;
+            }
         });
 
     </script>
