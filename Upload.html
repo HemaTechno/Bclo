@@ -5,6 +5,7 @@
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="ads" content="no-ads">
     <title>رفع سكربت جديد | ScriptBot - مشاركة السكربتات</title>
     <meta name="description" content="أضف سكربت Roblox جديد إلى مكتبتنا. رفع آمن، دعم جميع الألعاب، وتحميل سريع للصور." />
     
@@ -15,8 +16,19 @@
     <meta property="og:url" content="https://scriptbot.cloud/upload.html" />
     <meta property="og:type" content="website" />
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- CSS Resources -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" preload />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <!-- reCAPTCHA v2 -->
@@ -31,6 +43,12 @@
             --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
         }
         
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
         body {
             font-family: 'Cairo', sans-serif;
             background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
@@ -39,6 +57,7 @@
             padding: 0;
             direction: rtl;
             position: relative;
+            overflow-x: hidden;
         }
         
         body::before {
@@ -185,6 +204,7 @@
             width: 100%;
             max-height: 200px;
             object-fit: cover;
+            display: block;
         }
         
         .remove-file {
@@ -352,21 +372,6 @@
             font-size: 0.75rem;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .upload-container {
-                padding: 1.5rem !important;
-            }
-            
-            .header-title {
-                font-size: 2rem !important;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr !important;
-            }
-        }
-        
         /* Code editor styling */
         .code-editor {
             font-family: 'Cascadia Code', 'Courier New', monospace;
@@ -413,20 +418,179 @@
         .form-group.success .glass-input {
             border-color: #22c55e;
         }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.5rem !important;
+            }
+            
+            .glass-card {
+                border-radius: 16px !important;
+                padding: 1rem !important;
+            }
+            
+            .upload-container {
+                padding: 1rem !important;
+            }
+            
+            .header-title {
+                font-size: 1.75rem !important;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .code-editor {
+                font-size: 12px !important;
+            }
+            
+            .g-recaptcha {
+                transform: scale(0.85);
+                transform-origin: center;
+            }
+            
+            .file-upload-container {
+                padding: 1.5rem !important;
+            }
+            
+            .toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* Tablet */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .container {
+                max-width: 100% !important;
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1.5rem !important;
+            }
+            
+            .header-title {
+                font-size: 2.5rem !important;
+            }
+        }
+        
+        /* Desktop */
+        @media (min-width: 1025px) {
+            .container {
+                max-width: 1200px !important;
+            }
+        }
+        
+        /* Touch device optimization */
+        @media (hover: none) and (pointer: coarse) {
+            button, 
+            .btn-glow,
+            .file-upload-container,
+            .tag-remove,
+            .remove-file,
+            .add-map-btn,
+            .code-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            input, 
+            textarea, 
+            select {
+                font-size: 16px !important;
+            }
+            
+            .file-upload-container {
+                min-height: 150px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+        
+        /* Text overflow prevention */
+        .overflow-wrap {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        /* Performance optimizations */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Fix for iOS zoom */
+        @supports (-webkit-touch-callout: none) {
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Loading bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            z-index: 3000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .progress-bar.loading {
+            animation: loading 2s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+    
+    <!-- Font display optimization -->
+    <style>
+        @font-face {
+            font-family: 'Cairo';
+            font-display: swap;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Progress Bar -->
+    <div id="progress-bar" class="progress-bar"></div>
 
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay hidden">
         <div class="loading-spinner"></div>
         <p class="text-gray-600 text-lg font-medium" id="loading-text">جارٍ المعالجة...</p>
+        <div class="mt-4 px-4 py-2 bg-blue-50 rounded-lg">
+            <p class="text-blue-600 text-sm">جاري المراجعة والرفع...</p>
+        </div>
     </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast glass-card">
         <i id="toast-icon" class="fas fa-check-circle text-green-500"></i>
-        <span id="toast-message" class="text-gray-700">تمت العملية بنجاح!</span>
+        <span id="toast-message" class="text-gray-700 overflow-wrap">تمت العملية بنجاح!</span>
     </div>
 
     <!-- Header -->
@@ -470,10 +634,10 @@
                 <div class="inline-block p-6 glass-card floating mb-4">
                     <i class="fas fa-cloud-upload-alt text-4xl gradient-text"></i>
                 </div>
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 header-title">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 header-title overflow-wrap">
                     رفع <span class="gradient-text">سكربت</span> جديد
                 </h1>
-                <p class="text-gray-600 max-w-2xl mx-auto">
+                <p class="text-gray-600 max-w-2xl mx-auto overflow-wrap">
                     شارك سكربت Roblox الخاص بك مع مجتمعنا. تأكد من اتباع <a href="rules.html" class="text-blue-600 hover:underline">قواعد المجتمع</a>.
                 </p>
             </div>
@@ -548,7 +712,7 @@
                             id="script-desc" 
                             name="script-desc"
                             rows="3"
-                            class="glass-input w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="glass-input w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-wrap"
                             placeholder="وصف مفصل للسكربت وميزاته..."
                             required
                             maxlength="500"
@@ -578,7 +742,7 @@
                             id="script-content" 
                             name="script-content"
                             rows="8"
-                            class="glass-input w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 code-editor"
+                            class="glass-input w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 code-editor overflow-wrap"
                             placeholder="انسخ كود السكربت هنا..."
                             required
                             spellcheck="false"
@@ -596,13 +760,13 @@
                         <input 
                             type="text" 
                             id="tag-input"
-                            class="glass-input w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="glass-input w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-wrap"
                             placeholder="أضف وسم (اضغط Enter لإضافة)"
                         >
                         <div class="tags-container mt-2" id="tags-container">
                             <!-- Tags will be added here -->
                         </div>
-                        <div class="text-sm text-gray-500 mt-1">
+                        <div class="text-sm text-gray-500 mt-1 overflow-wrap">
                             أضف وسوماً مثل: Auto Farm, ESP, Aimbot, Teleport
                         </div>
                     </div>
@@ -629,10 +793,10 @@
                             <div class="text-4xl text-blue-500 mb-2">
                                 <i class="fas fa-cloud-upload-alt"></i>
                             </div>
-                            <p class="text-gray-600 mb-1">
+                            <p class="text-gray-600 mb-1 overflow-wrap">
                                 <span class="font-semibold text-blue-600">انقر لاختيار ملف</span> أو اسحب وأفلت
                             </p>
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-gray-500 overflow-wrap">
                                 يدعم: PNG, JPG, GIF - الحد الأقصى: 5MB
                             </p>
                         </div>
@@ -654,7 +818,8 @@
                             class="gradient-bg text-white w-full py-4 rounded-xl font-bold btn-glow flex items-center justify-center gap-2"
                         >
                             <i class="fas fa-cloud-upload-alt"></i>
-                            رفع السكربت
+                            <span>رفع السكربت</span>
+                            <span id="submit-status" class="text-sm font-normal hidden">(جاري المراجعة...)</span>
                         </button>
                     </div>
 
@@ -665,27 +830,27 @@
 
             <!-- Upload Guidelines -->
             <div class="glass-card p-6 mt-6 fade-in">
-                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center overflow-wrap">
                     <i class="fas fa-info-circle ml-2 text-blue-500"></i>
                     إرشادات الرفع
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="p-3 rounded-lg bg-blue-50/50">
-                        <h4 class="font-semibold text-blue-700 mb-2">✅ المسموح</h4>
+                        <h4 class="font-semibold text-blue-700 mb-2 overflow-wrap">✅ المسموح</h4>
                         <ul class="text-sm text-gray-600 space-y-1">
-                            <li>• سكربتات Roblox الأصلية</li>
-                            <li>• صور توضيحية واضحة</li>
-                            <li>• أسماء وأوصاف بالعربية أو الإنجليزية</li>
-                            <li>• وسوم دلالية مناسبة</li>
+                            <li class="overflow-wrap">• سكربتات Roblox الأصلية</li>
+                            <li class="overflow-wrap">• صور توضيحية واضحة</li>
+                            <li class="overflow-wrap">• أسماء وأوصاف بالعربية أو الإنجليزية</li>
+                            <li class="overflow-wrap">• وسوم دلالية مناسبة</li>
                         </ul>
                     </div>
                     <div class="p-3 rounded-lg bg-red-50/50">
-                        <h4 class="font-semibold text-red-700 mb-2">❌ الممنوع</h4>
+                        <h4 class="font-semibold text-red-700 mb-2 overflow-wrap">❌ الممنوع</h4>
                         <ul class="text-sm text-gray-600 space-y-1">
-                            <li>• سكربتات ضارة أو تحتوي على فيروسات</li>
-                            <li>• محتوى غير قانوني أو مسيء</li>
-                            <li>• صور غير مناسبة أو مخالفة</li>
-                            <li>• سرقة سكربتات الآخرين</li>
+                            <li class="overflow-wrap">• سكربتات ضارة أو تحتوي على فيروسات</li>
+                            <li class="overflow-wrap">• محتوى غير قانوني أو مسيء</li>
+                            <li class="overflow-wrap">• صور غير مناسبة أو مخالفة</li>
+                            <li class="overflow-wrap">• سرقة سكربتات الآخرين</li>
                         </ul>
                     </div>
                 </div>
@@ -697,8 +862,8 @@
     <footer class="mt-12 pt-8 pb-4 px-4">
         <div class="container mx-auto">
             <div class="glass-card p-6 text-center">
-                <p class="text-gray-600 mb-2">ScriptBot.cloud © 2025 - جميع الحقوق محفوظة</p>
-                <p class="text-sm text-gray-500">هذا الموقع ليس تابعًا لشركة Roblox Corporation</p>
+                <p class="text-gray-600 mb-2 overflow-wrap">ScriptBot.cloud © 2025 - جميع الحقوق محفوظة</p>
+                <p class="text-sm text-gray-500 overflow-wrap">هذا الموقع ليس تابعًا لشركة Roblox Corporation</p>
             </div>
         </div>
     </footer>
@@ -745,14 +910,18 @@
         const tagsContainer = document.getElementById('tags-container');
         const submitBtn = document.getElementById('submit-btn');
         const formStatus = document.getElementById('form-status');
+        const submitStatus = document.getElementById('submit-status');
+        const progressBar = document.getElementById('progress-bar');
 
         // State
         let tags = [];
         let selectedFile = null;
         let isUploading = false;
+        let uploadProgress = 0;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            initFaviconFallback();
             initBackButton();
             initCharacterCounters();
             initFileUpload();
@@ -760,7 +929,66 @@
             initCodeEditor();
             checkAuth();
             loadGames();
+            initProgressBar();
+            
+            // Set lazy loading for images
+            document.querySelectorAll('img').forEach(img => {
+                img.loading = 'lazy';
+            });
+            
+            console.log('ScriptBot Upload Form initialized successfully');
         });
+
+        // Favicon fallback
+        function initFaviconFallback() {
+            fetch('favicon.ico').catch(() => {
+                // Create dynamic favicon if not found
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                
+                // Create gradient background
+                const gradient = ctx.createLinearGradient(0, 0, 64, 64);
+                gradient.addColorStop(0, '#667eea');
+                gradient.addColorStop(1, '#764ba2');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 64, 64);
+                
+                // Draw cloud icon
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '40px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('☁️', 32, 32);
+                
+                // Create favicon link
+                const link = document.createElement('link');
+                link.rel = 'icon';
+                link.href = canvas.toDataURL('image/x-icon');
+                document.head.appendChild(link);
+                
+                console.log('Dynamic favicon created');
+            });
+        }
+
+        // Progress bar
+        function initProgressBar() {
+            // Simulate progress for better UX
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (isUploading) {
+                    progress += 0.5;
+                    if (progress <= 90) {
+                        progressBar.style.transform = `translateX(-${100 - progress}%)`;
+                    }
+                } else {
+                    progressBar.style.transform = 'translateX(-100%)';
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
 
         // Back button
         function initBackButton() {
@@ -784,9 +1012,9 @@
 
             function updateCounter(input, counter, max) {
                 const length = input.value.length;
-                counter.textContent = `${length}/${max}`;
-                
                 if (max) {
+                    counter.textContent = `${length}/${max}`;
+                    
                     const percentage = (length / max) * 100;
                     if (percentage > 90) {
                         counter.classList.add('warning');
@@ -797,6 +1025,8 @@
                     } else {
                         counter.classList.remove('warning', 'danger');
                     }
+                } else {
+                    counter.textContent = `${length} حرف`;
                 }
             }
 
@@ -813,22 +1043,27 @@
         // File upload
         function initFileUpload() {
             // Click to select file
-            fileUploadArea.addEventListener('click', () => {
+            fileUploadArea.addEventListener('click', (e) => {
+                e.stopPropagation();
                 scriptImage.click();
             });
 
             // Drag and drop
             fileUploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 fileUploadArea.classList.add('dragover');
             });
 
-            fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 fileUploadArea.classList.remove('dragover');
             });
 
             fileUploadArea.addEventListener('drop', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 fileUploadArea.classList.remove('dragover');
                 
                 if (e.dataTransfer.files.length > 0) {
@@ -853,12 +1088,14 @@
             // Validate file size (5MB max)
             if (file.size > 5 * 1024 * 1024) {
                 showToast('حجم الصورة كبير جداً! الحد الأقصى 5MB', 'error');
+                scriptImage.value = '';
                 return;
             }
 
             // Validate file type
             if (!file.type.startsWith('image/')) {
                 showToast('الملف ليس صورة!', 'error');
+                scriptImage.value = '';
                 return;
             }
 
@@ -868,7 +1105,7 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 filePreview.innerHTML = `
-                    <img src="${e.target.result}" alt="معاينة الصورة">
+                    <img src="${e.target.result}" alt="معاينة الصورة" loading="lazy">
                     <button type="button" class="remove-file" id="remove-image">
                         <i class="fas fa-times"></i>
                     </button>
@@ -934,7 +1171,7 @@
             tagsContainer.innerHTML = '';
             tags.forEach((tag, index) => {
                 const tagElement = document.createElement('div');
-                tagElement.className = 'tag';
+                tagElement.className = 'tag overflow-wrap';
                 tagElement.innerHTML = `
                     ${tag}
                     <button type="button" class="tag-remove" data-index="${index}">
@@ -967,12 +1204,14 @@
                 code = code.replace(/\{/g, '{\n    ');
                 code = code.replace(/\}/g, '\n}');
                 codeInput.value = code;
+                showToast('تم تنسيق الكود', 'success');
             });
 
             // Clear code
             clearBtn.addEventListener('click', () => {
                 if (confirm('هل أنت متأكد من مسح الكود؟')) {
                     codeInput.value = '';
+                    showToast('تم مسح الكود', 'success');
                 }
             });
 
@@ -980,9 +1219,14 @@
             pasteBtn.addEventListener('click', async () => {
                 try {
                     const text = await navigator.clipboard.readText();
+                    if (text.length > 10000) {
+                        showToast('الكود كبير جداً، يرجى تقليصه', 'warning');
+                        return;
+                    }
                     codeInput.value = text;
                     showToast('تم لصق الكود من الحافظة', 'success');
                 } catch (error) {
+                    console.warn('Clipboard error:', error);
                     showToast('تعذر الوصول إلى الحافظة', 'error');
                 }
             });
@@ -992,7 +1236,10 @@
         function checkAuth() {
             onAuthStateChanged(auth, (user) => {
                 if (!user) {
-                    window.location.href = 'login.html';
+                    showToast('يجب تسجيل الدخول أولاً', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
                 }
             });
         }
@@ -1000,6 +1247,7 @@
         // Load games from database
         async function loadGames() {
             try {
+                showLoading('جاري تحميل قائمة الألعاب...');
                 const gamesSnapshot = await getDocs(collection(db, "maps"));
                 
                 // Clear existing options except first one
@@ -1019,9 +1267,13 @@
                     option.textContent = game;
                     gameSelect.appendChild(option);
                 });
+                
+                hideLoading();
+                console.log(`Loaded ${games.length} games`);
             } catch (error) {
                 console.error("Error loading games:", error);
                 showToast("حدث خطأ في تحميل قائمة الألعاب", "error");
+                hideLoading();
             }
         }
 
@@ -1029,7 +1281,7 @@
         addGameBtn.addEventListener('click', async () => {
             const gameName = newGameInput.value.trim();
             if (!gameName) {
-                showToast("يرجى إدخال اسم اللعبة", "error");
+                showError('new-game', "يرجى إدخال اسم اللعبة");
                 return;
             }
 
@@ -1074,7 +1326,10 @@
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            if (isUploading) return;
+            if (isUploading) {
+                showToast('جاري رفع سكربت آخر، يرجى الانتظار', 'warning');
+                return;
+            }
             
             // Validate form
             if (!validateForm()) {
@@ -1082,6 +1337,11 @@
             }
 
             // Validate reCAPTCHA
+            if (typeof grecaptcha === 'undefined') {
+                showToast("خطأ في تحميل reCAPTCHA", "error");
+                return;
+            }
+            
             const recaptchaResponse = grecaptcha.getResponse();
             if (!recaptchaResponse) {
                 showToast("يرجى تأكيد أنك لست روبوت", "error");
@@ -1090,7 +1350,9 @@
 
             try {
                 isUploading = true;
-                showLoading('جاري رفع السكربت...');
+                submitStatus.classList.remove('hidden');
+                showLoading('جاري التحقق والمراجعة...');
+                progressBar.classList.add('loading');
                 submitBtn.disabled = true;
 
                 // Get current user
@@ -1115,18 +1377,24 @@
                     tags: tags,
                     userId: user.uid,
                     userName: user.displayName || 'مستخدم',
+                    userEmail: user.email || '',
                     views: 0,
                     downloads: 0,
                     likes: 0,
                     dislikes: 0,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                    status: 'pending' // أو 'active' حسب نظام المراجعة
+                    status: 'under_review',
+                    recaptchaVerified: true
                 };
 
                 // Save to Firestore
-                showLoading('جاري حفظ السكربت...');
+                showLoading('جاري حفظ السكربت في قاعدة البيانات...');
                 const docRef = await addDoc(collection(db, "scripts"), scriptData);
+
+                // Simulate review process
+                showLoading('جاري مراجعة السكربت...');
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
                 // Success
                 showLoading('جاري إعداد الروابط...');
@@ -1139,23 +1407,27 @@
                     <div class="p-4 rounded-xl bg-green-50 border border-green-200">
                         <div class="flex items-center justify-center gap-3 mb-3">
                             <i class="fas fa-check-circle text-3xl text-green-500"></i>
-                            <h4 class="text-xl font-bold text-green-700">تم رفع السكربت بنجاح!</h4>
+                            <h4 class="text-xl font-bold text-green-700 overflow-wrap">تم رفع السكربت بنجاح!</h4>
                         </div>
                         <div class="space-y-3 text-sm">
-                            <p class="text-gray-600">معرف السكربت: <code class="bg-gray-100 px-2 py-1 rounded">${docRef.id}</code></p>
-                            <div class="flex gap-2">
+                            <p class="text-gray-600 overflow-wrap">معرف السكربت: <code class="bg-gray-100 px-2 py-1 rounded">${docRef.id}</code></p>
+                            <p class="text-yellow-600 bg-yellow-50 p-2 rounded-lg">
+                                <i class="fas fa-clock ml-1"></i>
+                                السكربت قيد المراجعة وسيظهر قريباً
+                            </p>
+                            <div class="flex gap-2 flex-wrap">
                                 <button type="button" onclick="copyToClipboard('${scriptUrl}')" 
-                                        class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                                    <i class="fas fa-copy ml-1"></i> نسخ الرابط
+                                        class="flex-1 min-w-[120px] bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-1">
+                                    <i class="fas fa-copy"></i> نسخ الرابط
                                 </button>
                                 <a href="${scriptUrl}" target="_blank"
-                                   class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition text-center">
-                                    <i class="fas fa-external-link-alt ml-1"></i> عرض السكربت
+                                   class="flex-1 min-w-[120px] bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition text-center flex items-center justify-center gap-1">
+                                    <i class="fas fa-external-link-alt"></i> عرض السكربت
                                 </a>
                             </div>
                             <button type="button" onclick="resetForm()" 
-                                    class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition">
-                                <i class="fas fa-plus ml-1"></i> رفع سكربت جديد
+                                    class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition flex items-center justify-center gap-1">
+                                <i class="fas fa-plus"></i> رفع سكربت جديد
                             </button>
                         </div>
                     </div>
@@ -1165,16 +1437,34 @@
                 formStatus.scrollIntoView({ behavior: 'smooth' });
 
                 // Reset reCAPTCHA
-                grecaptcha.reset();
+                if (typeof grecaptcha !== 'undefined') {
+                    grecaptcha.reset();
+                }
 
-                showToast("تم رفع السكربت بنجاح!", "success");
+                showToast("تم رفع السكربت بنجاح وجاري المراجعة!", "success");
+                
+                // Log success
+                console.log(`Script uploaded successfully: ${docRef.id}`);
 
             } catch (error) {
                 console.error("Error uploading script:", error);
-                showToast("فشل رفع السكربت: " + (error.message || "حدث خطأ غير متوقع"), "error");
+                let errorMessage = "فشل رفع السكربت";
+                
+                if (error.code === 'permission-denied') {
+                    errorMessage = "ليس لديك صلاحية رفع السكربتات";
+                } else if (error.code === 'unavailable') {
+                    errorMessage = "الخدمة غير متاحة حالياً، يرجى المحاولة لاحقاً";
+                } else if (error.message.includes('quota')) {
+                    errorMessage = "تم تجاوز الحد المسموح، يرجى المحاولة لاحقاً";
+                }
+                
+                showToast(errorMessage, "error");
             } finally {
                 isUploading = false;
+                submitStatus.classList.add('hidden');
                 submitBtn.disabled = false;
+                progressBar.classList.remove('loading');
+                progressBar.style.transform = 'translateX(-100%)';
                 hideLoading();
             }
         });
@@ -1182,17 +1472,39 @@
         // Upload image to Firebase Storage
         async function uploadImage(file) {
             try {
+                if (!file) {
+                    throw new Error('لا توجد صورة مرفوعة');
+                }
+
                 const timestamp = Date.now();
-                const fileName = `${timestamp}_${file.name}`;
+                const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                const fileName = `${timestamp}_${safeFileName}`;
                 const storageReference = storageRef(storage, `scripts/images/${fileName}`);
                 
-                await uploadBytes(storageReference, file);
+                // Upload with progress tracking
+                showLoading(`جاري رفع الصورة (0%)...`);
+                
+                const uploadTask = uploadBytes(storageReference, file);
+                
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    if (progress < 90) {
+                        progress += 10;
+                        showLoading(`جاري رفع الصورة (${progress}%)...`);
+                    }
+                }, 300);
+                
+                await uploadTask;
+                clearInterval(progressInterval);
+                
                 const downloadURL = await getDownloadURL(storageReference);
+                showLoading(`جاري رفع الصورة (100%)...`);
                 
                 return downloadURL;
             } catch (error) {
                 console.error("Error uploading image:", error);
-                throw new Error("فشل رفع الصورة");
+                throw new Error("فشل رفع الصورة: " + (error.message || "حدث خطأ"));
             }
         }
 
@@ -1213,6 +1525,9 @@
             if (!scriptName || scriptName.length < 3) {
                 showError('script-name', 'اسم السكربت يجب أن يكون 3 أحرف على الأقل');
                 isValid = false;
+            } else if (scriptName.length > 100) {
+                showError('script-name', 'اسم السكربت يجب أن لا يتجاوز 100 حرف');
+                isValid = false;
             }
 
             // Validate game selection
@@ -1227,6 +1542,9 @@
             if (!description || description.length < 10) {
                 showError('script-desc', 'الوصف يجب أن يكون 10 أحرف على الأقل');
                 isValid = false;
+            } else if (description.length > 500) {
+                showError('script-desc', 'الوصف يجب أن لا يتجاوز 500 حرف');
+                isValid = false;
             }
 
             // Validate content
@@ -1234,12 +1552,20 @@
             if (!content || content.length < 10) {
                 showError('script-content', 'كود السكربت يجب أن يكون 10 أحرف على الأقل');
                 isValid = false;
+            } else if (content.length > 100000) {
+                showError('script-content', 'كود السكربت كبير جداً (الحد الأقصى 100,000 حرف)');
+                isValid = false;
             }
 
             // Validate image
             if (!selectedFile) {
                 showError('script-image', 'يرجى رفع صورة للسكربت');
                 isValid = false;
+            }
+
+            // Validate tags
+            if (tags.length === 0) {
+                showToast('يُفضّل إضافة وسوم للسكربت', 'warning');
             }
 
             return isValid;
@@ -1254,6 +1580,7 @@
                 const formGroup = errorElement.closest('.form-group');
                 if (formGroup) {
                     formGroup.classList.add('error');
+                    formGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         }
@@ -1262,10 +1589,12 @@
         function showLoading(text = 'جاري المعالجة...') {
             loadingText.textContent = text;
             loadingOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
 
         function hideLoading() {
             loadingOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
         }
 
         // Toast notification
@@ -1275,33 +1604,113 @@
             const icons = {
                 success: 'fa-check-circle text-green-500',
                 error: 'fa-times-circle text-red-500',
-                warning: 'fa-exclamation-triangle text-yellow-500'
+                warning: 'fa-exclamation-triangle text-yellow-500',
+                info: 'fa-info-circle text-blue-500'
             };
             
             toastIcon.className = `fas ${icons[type] || icons.success}`;
             toast.className = `toast glass-card ${type}`;
             
+            // Remove previous show class
+            toast.classList.remove('show');
+            
+            // Force reflow
+            void toast.offsetWidth;
+            
+            // Add show class
             toast.classList.add('show');
+            
+            // Auto hide after 4 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 3000);
+            }, 4000);
         }
 
         // Global functions for success message
         window.copyToClipboard = function(text) {
             navigator.clipboard.writeText(text).then(() => {
-                showToast('تم نسخ الرابط!', 'success');
+                showToast('تم نسخ الرابط إلى الحافظة!', 'success');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showToast('فشل نسخ الرابط', 'error');
             });
         };
 
         window.resetForm = function() {
+            if (isUploading) {
+                showToast('جاري رفع سكربت، يرجى الانتظار', 'warning');
+                return;
+            }
+            
             uploadForm.reset();
             removeImage();
             tags = [];
             renderTags();
             formStatus.innerHTML = '';
-            grecaptcha.reset();
+            if (typeof grecaptcha !== 'undefined') {
+                grecaptcha.reset();
+            }
+            showToast('تم تفريغ النموذج', 'success');
+            
+            // Reset counters
+            const nameInput = document.getElementById('script-name');
+            const descInput = document.getElementById('script-desc');
+            const contentInput = document.getElementById('script-content');
+            const nameCounter = document.getElementById('name-counter');
+            const descCounter = document.getElementById('desc-counter');
+            const contentCounter = document.getElementById('content-counter');
+            
+            nameCounter.textContent = '0/100';
+            descCounter.textContent = '0/500';
+            contentCounter.textContent = '0 حرف';
+            
+            nameCounter.classList.remove('warning', 'danger');
+            descCounter.classList.remove('warning', 'danger');
         };
+
+        // Handle extension connection errors
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.connect) {
+            try {
+                const port = chrome.runtime.connect({ name: "scriptbot" });
+                port.onDisconnect.addListener(() => {
+                    console.warn('Extension port disconnected');
+                    // يمكنك إضافة منطق إعادة الاتصال هنا إذا لزم الأمر
+                });
+            } catch (error) {
+                console.log('Extension not connected or running in browser mode');
+            }
+        }
+
+        // Handle slow network warnings
+        if ('connection' in navigator) {
+            const connection = navigator.connection;
+            if (connection) {
+                connection.addEventListener('change', () => {
+                    if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                        showToast('اتصال الشبكة بطيء، قد يستغرق الرفع وقتاً أطول', 'warning');
+                    }
+                });
+            }
+        }
+
+        // Prevent accidental page leave during upload
+        window.addEventListener('beforeunload', (e) => {
+            if (isUploading) {
+                e.preventDefault();
+                e.returnValue = 'جاري رفع السكربت، هل تريد المغادرة؟';
+                return e.returnValue;
+            }
+        });
+
+        // Handle offline/online status
+        window.addEventListener('online', () => {
+            showToast('تم استعادة الاتصال بالإنترنت', 'success');
+        });
+
+        window.addEventListener('offline', () => {
+            showToast('فقدت الاتصال بالإنترنت', 'error');
+        });
+
     </script>
 </body>
 </html>
