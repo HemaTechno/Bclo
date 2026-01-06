@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>جاري التحضير للتحميل...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Linkvertise Full Script -->
+  <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
+  <script>
+    linkvertise(1264869, {
+      whitelist: [],
+      blacklist: [""]
+    });
+  </script>
+</head>
+<body style="font-family: Cairo, sans-serif; text-align:center; margin-top:60px">
+
+  <h2>⏳ برجاء إكمال الإعلان للمتابعة</h2>
+  <p>سيتم تجهيز رابط التحميل تلقائيًا</p>
+
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const params = new URLSearchParams(window.location.search);
+    const scriptId = params.get("id");
+
+    async function startDownload() {
+      const doc = await db.collection("scripts").doc(scriptId).get();
+      if (!doc.exists) return;
+
+      const data = doc.data();
+      const content = data.content;
+
+      // إنشاء ملف وتحميله
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${data.name}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+
+      // زيادة عدد التحميلات
+      db.collection("scripts").doc(scriptId).update({
+        downloads: (data.downloads || 0) + 1
+      });
+    }
+
+    // Linkvertise يفتح → بعده يتم التحميل
+    setTimeout(startDownload, 3000);
+  </script>
+
+</body>
+</html>
