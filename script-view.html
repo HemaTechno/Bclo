@@ -2,426 +2,1438 @@
 <html lang="ar" dir="rtl">
 <head>
     <script type="module" src="notification.js"></script>
-<script type="module" src="maintenance-check.js"></script>
+    <script type="module" src="maintenance-check.js"></script>
 
-  <meta charset="UTF-8" />
-  <title>عرض السكربت</title>
-  <meta name="description" content="عرض سكربت Roblox بشكل أنيق وقابل للتحميل" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
-    .fade-in {
-      animation: fadeIn 0.8s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .container {
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-      max-width: 720px;
-      width: 100%;
-      padding: 2rem 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    h1 {
-      color: #2563eb;
-      font-weight: 800;
-      font-size: 2.75rem;
-      margin-bottom: 0.5rem;
-      text-align: center;
-      letter-spacing: 1.5px;
-      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
-    }
-    p.desc {
-      color: #374151;
-      margin-bottom: 0.25rem;
-      font-size: 1rem;
-      text-align: center;
-    }
-    p.map {
-      color: #6b7280;
-      font-size: 0.875rem;
-      margin-bottom: 0.25rem;
-      text-align: center;
-    }
-    p.publisher {
-      color: #1e40af;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-      text-align: center;
-      letter-spacing: 0.6px;
-      user-select: none;
-      font-style: italic;
-    }
-    img.script-image {
-      border-radius: 12px;
-      max-height: 220px;
-      object-fit: cover;
-      width: 100%;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-      user-select: none;
-      pointer-events: none;
-      animation: fadeIn 1s ease forwards;
-    }
-    .warning {
-      background-color: #fef3c7;
-      color: #b45309;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      box-shadow: 0 0 12px #fbbf24;
-      user-select: none;
-      text-align: center;
-    }
-    pre#codeBlock {
-      background: #1e293b;
-      color: #f8fafc;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      max-height: 320px;
-      overflow-y: auto;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 14px;
-      line-height: 1.5;
-      box-shadow:
-        inset 0 0 8px rgba(255,255,255,0.05),
-        0 0 12px rgba(0,0,0,0.3);
-      user-select: none; /* منع تحديد النص */
-      white-space: pre-wrap;
-      word-break: break-word;
-      direction: ltr;
-    }
-    .btn-group {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-    .btn-back-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      align-items: center;
-    }
-    .btn-stats-group {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.3rem;
-      flex-wrap: nowrap;
-    }
-    button {
-      font-weight: 700;
-      padding: 0.65rem 1.8rem;
-      border-radius: 14px;
-      border: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-      cursor: pointer;
-      box-shadow:
-        0 4px 8px rgba(0,0,0,0.15),
-        0 0 8px rgba(0,0,0,0.1);
-      flex-grow: 0;
-      min-width: 120px;
-      text-align: center;
-      font-size: 1rem;
-      letter-spacing: 0.7px;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.12));
-    }
-    /* الأزرار الصغيرة */
-    .btn-small {
-      min-width: 70px;
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-    }
-    .btn-small-viewers {
-      background: linear-gradient(135deg, #facc15, #ca8a04);
-      color: #fff;
-      box-shadow: 0 5px 10px rgba(202,138,4,0.6);
-    }
-    .btn-small-downloads {
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
-      color: #fff;
-      box-shadow: 0 5px 10px rgba(30,64,175,0.6);
-    }
-    .btn-small-viewers:hover {
-      background: linear-gradient(135deg, #ca8a04, #a16207);
-      box-shadow: 0 7px 16px rgba(161,98,7,0.7);
-      transform: translateY(-2px);
-    }
-    .btn-small-downloads:hover {
-      background: linear-gradient(135deg, #1e40af, #1e3a8a);
-      box-shadow: 0 7px 16px rgba(30,58,138,0.7);
-      transform: translateY(-2px);
-    }
-    .btn-back {
-      background: linear-gradient(135deg, #9ca3af, #6b7280);
-      color: #f9fafb;
-      box-shadow:
-        0 6px 12px rgba(107,114,128,0.5);
-      min-width: 120px;
-    }
-    .btn-back:hover:not(:disabled) {
-      background: linear-gradient(135deg, #6b7280, #4b5563);
-      box-shadow:
-        0 8px 20px rgba(75,85,99,0.7);
-      transform: translateY(-2px);
-    }
-    .btn-copy {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: white;
-      box-shadow:
-        0 6px 15px rgba(22,163,74,0.6);
-    }
-    .btn-copy:hover:not(:disabled) {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      box-shadow:
-        0 10px 20px rgba(21,128,61,0.7);
-      transform: translateY(-2px);
-    }
-    .btn-download {
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
-      color: white;
-      box-shadow:
-        0 6px 15px rgba(30,64,175,0.6);
-    }
-    .btn-download:hover:not(:disabled) {
-      background: linear-gradient(135deg, #1e40af, #1e3a8a);
-      box-shadow:
-        0 10px 25px rgba(30,58,138,0.7);
-      transform: translateY(-2px);
-    }
-    .btn-discord {
-      background: linear-gradient(135deg, #5865F2, #4752c4);
-      color: white;
-      box-shadow:
-        0 6px 15px rgba(87,86,242,0.6);
-    }
-    .btn-discord:hover {
-      background: linear-gradient(135deg, #4752c4, #3c41a4);
-      box-shadow:
-        0 10px 25px rgba(60,65,164,0.7);
-      transform: translateY(-2px);
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>عرض السكربت | ScriptBot - تنزيل سكربت Roblox مجاناً</title>
+    <meta name="description" content="عرض وتحميل سكربت Roblox كاملاً مع كود التنفيذ. دعم مباشر، نسخ سهل، وتحميل فوري." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="عرض السكربت | ScriptBot - تنزيل سكربت Roblox مجاناً" />
+    <meta property="og:description" content="عرض وتحميل سكربت Roblox كاملاً مع كود التنفيذ." />
+    <meta property="og:image" content="https://scriptbot.cloud/assets/script-detail-banner.png" />
+    <meta property="og:url" content="https://scriptbot.cloud/script-view.html" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="عرض السكربت | ScriptBot" />
+    <meta name="twitter:description" content="تحميل سكربت Roblox مجاناً مع كود التنفيذ الكامل." />
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(240, 147, 251, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.1),
+                0 5px 15px rgba(0, 0, 0, 0.07),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+            z-index: -1;
+            border-radius: inherit;
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: var(--primary-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(102, 126, 234, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .secondary-gradient-bg {
+            background: var(--secondary-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(240, 147, 251, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success-gradient-bg {
+            background: var(--success-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(34, 197, 94, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .warning-gradient-bg {
+            background: var(--warning-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(245, 158, 11, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .danger-gradient-bg {
+            background: var(--danger-gradient);
+            border: none;
+            box-shadow: 
+                0 4px 15px rgba(239, 68, 68, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-glow {
+            box-shadow: 
+                0 4px 15px rgba(102, 126, 234, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 
+                0 6px 25px rgba(102, 126, 234, 0.5),
+                0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success-glow {
+            box-shadow: 
+                0 4px 15px rgba(34, 197, 94, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-success-glow:hover {
+            box-shadow: 
+                0 6px 25px rgba(34, 197, 94, 0.5),
+                0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning-glow {
+            box-shadow: 
+                0 4px 15px rgba(245, 158, 11, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-warning-glow:hover {
+            box-shadow: 
+                0 6px 25px rgba(245, 158, 11, 0.5),
+                0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger-glow {
+            box-shadow: 
+                0 4px 15px rgba(239, 68, 68, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-danger-glow:hover {
+            box-shadow: 
+                0 6px 25px rgba(239, 68, 68, 0.5),
+                0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .script-badge {
+            background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+            color: white;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 
+                0 4px 10px rgba(255, 65, 108, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .script-header {
+                padding: 1rem !important;
+            }
+            
+            .script-image {
+                height: 200px !important;
+            }
+            
+            .code-container {
+                padding: 1rem !important;
+            }
+            
+            .action-buttons {
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+            }
+            
+            .action-button {
+                width: 100% !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .script-title {
+                font-size: 1.75rem !important;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        /* Code block styling */
+        .code-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .code-content {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Cascadia Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            direction: ltr;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        /* Custom scrollbar for code */
+        .code-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .code-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .code-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Copy success animation */
+        @keyframes copySuccess {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .copy-success {
+            animation: copySuccess 0.3s ease-out;
+        }
+        
+        /* Shine effect */
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: transform 0.6s;
+        }
+        
+        .shine-effect:hover::after {
+            transform: rotate(30deg) translate(100%, 100%);
+        }
+        
+        /* Game badge */
+        .game-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            border-right: 4px solid #22c55e;
+        }
+        
+        .toast.error {
+            border-right: 4px solid #ef4444;
+        }
+        
+        .toast.warning {
+            border-right: 4px solid #f59e0b;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        /* Tag styling */
+        .script-tag {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+        }
+    </style>
 </head>
-<body>
-  <div class="container fade-in" id="container">
-    <p>جاري تحميل السكربت...</p>
-  </div>
+<body class="text-gray-800 min-h-screen">
 
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-  <script>
-    // إعداد Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
-      projectId: "hhhhhh-d4fb8",
-      storageBucket: "hhhhhh-d4fb8.appspot.com",
-      messagingSenderId: "24512338206",
-      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
-      measurementId: "G-HD4R7GNQ5H"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="mb-4">
+            <div class="w-16 h-16 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin"></div>
+        </div>
+        <p class="text-gray-600 text-lg font-medium">جارٍ تحميل السكربت...</p>
+    </div>
 
-    const container = document.getElementById('container');
-    const urlParams = new URLSearchParams(window.location.search);
-    const scriptId = urlParams.get('id');
+    <!-- Toast Notification -->
+    <div id="toast" class="toast glass-card">
+        <i id="toast-icon" class="fas fa-check-circle text-green-500"></i>
+        <span id="toast-message" class="text-gray-700">تم نسخ السكربت بنجاح!</span>
+    </div>
 
-    const warningText = `تحذير: استخدم السكربت بحذر.\nلا تتحمل الإدارة أي مسؤولية عن سوء الاستخدام.`;
+    <!-- Header -->
+    <header class="sticky top-0 z-50 p-4">
+        <div class="container mx-auto">
+            <div class="glass-card p-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <a href="index.html" class="flex items-center space-x-3 space-x-reverse">
+                        <div class="relative">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                                <i class="fas fa-code text-white text-xl"></i>
+                            </div>
+                            <div class="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                        </div>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold gradient-text">ScriptBot<span class="text-blue-600">.cloud</span></h1>
+                            <p class="text-xs text-gray-500 hidden md:block">سكربتات روبلوكس مجانية وآمنة</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Back Button -->
+                <button id="back-button" class="glass-input text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium hover:bg-white transition flex items-center">
+                    <i class="fas fa-arrow-left ml-2"></i>
+                    <span class="hidden md:inline">رجوع للقائمة</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-    // متغير لتخزين محتوى السكربت
-    let scriptContent = '';
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Script Header -->
+        <div id="script-header" class="glass-card p-6 md:p-8 mb-8 fade-in hidden">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Script Image -->
+                <div class="lg:w-1/3">
+                    <div id="script-image-container" class="rounded-2xl overflow-hidden shadow-lg">
+                        <img id="script-image" class="w-full h-64 object-cover" src="" alt="صورة السكربت">
+                    </div>
+                </div>
+                
+                <!-- Script Info -->
+                <div class="lg:w-2/3">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h1 id="script-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-2 script-title"></h1>
+                            <div id="script-badges" class="flex flex-wrap gap-2 mb-3">
+                                <!-- Badges will be added here -->
+                            </div>
+                        </div>
+                        <div id="script-actions" class="flex gap-2">
+                            <!-- Quick actions will be added here -->
+                        </div>
+                    </div>
+                    
+                    <p id="script-description" class="text-gray-600 mb-4 text-base md:text-lg"></p>
+                    
+                    <!-- Game Info -->
+                    <div class="mb-6">
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <span id="game-badge" class="game-badge">
+                                <i class="fas fa-gamepad ml-2"></i>
+                                <span id="game-name">جارٍ التحميل...</span>
+                            </span>
+                            <span id="publisher-info" class="text-sm text-gray-500">
+                                <i class="fas fa-user-edit ml-1"></i>
+                                <span>الناشر: </span>
+                                <span id="publisher-name">جارٍ التحميل...</span>
+                            </span>
+                            <span id="date-info" class="text-sm text-gray-500">
+                                <i class="fas fa-calendar-alt ml-1"></i>
+                                <span id="script-date">تاريخ النشر: </span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div id="tags-container" class="mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <!-- Tags will be added here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Grid -->
+                    <div id="stats-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 stats-grid">
+                        <!-- Stats will be added here -->
+                    </div>
+                    
+                    <!-- Warning Alert -->
+                    <div id="warning-alert" class="glass-card bg-orange-50/50 border-orange-200 p-4 rounded-xl mb-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-orange-500 text-xl ml-3 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-orange-700 mb-1">تحذير مهم</h4>
+                                <p class="text-orange-600 text-sm">استخدم السكربت بحذر ومسؤولية. لا تتحمل الإدارة أي مسؤولية عن سوء الاستخدام. تأكد من استخدام سكربتات آمنة فقط.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    function createButtons(finalCode, scriptName, views, downloads, publisherName) {
-      const btnGroup = document.createElement('div');
-      btnGroup.className = 'btn-group';
+        <!-- Code Section -->
+        <div id="code-section" class="glass-card mb-8 fade-in hidden">
+            <div class="code-header">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-code text-blue-400"></i>
+                    <span class="text-white font-medium">كود السكربت</span>
+                    <span id="code-length" class="text-gray-400 text-sm">(0 حرف)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="copy-all-btn" class="glass-input text-white px-3 py-1 rounded-lg text-sm hover:bg-white/20 transition flex items-center">
+                        <i class="fas fa-copy ml-1"></i>
+                        نسخ الكل
+                    </button>
+                    <button id="toggle-code-btn" class="glass-input text-white px-3 py-1 rounded-lg text-sm hover:bg-white/20 transition flex items-center">
+                        <i id="toggle-icon" class="fas fa-expand ml-1"></i>
+                        <span id="toggle-text">تكبير</span>
+                    </button>
+                </div>
+            </div>
+            <div class="code-content" id="code-content">
+                <!-- Code will be loaded here -->
+                <div class="text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                    <p class="text-gray-400">جارٍ تحميل كود السكربت...</p>
+                </div>
+            </div>
+        </div>
 
-      // مجموعة الإحصائيات الصغيرة
-      const backGroup = document.createElement('div');
-      backGroup.className = 'btn-back-group';
+        <!-- Action Buttons -->
+        <div id="action-buttons" class="glass-card p-6 mb-8 fade-in hidden">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">تحميل واستخدام السكربت</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 action-buttons">
+                <!-- Buttons will be added here -->
+            </div>
+            
+            <!-- Instructions -->
+            <div class="mt-8 p-4 rounded-xl bg-blue-50/50 border border-blue-200">
+                <h4 class="font-bold text-blue-700 mb-2 flex items-center">
+                    <i class="fas fa-info-circle ml-2"></i>
+                    كيفية استخدام السكربت:
+                </h4>
+                <ol class="list-decimal pr-5 space-y-2 text-sm text-gray-600">
+                    <li>انسخ كود السكربت باستخدام زر "نسخ الكل"</li>
+                    <li>افتح لعبة Roblox واضغط على زر Windows + R</li>
+                    <li>الصق الكود في نافذة التنفيذ (Executor)</li>
+                    <li>اضغط على زر التشغيل (Execute/Inject)</li>
+                    <li>استمتع بميزات السكربت داخل اللعبة</li>
+                </ol>
+            </div>
+        </div>
 
-      const statsGroup = document.createElement('div');
-      statsGroup.className = 'btn-stats-group';
+        <!-- Related Scripts -->
+        <div id="related-scripts" class="glass-card p-6 fade-in hidden">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">سكربتات مشابهة</h3>
+            <div id="related-scripts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Related scripts will be loaded here -->
+                <div class="text-center py-8 col-span-full">
+                    <p class="text-gray-400">جارٍ تحميل السكربتات المشابهة...</p>
+                </div>
+            </div>
+        </div>
 
-      const viewersBtn = document.createElement('button');
-      viewersBtn.className = 'btn-small btn-small-viewers';
-      viewersBtn.textContent = `👁️ ${views || 0}`;
+        <!-- Error Message -->
+        <div id="error-message" class="glass-card p-8 text-center hidden">
+            <div class="text-red-500 mb-4">
+                <i class="fas fa-exclamation-circle text-5xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-700 mb-2">عذراً، حدث خطأ</h3>
+            <p class="text-gray-600 mb-4">لا يمكن تحميل السكربت المطلوب. قد يكون السكربت غير موجود أو تم حذفه.</p>
+            <a href="scripts.html" class="gradient-bg text-white px-6 py-3 rounded-xl font-medium btn-glow inline-flex items-center">
+                <i class="fas fa-arrow-left ml-2"></i>
+                العودة إلى جميع السكربتات
+            </a>
+        </div>
+    </main>
 
-      const downloadsBtn = document.createElement('button');
-      downloadsBtn.className = 'btn-small btn-small-downloads';
-      downloadsBtn.textContent = `⬇️ ${downloads || 0}`;
+    <!-- Footer -->
+    <footer class="mt-12 pt-8 pb-4 px-4">
+        <div class="container mx-auto">
+            <div class="glass-card p-6 md:p-8">
+                <div class="text-center">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                            <i class="fas fa-code text-white"></i>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-bold gradient-text mr-3">ScriptBot<span class="text-blue-400">.cloud</span></h2>
+                    </div>
+                    <p class="text-gray-600 mb-3 text-sm md:text-base">أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة.</p>
+                    <div class="flex justify-center space-x-3 space-x-reverse mb-4">
+                        <a href="https://discord.gg/hema1" class="w-10 h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
+                            <i class="fab fa-discord text-blue-600"></i>
+                        </a>
+                        <a href="scripts.html" class="w-10 h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
+                            <i class="fas fa-code text-blue-600"></i>
+                        </a>
+                        <a href="Apps.html" class="w-10 h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
+                            <i class="fas fa-download text-blue-600"></i>
+                        </a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        <p class="mb-1">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</p>
+                        <p>هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-      statsGroup.appendChild(viewersBtn);
-      statsGroup.appendChild(downloadsBtn);
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40 btn-glow">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-      // زر رجوع
-      const backBtn = document.createElement('button');
-      backBtn.className = 'btn-back';
-      backBtn.textContent = "رجوع";
-      backBtn.onclick = () => window.history.back();
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-      backGroup.appendChild(statsGroup);
-      backGroup.appendChild(backBtn);
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+            authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+            projectId: "hhhhhh-d4fb8",
+            storageBucket: "hhhhhh-d4fb8.appspot.com",
+            messagingSenderId: "24512338206",
+            appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+            measurementId: "G-HD4R7GNQ5H"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-      btnGroup.appendChild(backGroup);
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Main sections
+        const scriptHeader = document.getElementById('script-header');
+        const codeSection = document.getElementById('code-section');
+        const actionButtons = document.getElementById('action-buttons');
+        const relatedScripts = document.getElementById('related-scripts');
+        const errorMessage = document.getElementById('error-message');
+        
+        // Header elements
+        const backButton = document.getElementById('back-button');
+        const scriptTitle = document.getElementById('script-title');
+        const scriptImage = document.getElementById('script-image');
+        const scriptImageContainer = document.getElementById('script-image-container');
+        const scriptDescription = document.getElementById('script-description');
+        const gameName = document.getElementById('game-name');
+        const gameBadge = document.getElementById('game-badge');
+        const publisherName = document.getElementById('publisher-name');
+        const scriptDate = document.getElementById('script-date');
+        const scriptBadges = document.getElementById('script-badges');
+        const scriptActions = document.getElementById('script-actions');
+        const tagsContainer = document.getElementById('tags-container');
+        const statsGrid = document.getElementById('stats-grid');
+        const warningAlert = document.getElementById('warning-alert');
+        
+        // Code section elements
+        const codeContent = document.getElementById('code-content');
+        const codeLength = document.getElementById('code-length');
+        const copyAllBtn = document.getElementById('copy-all-btn');
+        const toggleCodeBtn = document.getElementById('toggle-code-btn');
+        const toggleIcon = document.getElementById('toggle-icon');
+        const toggleText = document.getElementById('toggle-text');
+        
+        // Action buttons container
+        const actionButtonsContainer = document.getElementById('action-buttons');
+        
+        // Related scripts
+        const relatedScriptsGrid = document.getElementById('related-scripts-grid');
+        
+        // Back to top button
+        const backToTopBtn = document.getElementById('back-to-top');
 
-      // زر نسخ السكربت
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'btn-copy';
-      copyBtn.textContent = "نسخ السكربت";
-      copyBtn.onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(scriptContent);
-          alert('تم نسخ السكربت!');
-          // زيادة عدد التحميلات عند النسخ
-          const newDownloads = (downloads || 0) + 1;
-          await updateDownloads(scriptId, newDownloads);
-          // تحديث العدد المعروض
-          downloadsBtn.textContent = `⬇️ ${newDownloads}`;
-        } catch (error) {
-          console.error('Error copying text: ', error);
-          alert('حدث خطأ أثناء نسخ السكربت');
-        }
-      };
-      btnGroup.appendChild(copyBtn);
+        // State
+        let currentScript = null;
+        let scriptContent = '';
+        let isCodeExpanded = false;
+        let scriptId = null;
 
-      // زر تحميل السكربت
-      const downloadBtn = document.createElement('button');
-      downloadBtn.className = 'btn-download';
-      downloadBtn.textContent = "تحميل السكربت";
-      downloadBtn.onclick = async () => {
-        try {
-          const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${scriptName}.txt`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(url);
-          
-          // تحديث عدد التحميلات في Firebase
-          const newDownloads = (downloads || 0) + 1;
-          await updateDownloads(scriptId, newDownloads);
-          // تحديث العدد المعروض
-          downloadsBtn.textContent = `⬇️ ${newDownloads}`;
-        } catch (error) {
-          console.error('Error downloading file: ', error);
-          alert('حدث خطأ أثناء تحميل السكربت');
-        }
-      };
-      btnGroup.appendChild(downloadBtn);
-
-      // زر Discord
-      const discordBtn = document.createElement('button');
-      discordBtn.className = 'btn-discord';
-      discordBtn.textContent = "Discord";
-      discordBtn.onclick = () => {
-        window.open('https://discord.gg/hema1', '_blank');
-      };
-      btnGroup.appendChild(discordBtn);
-
-      container.appendChild(btnGroup);
-    }
-
-    // تحديث عدد التحميلات
-    async function updateDownloads(id, newCount) {
-      try {
-        await db.collection('scripts').doc(id).update({
-          downloads: newCount
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackButton();
+            initBackToTop();
+            initCodeToggle();
+            loadScriptFromURL();
         });
-      } catch (error) {
-        console.error("خطأ في تحديث التحميلات:", error);
-      }
-    }
 
-    // تحديث عدد المشاهدات مرة واحدة فقط لكل تحميل صفحة
-    async function updateViews(id, currentViews) {
-      try {
-        const newViews = (currentViews || 0) + 1;
-        await db.collection('scripts').doc(id).update({
-          views: newViews
-        });
-        return newViews;
-      } catch (error) {
-        console.error("خطأ في تحديث المشاهدات:", error);
-        return currentViews || 0;
-      }
-    }
-
-    // تحميل بيانات السكربت من Firebase
-    async function loadScript(id) {
-      try {
-        const docRef = db.collection('scripts').doc(id);
-        const docSnap = await docRef.get();
-
-        if (!docSnap.exists) {
-          container.innerHTML = '<p class="error">السكربت غير موجود.</p>';
-          return;
+        // Back button functionality
+        function initBackButton() {
+            backButton.addEventListener('click', function() {
+                if (document.referrer && document.referrer.includes(window.location.hostname)) {
+                    window.history.back();
+                } else {
+                    window.location.href = 'scripts.html';
+                }
+            });
         }
 
-        const data = docSnap.data();
-        scriptContent = data.content; // تخزين محتوى السكربت في المتغير
-
-        // زيادة عدد المشاهدات
-        const updatedViews = await updateViews(id, data.views);
-
-        let publisherName = "غير معروف";
-        if (data.publisher) {
-          // جلب بيانات الناشر من مجموعة users
-          const userDoc = await db.collection('users').doc(data.publisher).get();
-          if (userDoc.exists) {
-            const userData = userDoc.data();
-            publisherName = userData.name || "غير معروف";
-          }
+        // Load script from URL parameter
+        function loadScriptFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            scriptId = urlParams.get('id');
+            
+            if (!scriptId) {
+                showError('لم يتم تحديد معرف السكربت');
+                return;
+            }
+            
+            loadScript(scriptId);
         }
 
-        container.innerHTML = `
-          <h1>${data.name}</h1>
-          <p class="desc">${data.desc}</p>
-          <p class="map">الخريطة: ${data.map}</p>
-          <img src="${data.imageUrl}" alt="صورة السكربت" class="script-image" />
-          <div class="warning">${warningText.replace(/\n/g, "<br>")}</div>
-          <pre id="codeBlock">${data.content}</pre>
-        `;
+        // Load script from Firebase
+        async function loadScript(id) {
+            try {
+                showLoading(true);
+                
+                const docRef = db.collection('scripts').doc(id);
+                const docSnap = await docRef.get();
 
-        // بعد العرض، نضيف الأزرار مع إحصائيات المشاهدات والتحميلات واسم الناشر
-        createButtons(data.content, data.name, updatedViews, data.downloads || 0, publisherName);
+                if (!docSnap.exists) {
+                    showError('السكربت غير موجود');
+                    return;
+                }
 
-      } catch (error) {
-        container.innerHTML = `<p class="error">خطأ في تحميل البيانات. حاول مرة أخرى لاحقًا.</p>`;
-        console.error(error);
-      }
-    }
+                currentScript = docSnap.data();
+                currentScript.id = docSnap.id;
+                scriptContent = currentScript.content || '';
+                
+                // Update views count
+                await updateViews(id, currentScript.views || 0);
+                
+                // Get publisher info if available
+                let publisherData = { name: 'غير معروف' };
+                if (currentScript.publisher) {
+                    const userDoc = await db.collection('users').doc(currentScript.publisher).get();
+                    if (userDoc.exists) {
+                        publisherData = userDoc.data();
+                    }
+                }
+                
+                // Render script
+                renderScript(currentScript, publisherData);
+                
+                // Load related scripts
+                loadRelatedScripts(currentScript.map || currentScript.game);
+                
+                showLoading(false);
+                
+            } catch (error) {
+                console.error('Error loading script:', error);
+                showError('حدث خطأ في تحميل السكربت');
+                showLoading(false);
+            }
+        }
 
-    if (scriptId) {
-      loadScript(scriptId);
-    } else {
-      container.innerHTML = '<p class="error">لم يتم تحديد معرف السكربت.</p>';
-    }
-  </script>
+        // Update views count
+        async function updateViews(id, currentViews) {
+            try {
+                const newViews = (currentViews || 0) + 1;
+                await db.collection('scripts').doc(id).update({
+                    views: newViews
+                });
+                return newViews;
+            } catch (error) {
+                console.error('Error updating views:', error);
+                return currentViews || 0;
+            }
+        }
+
+        // Update downloads count
+        async function updateDownloads(id, currentDownloads) {
+            try {
+                const newDownloads = (currentDownloads || 0) + 1;
+                await db.collection('scripts').doc(id).update({
+                    downloads: newDownloads
+                });
+                return newDownloads;
+            } catch (error) {
+                console.error('Error updating downloads:', error);
+                return currentDownloads || 0;
+            }
+        }
+
+        // Render script
+        function renderScript(script, publisherData) {
+            // Update title
+            document.title = `${script.name} | ScriptBot`;
+            scriptTitle.textContent = script.name;
+            
+            // Update description
+            scriptDescription.textContent = script.desc || 'لا يوجد وصف';
+            
+            // Update game info
+            const game = script.map || script.game || 'عام';
+            gameName.textContent = game;
+            
+            // Update publisher
+            publisherName.textContent = publisherData.name || 'غير معروف';
+            
+            // Update date
+            const date = script.createdAt?.toDate?.() || new Date(script.date || Date.now());
+            scriptDate.textContent = `تاريخ النشر: ${formatDate(date)}`;
+            
+            // Update image
+            if (script.imageUrl) {
+                scriptImage.src = script.imageUrl;
+                scriptImage.alt = `صورة سكربت ${script.name}`;
+            } else {
+                scriptImageContainer.innerHTML = `
+                    <div class="w-full h-64 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                        <i class="fas fa-code text-white text-5xl"></i>
+                    </div>
+                `;
+            }
+            
+            // Create badges
+            createBadges(script);
+            
+            // Create quick actions
+            createQuickActions(script);
+            
+            // Create tags
+            createTags(script);
+            
+            // Create stats
+            createStats(script);
+            
+            // Update code
+            updateCodeContent(script);
+            
+            // Create action buttons
+            createActionButtons(script);
+            
+            // Show sections
+            scriptHeader.classList.remove('hidden');
+            codeSection.classList.remove('hidden');
+            actionButtons.classList.remove('hidden');
+            
+            // Add fade-in effect
+            setTimeout(() => {
+                scriptHeader.classList.add('fade-in');
+                codeSection.classList.add('fade-in');
+                actionButtons.classList.add('fade-in');
+            }, 100);
+        }
+
+        // Create badges
+        function createBadges(script) {
+            scriptBadges.innerHTML = '';
+            
+            // New badge
+            if (script.isNew || script.status === 'new') {
+                const badge = document.createElement('span');
+                badge.className = 'script-badge';
+                badge.textContent = 'جديد';
+                scriptBadges.appendChild(badge);
+            }
+            
+            // Updated badge
+            if (script.isUpdated || script.status === 'updated') {
+                const badge = document.createElement('span');
+                badge.className = 'script-badge';
+                badge.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
+                badge.textContent = 'محدث';
+                scriptBadges.appendChild(badge);
+            }
+            
+            // Popular badge
+            if ((script.downloads || 0) > 1000) {
+                const badge = document.createElement('span');
+                badge.className = 'script-badge';
+                badge.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                badge.textContent = 'شائع';
+                scriptBadges.appendChild(badge);
+            }
+        }
+
+        // Create quick actions
+        function createQuickActions(script) {
+            scriptActions.innerHTML = '';
+            
+            // Copy button
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'glass-input text-blue-600 p-2 rounded-lg hover:bg-white transition';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.title = 'نسخ السكربت';
+            copyBtn.addEventListener('click', copyScriptToClipboard);
+            scriptActions.appendChild(copyBtn);
+            
+            // Download button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'glass-input text-blue-600 p-2 rounded-lg hover:bg-white transition';
+            downloadBtn.innerHTML = '<i class="fas fa-download"></i>';
+            downloadBtn.title = 'تحميل السكربت';
+            downloadBtn.addEventListener('click', downloadScript);
+            scriptActions.appendChild(downloadBtn);
+            
+            // Share button
+            const shareBtn = document.createElement('button');
+            shareBtn.className = 'glass-input text-blue-600 p-2 rounded-lg hover:bg-white transition';
+            shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
+            shareBtn.title = 'مشاركة السكربت';
+            shareBtn.addEventListener('click', shareScript);
+            scriptActions.appendChild(shareBtn);
+        }
+
+        // Create tags
+        function createTags(script) {
+            const tagsDiv = tagsContainer.querySelector('.flex');
+            tagsDiv.innerHTML = '';
+            
+            // Add game tag
+            const gameTag = document.createElement('span');
+            gameTag.className = 'script-tag';
+            gameTag.textContent = script.map || script.game || 'عام';
+            tagsDiv.appendChild(gameTag);
+            
+            // Add other tags
+            if (script.tags && Array.isArray(script.tags)) {
+                script.tags.slice(0, 5).forEach(tag => {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'script-tag';
+                    tagElement.textContent = tag;
+                    tagsDiv.appendChild(tagElement);
+                });
+            }
+            
+            // Add type tag if exists
+            if (script.type) {
+                const typeTag = document.createElement('span');
+                typeTag.className = 'script-tag';
+                typeTag.textContent = script.type;
+                tagsDiv.appendChild(typeTag);
+            }
+        }
+
+        // Create stats
+        function createStats(script) {
+            statsGrid.innerHTML = '';
+            
+            const stats = [
+                {
+                    icon: 'fa-eye',
+                    label: 'مشاهدات',
+                    value: formatNumber(script.views || 0),
+                    color: 'text-blue-600',
+                    bg: 'bg-blue-100/50'
+                },
+                {
+                    icon: 'fa-download',
+                    label: 'تحميلات',
+                    value: formatNumber(script.downloads || 0),
+                    color: 'text-green-600',
+                    bg: 'bg-green-100/50'
+                },
+                {
+                    icon: 'fa-heart',
+                    label: 'إعجابات',
+                    value: formatNumber(script.likes || 0),
+                    color: 'text-red-600',
+                    bg: 'bg-red-100/50'
+                },
+                {
+                    icon: 'fa-star',
+                    label: 'تقييم',
+                    value: script.rating ? `${script.rating}/5` : 'غير مقيم',
+                    color: 'text-yellow-600',
+                    bg: 'bg-yellow-100/50'
+                }
+            ];
+            
+            stats.forEach(stat => {
+                const statElement = document.createElement('div');
+                statElement.className = 'glass-card p-4 text-center';
+                statElement.innerHTML = `
+                    <div class="${stat.bg} w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas ${stat.icon} ${stat.color} text-lg"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800 mb-1">${stat.value}</div>
+                    <div class="text-sm text-gray-600">${stat.label}</div>
+                `;
+                statsGrid.appendChild(statElement);
+            });
+        }
+
+        // Update code content
+        function updateCodeContent(script) {
+            if (script.content) {
+                codeContent.textContent = script.content;
+                codeLength.textContent = `(${formatNumber(script.content.length)} حرف)`;
+                
+                // Add syntax highlighting for common keywords
+                highlightCode();
+            } else {
+                codeContent.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-gray-400 text-3xl mb-3"></i>
+                        <p class="text-gray-400">لا يوجد كود متاح لهذا السكربت</p>
+                    </div>
+                `;
+                codeLength.textContent = '(لا يوجد كود)';
+            }
+        }
+
+        // Simple syntax highlighting
+        function highlightCode() {
+            const code = codeContent.textContent;
+            
+            // Common Lua/Roblox keywords
+            const keywords = [
+                'local', 'function', 'end', 'if', 'then', 'else', 'elseif',
+                'for', 'while', 'do', 'repeat', 'until', 'in', 'return',
+                'break', 'nil', 'true', 'false', 'not', 'and', 'or',
+                'game', 'workspace', 'players', 'player', 'character',
+                'wait', 'print', 'warn', 'error'
+            ];
+            
+            let highlighted = code;
+            
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b(${keyword})\\b`, 'g');
+                highlighted = highlighted.replace(regex, `<span class="text-blue-400 font-semibold">$1</span>`);
+            });
+            
+            // Highlight strings
+            highlighted = highlighted.replace(/("[^"]*"|'[^']*')/g, '<span class="text-green-400">$1</span>');
+            
+            // Highlight numbers
+            highlighted = highlighted.replace(/\b(\d+\.?\d*)\b/g, '<span class="text-yellow-400">$1</span>');
+            
+            // Highlight comments
+            highlighted = highlighted.replace(/--[^\n]*/g, '<span class="text-gray-500">$&</span>');
+            
+            codeContent.innerHTML = highlighted;
+        }
+
+        // Create action buttons
+        function createActionButtons(script) {
+            const container = actionButtonsContainer.querySelector('.grid');
+            container.innerHTML = '';
+            
+            const buttons = [
+                {
+                    id: 'copy-btn',
+                    icon: 'fa-copy',
+                    text: 'نسخ الكل',
+                    color: 'success-gradient-bg btn-success-glow',
+                    action: copyScriptToClipboard
+                },
+                {
+                    id: 'download-btn',
+                    icon: 'fa-download',
+                    text: 'تحميل ملف',
+                    color: 'gradient-bg btn-glow',
+                    action: downloadScript
+                },
+                {
+                    id: 'execute-btn',
+                    icon: 'fa-play',
+                    text: 'تعليمات التشغيل',
+                    color: 'secondary-gradient-bg btn-glow',
+                    action: showInstructions
+                },
+                {
+                    id: 'discord-btn',
+                    icon: 'fab fa-discord',
+                    text: 'الدعم على Discord',
+                    color: 'warning-gradient-bg btn-warning-glow',
+                    action: openDiscord
+                }
+            ];
+            
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.id = btn.id;
+                button.className = `${btn.color} text-white p-4 rounded-xl font-medium flex flex-col items-center justify-center action-button`;
+                button.innerHTML = `
+                    <i class="${btn.icon} text-2xl mb-2"></i>
+                    <span class="text-sm font-medium">${btn.text}</span>
+                `;
+                button.addEventListener('click', btn.action);
+                container.appendChild(button);
+            });
+        }
+
+        // Load related scripts
+        async function loadRelatedScripts(gameName) {
+            try {
+                if (!gameName || gameName === 'عام') {
+                    relatedScripts.classList.add('hidden');
+                    return;
+                }
+                
+                const querySnapshot = await db.collection('scripts')
+                    .where('map', '==', gameName)
+                    .limit(3)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    relatedScripts.classList.add('hidden');
+                    return;
+                }
+                
+                relatedScriptsGrid.innerHTML = '';
+                let hasRelated = false;
+                
+                querySnapshot.forEach(doc => {
+                    const script = doc.data();
+                    script.id = doc.id;
+                    
+                    // Don't show current script in related
+                    if (script.id === currentScript.id) return;
+                    
+                    hasRelated = true;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'glass-card p-4 hover:shadow-xl transition cursor-pointer';
+                    card.addEventListener('click', () => {
+                        window.location.href = `script-view.html?id=${script.id}`;
+                    });
+                    
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between mb-3">
+                            <h4 class="font-bold text-gray-800 line-clamp-1">${script.name}</h4>
+                            <span class="text-xs text-gray-500">${formatDate(script.createdAt?.toDate?.() || new Date(script.date || Date.now()))}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm line-clamp-2 mb-3">${script.desc || 'لا يوجد وصف'}</p>
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span class="flex items-center">
+                                <i class="fas fa-eye ml-1"></i>
+                                <span>${formatNumber(script.views || 0)}</span>
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-download ml-1"></i>
+                                <span>${formatNumber(script.downloads || 0)}</span>
+                            </span>
+                        </div>
+                    `;
+                    
+                    relatedScriptsGrid.appendChild(card);
+                });
+                
+                if (hasRelated) {
+                    relatedScripts.classList.remove('hidden');
+                    relatedScripts.classList.add('fade-in');
+                } else {
+                    relatedScripts.classList.add('hidden');
+                }
+                
+            } catch (error) {
+                console.error('Error loading related scripts:', error);
+                relatedScripts.classList.add('hidden');
+            }
+        }
+
+        // Copy script to clipboard
+        async function copyScriptToClipboard() {
+            try {
+                if (!scriptContent) {
+                    showToast('لا يوجد كود لنسخه', 'error');
+                    return;
+                }
+                
+                await navigator.clipboard.writeText(scriptContent);
+                showToast('تم نسخ السكربت بنجاح!', 'success');
+                
+                // Add animation effect to copy button
+                const copyBtn = document.getElementById('copy-btn');
+                if (copyBtn) {
+                    copyBtn.classList.add('copy-success');
+                    setTimeout(() => copyBtn.classList.remove('copy-success'), 300);
+                }
+                
+            } catch (error) {
+                console.error('Error copying text:', error);
+                showToast('حدث خطأ أثناء النسخ', 'error');
+            }
+        }
+
+        // Download script
+        async function downloadScript() {
+            try {
+                if (!scriptContent) {
+                    showToast('لا يوجد كود لتحميله', 'error');
+                    return;
+                }
+                
+                const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${currentScript.name.replace(/[^\w\s]/gi, '')}.lua`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Update downloads count
+                const newDownloads = await updateDownloads(currentScript.id, currentScript.downloads || 0);
+                
+                // Update stats display
+                const downloadsElement = statsGrid.querySelector('.fa-download')?.closest('.glass-card');
+                if (downloadsElement) {
+                    downloadsElement.querySelector('.text-2xl').textContent = formatNumber(newDownloads);
+                }
+                
+                showToast('تم تحميل السكربت بنجاح!', 'success');
+                
+            } catch (error) {
+                console.error('Error downloading file:', error);
+                showToast('حدث خطأ أثناء التحميل', 'error');
+            }
+        }
+
+        // Show instructions
+        function showInstructions() {
+            showToast('انظر قسم "كيفية استخدام السكربت" أدناه', 'info');
+            
+            // Scroll to instructions
+            const instructions = document.querySelector('.mt-8.p-4');
+            if (instructions) {
+                instructions.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Open Discord
+        function openDiscord() {
+            window.open('https://discord.gg/hema1', '_blank');
+        }
+
+        // Share script
+        function shareScript() {
+            if (navigator.share) {
+                navigator.share({
+                    title: currentScript.name,
+                    text: `تحقق من سكربت ${currentScript.name} على ScriptBot`,
+                    url: window.location.href,
+                })
+                .catch(error => console.log('Error sharing:', error));
+            } else {
+                // Fallback: copy URL to clipboard
+                navigator.clipboard.writeText(window.location.href)
+                    .then(() => showToast('تم نسخ رابط المشاركة', 'success'))
+                    .catch(() => showToast('حدث خطأ في المشاركة', 'error'));
+            }
+        }
+
+        // Initialize code toggle
+        function initCodeToggle() {
+            toggleCodeBtn.addEventListener('click', function() {
+                isCodeExpanded = !isCodeExpanded;
+                
+                if (isCodeExpanded) {
+                    codeContent.style.maxHeight = 'none';
+                    toggleIcon.className = 'fas fa-compress ml-1';
+                    toggleText.textContent = 'تصغير';
+                } else {
+                    codeContent.style.maxHeight = '400px';
+                    toggleIcon.className = 'fas fa-expand ml-1';
+                    toggleText.textContent = 'تكبير';
+                }
+            });
+            
+            // Also handle copy all button
+            copyAllBtn.addEventListener('click', copyScriptToClipboard);
+        }
+
+        // Initialize back to top
+        function initBackToTop() {
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.remove('hidden');
+                } else {
+                    backToTopBtn.classList.add('hidden');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Show loading overlay
+        function showLoading(show) {
+            if (show) {
+                loadingOverlay.style.display = 'flex';
+            } else {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.classList.remove('hidden');
+            errorMessage.querySelector('p').textContent = message;
+            showLoading(false);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            // Update toast content
+            toastMessage.textContent = message;
+            
+            // Update icon based on type
+            const icons = {
+                success: 'fa-check-circle text-green-500',
+                error: 'fa-times-circle text-red-500',
+                warning: 'fa-exclamation-triangle text-yellow-500',
+                info: 'fa-info-circle text-blue-500'
+            };
+            
+            toastIcon.className = `fas ${icons[type] || icons.success}`;
+            toast.className = `toast glass-card ${type}`;
+            
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Helper functions
+        function formatDate(date) {
+            if (!date) return 'غير معروف';
+            
+            try {
+                const d = new Date(date);
+                return d.toLocaleDateString('ar-EG', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return 'غير معروف';
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // Touch device optimizations
+        if ('ontouchstart' in window) {
+            document.body.classList.add('touch-device');
+            
+            // Increase tap target sizes for mobile
+            document.querySelectorAll('button, a').forEach(el => {
+                if (el.offsetWidth < 44 || el.offsetHeight < 44) {
+                    el.style.minHeight = '44px';
+                    el.style.minWidth = '44px';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
