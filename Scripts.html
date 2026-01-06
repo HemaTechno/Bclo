@@ -2,338 +2,1080 @@
 <html lang="ar" dir="rtl">
 <head>
     <script type="module" src="notification.js"></script>
-<script type="module" src="maintenance-check.js"></script>
+    <script type="module" src="maintenance-check.js"></script>
 
-  <meta charset="UTF-8" />
-  <title>كل الاسكربتات</title>
-  <meta name="description" content="عرض جميع سكربتات Roblox مع نظام فلترة حسب الماب والأحدث" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-      min-height: 100vh;
-      margin: 0;
-      padding: 1.5rem 1rem;
-      direction: rtl;
-    }
-    h1 {
-      text-align: center;
-      font-weight: 900;
-      font-size: 2.8rem;
-      margin-bottom: 1rem;
-      color: #2563eb;
-      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
-      letter-spacing: 1.4px;
-    }
-    .filter-bar {
-      max-width: 900px;
-      margin: 0 auto 2rem auto;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    select, button {
-      font-family: 'Cairo', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.6rem 1.2rem;
-      border-radius: 14px;
-      border: none;
-      box-shadow: 0 4px 10px rgba(59,130,246,0.3);
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      background-color: #3b82f6;
-      color: white;
-      user-select: none;
-      min-width: 160px;
-      text-align: center;
-    }
-    select:hover, button:hover {
-      background-color: #2563eb;
-    }
-    select:focus, button:focus {
-      outline: none;
-      box-shadow: 0 0 8px #2563eb;
-    }
-    .scripts-list {
-      max-width: 900px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
-      gap: 1.4rem;
-    }
-    .script-card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      padding: 1.2rem 1.5rem;
-      transition: transform 0.2s ease;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      user-select: none;
-    }
-    .script-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 16px 40px rgba(37, 99, 235, 0.3);
-    }
-    .script-name {
-      font-weight: 900;
-      font-size: 1.3rem;
-      color: #1e40af;
-      margin-bottom: 0.3rem;
-      letter-spacing: 0.7px;
-      min-height: 44px;
-    }
-    .script-desc {
-      color: #374151;
-      font-size: 0.9rem;
-      margin-bottom: 0.7rem;
-      flex-grow: 1;
-      line-height: 1.3;
-    }
-    .script-meta {
-      font-size: 0.8rem;
-      color: #6b7280;
-      margin-bottom: 0.8rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .script-map {
-      background: #e0f2fe;
-      color: #2563eb;
-      font-weight: 700;
-      padding: 0.2rem 0.8rem;
-      border-radius: 12px;
-      user-select: none;
-    }
-    .script-stats {
-      font-weight: 700;
-      font-size: 0.8rem;
-      color: #3b82f6;
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-    }
-    .script-stats span {
-      display: flex;
-      align-items: center;
-      gap: 0.2rem;
-    }
-    .script-image {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 0.8rem;
-      user-select: none;
-    }
-    .no-scripts {
-      text-align: center;
-      font-size: 1.2rem;
-      color: #9ca3af;
-      margin-top: 3rem;
-      font-weight: 700;
-    }
-    footer {
-      margin-top: 3rem;
-      text-align: center;
-      color: #6b7280;
-      font-size: 0.9rem;
-      user-select: none;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>جميع سكربتات Roblox | ScriptBot - مكتبة السكربتات المجانية</title>
+    <meta name="description" content="استعرض جميع سكربتات Roblox مجاناً على ScriptBot. تصفية حسب اللعبة، الترتيب حسب الأحدث، الأكثر تحميلاً. سكربتات آمنة ومحدثة لـ Blox Fruits, Da Hood, Pet Simulator X والمزيد." />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="جميع سكربتات Roblox | ScriptBot - مكتبة السكربتات المجانية" />
+    <meta property="og:description" content="استعرض وتحميل جميع سكربتات Roblox مجاناً. تصفية حسب اللعبة، الترتيب حسب الأحدث، الأكثر تحميلاً." />
+    <meta property="og:image" content="https://scriptbot.cloud/assets/scripts-banner.png" />
+    <meta property="og:url" content="https://scriptbot.cloud/scripts.html" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="جميع سكربتات Roblox | ScriptBot" />
+    <meta name="twitter:description" content="مكتبة شاملة لجميع سكربتات Roblox مجاناً. تحديثات يومية وسكربتات آمنة." />
+    
+    <!-- Keywords -->
+    <meta name="keywords" content="سكربتات روبلوكس, جميع سكربتات روبلوكس, تحميل سكربتات روبلوكس, سكربتات مجانية, Blox Fruits scripts, Da Hood scripts, Pet Simulator X scripts, BedWars scripts, مكتبة السكربتات, سكربتات آمنة" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05), 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: var(--primary-gradient);
+        }
+        
+        .btn-glow {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .tab-active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .script-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+            color: white;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem !important;
+            }
+            
+            .script-card {
+                padding: 1rem !important;
+            }
+            
+            .search-bar {
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+            
+            .filter-container {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+            
+            .filter-select {
+                width: 100% !important;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.75rem !important;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem !important;
+                padding: 0 1rem !important;
+            }
+            
+            .scripts-grid {
+                grid-template-columns: 1fr !important;
+                padding: 0 1rem !important;
+            }
+        }
+        
+        /* Search highlight */
+        .highlight {
+            background-color: rgba(255, 235, 59, 0.3);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+    </style>
 </head>
-<body>
+<body class="text-gray-800 min-h-screen flex flex-col">
 
-  <h1>كل السكربتات</h1>
-
-  <div class="filter-bar">
-    <select id="filter-map" aria-label="فلتر حسب الخريطة">
-      <option value="all">كل الخرائط</option>
-    </select>
-
-    <select id="filter-order" aria-label="ترتيب حسب">
-      <option value="newest">الأحدث أولاً</option>
-      <option value="oldest">الأقدم أولاً</option>
-      <option value="views">الأكثر مشاهدة</option>
-      <option value="downloads">الأكثر تحميلًا</option>
-    </select>
-
-    <button id="btn-reset">إعادة التصفية</button>
-  </div>
-
-  <section class="scripts-list" id="scripts-list">
-    <p>جارِ تحميل السكربتات...</p>
-  </section>
-
-  <footer>© 2025 جميع الحقوق محفوظة.</footer>
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <script>
-    // إعداد Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
-      projectId: "hhhhhh-d4fb8",
-      storageBucket: "hhhhhh-d4fb8.appspot.com",
-      messagingSenderId: "24512338206",
-      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
-      measurementId: "G-HD4R7GNQ5H"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const scriptsList = document.getElementById('scripts-list');
-    const filterMap = document.getElementById('filter-map');
-    const filterOrder = document.getElementById('filter-order');
-    const btnReset = document.getElementById('btn-reset');
-
-    let allScripts = [];
-    let uniqueMaps = new Set();
-
-    // تحميل جميع السكربتات من Firestore
-    async function fetchScripts() {
-      try {
-        const querySnapshot = await db.collection('scripts').get();
-
-        allScripts = [];
-        uniqueMaps.clear();
-
-        querySnapshot.forEach(doc => {
-          const data = doc.data();
-          data.id = doc.id;
-
-          // تخزين كل المابات
-          if (data.map) uniqueMaps.add(data.map);
-
-          // التحضير للعرض
-          allScripts.push(data);
-        });
-
-        populateMapFilter();
-        renderScripts();
-
-      } catch (error) {
-        scriptsList.innerHTML = `<p class="no-scripts">حدث خطأ أثناء تحميل السكربتات.</p>`;
-        console.error(error);
-      }
-    }
-
-    // تعبئة قائمة الفلتر بالخرائط المتاحة
-    function populateMapFilter() {
-      filterMap.innerHTML = `<option value="all">كل الخرائط</option>`;
-      Array.from(uniqueMaps).sort().forEach(mapName => {
-        const option = document.createElement('option');
-        option.value = mapName;
-        option.textContent = mapName;
-        filterMap.appendChild(option);
-      });
-    }
-
-    // تطبيق الفلتر والفرز ثم عرض السكربتات
-    function renderScripts() {
-      let filtered = [...allScripts];
-
-      // فلتر حسب الخريطة
-      const selectedMap = filterMap.value;
-      if (selectedMap !== 'all') {
-        filtered = filtered.filter(s => s.map === selectedMap);
-      }
-
-      // ترتيب حسب اختيار المستخدم
-      const order = filterOrder.value;
-      switch(order) {
-        case 'newest':
-          filtered.sort((a,b) => {
-            // نفترض أن لكل سكربت حقل timestamp للتاريخ كـ Firestore Timestamp
-            if(a.timestamp && b.timestamp) return b.timestamp.seconds - a.timestamp.seconds;
-            return 0;
-          });
-          break;
-        case 'oldest':
-          filtered.sort((a,b) => {
-            if(a.timestamp && b.timestamp) return a.timestamp.seconds - b.timestamp.seconds;
-            return 0;
-          });
-          break;
-        case 'views':
-          filtered.sort((a,b) => (b.views || 0) - (a.views || 0));
-          break;
-        case 'downloads':
-          filtered.sort((a,b) => (b.downloads || 0) - (a.downloads || 0));
-          break;
-      }
-
-      if (filtered.length === 0) {
-        scriptsList.innerHTML = `<p class="no-scripts">لا يوجد سكربتات مطابقة.</p>`;
-        return;
-      }
-
-      // إنشاء عناصر السكربت
-      scriptsList.innerHTML = '';
-      filtered.forEach(script => {
-        const card = document.createElement('article');
-        card.className = 'script-card';
-        card.tabIndex = 0;
-        card.setAttribute('role', 'button');
-        card.setAttribute('aria-label', `عرض تفاصيل السكربت ${script.name}`);
-
-        card.addEventListener('click', () => {
-          // تحويل لصفحة عرض السكربت مع تمرير id
-          window.location.href = `script-view.html?id=${encodeURIComponent(script.id)}`;
-        });
-
-        // صورة السكربت لو موجودة
-        const imageHTML = script.imageUrl
-          ? `<img src="${script.imageUrl}" alt="صورة السكربت" class="script-image" loading="lazy" />`
-          : '';
-
-        // وصف مختصر مع قص النص لو طويل جداً
-        const shortDesc = script.desc && script.desc.length > 120
-          ? script.desc.slice(0, 117) + '...'
-          : script.desc || '';
-
-        card.innerHTML = `
-          ${imageHTML}
-          <h2 class="script-name">${script.name}</h2>
-          <p class="script-desc" title="${script.desc || ''}">${shortDesc}</p>
-          
-          <div class="script-meta">
-            <span class="script-map">${script.map || 'بدون ماب'}</span>
-            <div class="script-stats">
-              <span title="عدد المشاهدات">👁️ ${script.views || 0}</span>
-              <span title="عدد التنزيلات">⬇️ ${script.downloads || 0}</span>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 p-4">
+        <div class="container mx-auto">
+            <div class="glass-card p-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <a href="index.html" class="flex items-center space-x-3 space-x-reverse">
+                        <div class="relative">
+                            <img src="/logo.png" alt="ScriptBot Logo" class="w-10 h-10 md:w-12 md:h-12 rounded-xl">
+                            <div class="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                        </div>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold gradient-text">ScriptBot<span class="text-blue-600">.cloud</span></h1>
+                            <p class="text-xs text-gray-500 hidden md:block">سكربتات روبلوكس مجانية وآمنة</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <div class="desktop-nav hidden md:flex items-center space-x-4 space-x-reverse">
+                    <!-- Search Bar -->
+                    <div class="relative">
+                        <input 
+                            id="search-input"
+                            type="text" 
+                            placeholder="ابحث عن سكربت..." 
+                            class="glass-card pl-12 pr-4 py-2 md:py-3 rounded-2xl w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="flex space-x-2 space-x-reverse">
+                        <a href="index.html" class="bg-white text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium border border-blue-200 hover:bg-blue-50 transition">
+                            <i class="fas fa-home ml-2"></i> الرئيسية
+                        </a>
+                        <a href="Apps.html" class="bg-white text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium border border-blue-200 hover:bg-blue-50 transition">
+                            <i class="fas fa-download ml-2"></i> التطبيقات
+                        </a>
+                    </div>
+                </div>
             </div>
-          </div>
-        `;
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-50 p-6 md:hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-bold gradient-text">القائمة</h2>
+                <button id="close-menu" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <i class="fas fa-times text-gray-700"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Search -->
+            <div class="relative mb-6">
+                <input 
+                    id="mobile-search-input"
+                    type="text" 
+                    placeholder="ابحث عن سكربت..." 
+                    class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            
+            <!-- Mobile Navigation Links -->
+            <nav class="space-y-4">
+                <a href="index.html" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                    <i class="fas fa-home ml-3"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="scripts.html" class="flex items-center p-3 rounded-xl bg-blue-50 text-blue-700">
+                    <i class="fas fa-code ml-3"></i>
+                    <span>السكربتات</span>
+                </a>
+                <a href="Apps.html" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                    <i class="fas fa-download ml-3"></i>
+                    <span>التطبيقات</span>
+                </a>
+                <a href="about.txt" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                    <i class="fas fa-info-circle ml-3"></i>
+                    <span>من نحن</span>
+                </a>
+                <a href="privacy.txt" class="flex items-center p-3 rounded-xl hover:bg-gray-100">
+                    <i class="fas fa-shield-alt ml-3"></i>
+                    <span>سياسة الخصوصية</span>
+                </a>
+                <a href="https://discord.gg/hema1" class="flex items-center p-3 rounded-xl bg-indigo-50 text-indigo-700 mt-8">
+                    <i class="fab fa-discord ml-3"></i>
+                    <span>الدعم على Discord</span>
+                </a>
+            </nav>
+            
+            <div class="absolute bottom-6 right-6 left-6">
+                <p class="text-xs text-gray-500 text-center">ScriptBot.cloud © 2025</p>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Overlay -->
+        <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+    </header>
 
-        scriptsList.appendChild(card);
-      });
-    }
+    <!-- Hero Section -->
+    <section class="py-8 md:py-12 px-4">
+        <div class="container mx-auto">
+            <div class="text-center mb-8 md:mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 md:mb-6 section-title hero-title">
+                    مكتبة <span class="gradient-text">سكربتات Roblox</span> الكاملة
+                </h1>
+                <p class="text-base md:text-lg text-gray-600 max-w-3xl mx-auto mb-6 md:mb-8 hero-subtitle">
+                    استعرض وتصفح جميع السكربتات المجانية لأشهر ألعاب Roblox. استخدم نظام البحث والتصفية المتقدم للعثور على السكربت المناسب لك.
+                </p>
+                
+                <!-- Search Bar for Mobile -->
+                <div class="md:hidden mb-6">
+                    <div class="relative">
+                        <input 
+                            id="hero-search-input"
+                            type="text" 
+                            placeholder="ابحث عن سكربت أو لعبة..." 
+                            class="glass-card pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-6">
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-bold gradient-text">2,500+</div>
+                        <div class="text-gray-600 text-sm">سكربت متاح</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-bold gradient-text">150+</div>
+                        <div class="text-gray-600 text-sm">لعبة مدعومة</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-bold gradient-text">50K+</div>
+                        <div class="text-gray-600 text-sm">تحميل يومي</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // إعادة التصفية والفلترة
-    btnReset.addEventListener('click', () => {
-      filterMap.value = 'all';
-      filterOrder.value = 'newest';
-      renderScripts();
-    });
+    <!-- Main Content -->
+    <main class="flex-1 pb-12">
+        <div class="container mx-auto px-4">
+            <!-- Filters Section -->
+            <div class="glass-card p-4 md:p-6 mb-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 filter-container">
+                    <!-- Search Bar for Desktop -->
+                    <div class="relative flex-1">
+                        <input 
+                            id="main-search-input"
+                            type="text" 
+                            placeholder="ابحث بالسكربت أو الوصف أو اللعبة..." 
+                            class="glass-card pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 search-bar"
+                        >
+                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <button id="clear-search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                        <select id="filter-game" class="glass-card px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
+                            <option value="all">جميع الألعاب</option>
+                            <option value="Blox Fruits">Blox Fruits</option>
+                            <option value="Da Hood">Da Hood</option>
+                            <option value="Pet Simulator X">Pet Simulator X</option>
+                            <option value="BedWars">BedWars</option>
+                            <option value="Brookhaven">Brookhaven</option>
+                            <option value="King Legacy">King Legacy</option>
+                            <option value="Shindo Life">Shindo Life</option>
+                            <option value="Project Slayers">Project Slayers</option>
+                            <option value="Arsenal">Arsenal</option>
+                        </select>
+                        
+                        <select id="filter-sort" class="glass-card px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
+                            <option value="newest">الأحدث أولاً</option>
+                            <option value="popular">الأكثر شهرة</option>
+                            <option value="downloads">الأكثر تحميلاً</option>
+                            <option value="views">الأكثر مشاهدة</option>
+                        </select>
+                        
+                        <button id="reset-filters" class="glass-card px-4 py-3 rounded-xl hover:bg-gray-50 transition font-medium">
+                            <i class="fas fa-redo ml-2"></i> إعادة التعيين
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Active Filters -->
+                <div id="active-filters" class="mt-4 flex flex-wrap gap-2 hidden">
+                    <!-- Active filters will be added here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Scripts Grid -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800" id="scripts-count">جارٍ التحميل...</h2>
+                    <div class="text-gray-600 text-sm">
+                        <span id="visible-count">0</span> من <span id="total-count">0</span> سكربت
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loading-indicator" class="text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                    <p class="text-gray-600">جارٍ تحميل السكربتات...</p>
+                </div>
+                
+                <!-- Scripts Grid -->
+                <div id="scripts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 scripts-grid">
+                    <!-- Script cards will be loaded here -->
+                </div>
+                
+                <!-- No Results -->
+                <div id="no-results" class="text-center py-16 hidden">
+                    <div class="text-gray-400 mb-4">
+                        <i class="fas fa-search text-5xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">لم يتم العثور على سكربتات</h3>
+                    <p class="text-gray-600 mb-6">جرب استخدام كلمات بحث مختلفة أو قم بإعادة تعيين الفلاتر</p>
+                    <button id="reset-search" class="gradient-bg text-white px-6 py-3 rounded-xl font-medium btn-glow">
+                        <i class="fas fa-redo ml-2"></i> إعادة تعيين البحث
+                    </button>
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="text-center mt-8" id="load-more-container">
+                    <button id="load-more" class="glass-card px-8 py-3 rounded-xl font-medium hover:bg-gray-50 transition hidden">
+                        <i class="fas fa-sync-alt ml-2"></i> تحميل المزيد
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Popular Games Quick Access -->
+            <div class="glass-card p-6 mb-8">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">استكشف حسب اللعبة</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <button class="game-filter-btn p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 transition text-center" data-game="Blox Fruits">
+                        <i class="fas fa-apple-alt mb-2 text-lg"></i>
+                        <div class="font-medium">Blox Fruits</div>
+                    </button>
+                    <button class="game-filter-btn p-3 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 transition text-center" data-game="Da Hood">
+                        <i class="fas fa-home mb-2 text-lg"></i>
+                        <div class="font-medium">Da Hood</div>
+                    </button>
+                    <button class="game-filter-btn p-3 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition text-center" data-game="Pet Simulator X">
+                        <i class="fas fa-paw mb-2 text-lg"></i>
+                        <div class="font-medium">Pet Simulator X</div>
+                    </button>
+                    <button class="game-filter-btn p-3 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 transition text-center" data-game="BedWars">
+                        <i class="fas fa-bed mb-2 text-lg"></i>
+                        <div class="font-medium">BedWars</div>
+                    </button>
+                    <button class="game-filter-btn p-3 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition text-center" data-game="Brookhaven">
+                        <i class="fas fa-city mb-2 text-lg"></i>
+                        <div class="font-medium">Brookhaven</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
 
-    // تحديث العرض عند تغيير الفلاتر
-    filterMap.addEventListener('change', renderScripts);
-    filterOrder.addEventListener('change', renderScripts);
+    <!-- Footer -->
+    <footer class="mt-auto pt-8 md:pt-12 pb-4 md:pb-6 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
+                <div>
+                    <div class="flex items-center mb-3 md:mb-4">
+                        <img src="/logo.png" alt="logo" class="w-8 h-8 md:w-10 md:h-10 mr-2 md:mr-3">
+                        <h2 class="text-xl md:text-2xl font-bold">ScriptBot<span class="text-blue-400">.cloud</span></h2>
+                    </div>
+                    <p class="text-gray-400 mb-3 md:mb-4 text-sm md:text-base">أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة.</p>
+                    <div class="flex space-x-2 md:space-x-3 space-x-reverse">
+                        <a href="https://discord.gg/hema1" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition">
+                            <i class="fab fa-discord text-sm md:text-base"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 md:w-10 md:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-400 transition">
+                            <i class="fab fa-telegram text-sm md:text-base"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">روابط سريعة</h3>
+                    <ul class="space-y-1 md:space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> الرئيسية</a></li>
+                        <li><a href="scripts.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات</a></li>
+                        <li><a href="Apps.html" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> التطبيقات</a></li>
+                        <li><a href="privacy.txt" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-arrow-left ml-2 text-xs"></i> سياسة الخصوصية</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4">أشهر الألعاب</h3>
+                    <ul class="space-y-1 md:space-y-2">
+                        <li><a href="?game=Blox+Fruits" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Blox Fruits</a></li>
+                        <li><a href="?game=Da+Hood" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Da Hood</a></li>
+                        <li><a href="?game=Pet+Simulator+X" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> Pet Simulator X</a></li>
+                        <li><a href="?game=BedWars" class="text-gray-400 hover:text-white transition text-sm md:text-base"><i class="fas fa-gamepad ml-2 text-xs"></i> BedWars</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-6 md:pt-8 border-t border-gray-700 text-center text-gray-400">
+                <div class="mb-1 md:mb-2 text-sm">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</div>
+                <div class="text-xs md:text-sm">هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</div>
+            </div>
+        </div>
+    </footer>
 
-    // تحميل السكربتات عند فتح الصفحة
-    fetchScripts();
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-  </script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+            authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+            projectId: "hhhhhh-d4fb8",
+            storageBucket: "hhhhhh-d4fb8.appspot.com",
+            messagingSenderId: "24512338206",
+            appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+            measurementId: "G-HD4R7GNQ5H"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const scriptsGrid = document.getElementById('scripts-grid');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const noResults = document.getElementById('no-results');
+        const scriptsCount = document.getElementById('scripts-count');
+        const visibleCount = document.getElementById('visible-count');
+        const totalCount = document.getElementById('total-count');
+        const loadMoreBtn = document.getElementById('load-more');
+        const loadMoreContainer = document.getElementById('load-more-container');
+        const resetSearchBtn = document.getElementById('reset-search');
+        
+        // Search and Filter Elements
+        const searchInputs = [
+            document.getElementById('search-input'),
+            document.getElementById('mobile-search-input'),
+            document.getElementById('hero-search-input'),
+            document.getElementById('main-search-input')
+        ].filter(input => input); // Filter out null elements
+        
+        const clearSearchBtn = document.getElementById('clear-search');
+        const filterGame = document.getElementById('filter-game');
+        const filterSort = document.getElementById('filter-sort');
+        const resetFiltersBtn = document.getElementById('reset-filters');
+        const activeFiltersContainer = document.getElementById('active-filters');
+        const gameFilterBtns = document.querySelectorAll('.game-filter-btn');
+
+        // State
+        let allScripts = [];
+        let filteredScripts = [];
+        let currentPage = 1;
+        const scriptsPerPage = 12;
+        let currentSearchTerm = '';
+        let currentGameFilter = 'all';
+        let currentSort = 'newest';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initMobileMenu();
+            initSearch();
+            initFilters();
+            fetchScripts();
+            initBackToTop();
+            
+            // Check for URL parameters
+            checkUrlParams();
+        });
+
+        // Mobile Menu
+        function initMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const closeMenuBtn = document.getElementById('close-menu');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuOverlay = document.getElementById('menu-overlay');
+            
+            function openMobileMenu() {
+                mobileMenu.classList.add('active');
+                menuOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                mobileMenu.classList.remove('active');
+                menuOverlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+            
+            mobileMenuBtn?.addEventListener('click', openMobileMenu);
+            closeMenuBtn?.addEventListener('click', closeMobileMenu);
+            menuOverlay?.addEventListener('click', closeMobileMenu);
+            
+            // Close menu when clicking on a link
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+        }
+
+        // Search Functionality
+        function initSearch() {
+            // Sync all search inputs
+            searchInputs.forEach(input => {
+                input.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    searchInputs.forEach(otherInput => {
+                        if (otherInput !== e.target) {
+                            otherInput.value = value;
+                        }
+                    });
+                    currentSearchTerm = value;
+                    updateClearButton();
+                    filterScripts();
+                });
+                
+                // Add enter key support
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        filterScripts();
+                    }
+                });
+            });
+            
+            // Clear search button
+            clearSearchBtn?.addEventListener('click', function() {
+                searchInputs.forEach(input => input.value = '');
+                currentSearchTerm = '';
+                updateClearButton();
+                filterScripts();
+            });
+            
+            // Reset search button
+            resetSearchBtn?.addEventListener('click', resetAllFilters);
+        }
+        
+        function updateClearButton() {
+            if (clearSearchBtn) {
+                if (currentSearchTerm.trim() !== '') {
+                    clearSearchBtn.classList.remove('hidden');
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        // Filter Functionality
+        function initFilters() {
+            // Game filter
+            filterGame?.addEventListener('change', function() {
+                currentGameFilter = this.value;
+                updateActiveFilters();
+                filterScripts();
+            });
+            
+            // Sort filter
+            filterSort?.addEventListener('change', function() {
+                currentSort = this.value;
+                filterScripts();
+            });
+            
+            // Reset filters
+            resetFiltersBtn?.addEventListener('click', resetAllFilters);
+            
+            // Quick game filter buttons
+            gameFilterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const game = this.getAttribute('data-game');
+                    filterGame.value = game;
+                    currentGameFilter = game;
+                    updateActiveFilters();
+                    filterScripts();
+                });
+            });
+        }
+        
+        function updateActiveFilters() {
+            activeFiltersContainer.innerHTML = '';
+            const filters = [];
+            
+            if (currentGameFilter !== 'all') {
+                filters.push({
+                    type: 'game',
+                    value: currentGameFilter,
+                    label: `اللعبة: ${currentGameFilter}`
+                });
+            }
+            
+            if (currentSearchTerm.trim() !== '') {
+                filters.push({
+                    type: 'search',
+                    value: currentSearchTerm,
+                    label: `بحث: ${currentSearchTerm}`
+                });
+            }
+            
+            if (filters.length > 0) {
+                activeFiltersContainer.classList.remove('hidden');
+                
+                filters.forEach(filter => {
+                    const filterElement = document.createElement('div');
+                    filterElement.className = 'inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm';
+                    filterElement.innerHTML = `
+                        ${filter.label}
+                        <button type="button" class="mr-2 text-blue-600 hover:text-blue-800" data-type="${filter.type}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    activeFiltersContainer.appendChild(filterElement);
+                });
+                
+                // Add event listeners to remove buttons
+                activeFiltersContainer.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const type = this.getAttribute('data-type');
+                        if (type === 'game') {
+                            filterGame.value = 'all';
+                            currentGameFilter = 'all';
+                        } else if (type === 'search') {
+                            searchInputs.forEach(input => input.value = '');
+                            currentSearchTerm = '';
+                            updateClearButton();
+                        }
+                        updateActiveFilters();
+                        filterScripts();
+                    });
+                });
+            } else {
+                activeFiltersContainer.classList.add('hidden');
+            }
+        }
+        
+        function resetAllFilters() {
+            searchInputs.forEach(input => input.value = '');
+            filterGame.value = 'all';
+            filterSort.value = 'newest';
+            currentSearchTerm = '';
+            currentGameFilter = 'all';
+            currentSort = 'newest';
+            updateClearButton();
+            updateActiveFilters();
+            filterScripts();
+        }
+
+        // Check URL Parameters
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.has('game')) {
+                const game = urlParams.get('game');
+                filterGame.value = game;
+                currentGameFilter = game;
+            }
+            
+            if (urlParams.has('search')) {
+                const search = urlParams.get('search');
+                searchInputs.forEach(input => input.value = search);
+                currentSearchTerm = search;
+            }
+            
+            if (urlParams.has('sort')) {
+                const sort = urlParams.get('sort');
+                if (['newest', 'popular', 'downloads', 'views'].includes(sort)) {
+                    filterSort.value = sort;
+                    currentSort = sort;
+                }
+            }
+            
+            updateClearButton();
+            updateActiveFilters();
+        }
+
+        // Fetch Scripts from Firestore
+        async function fetchScripts() {
+            try {
+                loadingIndicator.classList.remove('hidden');
+                scriptsGrid.innerHTML = '';
+                
+                const querySnapshot = await db.collection('scripts').get();
+                allScripts = [];
+                
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    allScripts.push(data);
+                });
+                
+                // Update counts
+                totalCount.textContent = allScripts.length;
+                scriptsCount.textContent = `جميع السكربتات (${allScripts.length})`;
+                
+                // Apply initial filters
+                filterScripts();
+                
+            } catch (error) {
+                console.error('Error fetching scripts:', error);
+                scriptsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-red-500 mb-4">
+                            <i class="fas fa-exclamation-triangle text-5xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-700 mb-2">حدث خطأ في تحميل السكربتات</h3>
+                        <p class="text-gray-600">يرجى المحاولة مرة أخرى لاحقاً</p>
+                    </div>
+                `;
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        }
+
+        // Filter and Sort Scripts
+        function filterScripts() {
+            currentPage = 1;
+            filteredScripts = [...allScripts];
+            
+            // Apply search filter
+            if (currentSearchTerm.trim() !== '') {
+                const searchTerm = currentSearchTerm.toLowerCase();
+                filteredScripts = filteredScripts.filter(script => {
+                    return (
+                        (script.name && script.name.toLowerCase().includes(searchTerm)) ||
+                        (script.description && script.description.toLowerCase().includes(searchTerm)) ||
+                        (script.game && script.game.toLowerCase().includes(searchTerm)) ||
+                        (script.tags && script.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
+                    );
+                });
+            }
+            
+            // Apply game filter
+            if (currentGameFilter !== 'all') {
+                filteredScripts = filteredScripts.filter(script => 
+                    script.game === currentGameFilter
+                );
+            }
+            
+            // Apply sorting
+            switch(currentSort) {
+                case 'newest':
+                    filteredScripts.sort((a, b) => {
+                        const dateA = a.createdAt?.toDate?.() || new Date(0);
+                        const dateB = b.createdAt?.toDate?.() || new Date(0);
+                        return dateB - dateA;
+                    });
+                    break;
+                case 'popular':
+                    filteredScripts.sort((a, b) => {
+                        const scoreA = (a.views || 0) * 0.3 + (a.downloads || 0) * 0.7;
+                        const scoreB = (b.views || 0) * 0.3 + (b.downloads || 0) * 0.7;
+                        return scoreB - scoreA;
+                    });
+                    break;
+                case 'downloads':
+                    filteredScripts.sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+                    break;
+                case 'views':
+                    filteredScripts.sort((a, b) => (b.views || 0) - (a.views || 0));
+                    break;
+            }
+            
+            // Update counts
+            visibleCount.textContent = Math.min(filteredScripts.length, currentPage * scriptsPerPage);
+            totalCount.textContent = filteredScripts.length;
+            
+            // Update title based on filters
+            if (currentGameFilter !== 'all') {
+                scriptsCount.textContent = `سكربتات ${currentGameFilter} (${filteredScripts.length})`;
+            } else if (currentSearchTerm.trim() !== '') {
+                scriptsCount.textContent = `نتائج البحث (${filteredScripts.length})`;
+            } else {
+                scriptsCount.textContent = `جميع السكربتات (${filteredScripts.length})`;
+            }
+            
+            // Show/hide no results
+            if (filteredScripts.length === 0) {
+                noResults.classList.remove('hidden');
+                scriptsGrid.classList.add('hidden');
+                loadMoreContainer.classList.add('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                scriptsGrid.classList.remove('hidden');
+                renderScripts();
+            }
+        }
+
+        // Render Scripts to Grid
+        function renderScripts() {
+            scriptsGrid.innerHTML = '';
+            
+            const startIndex = 0;
+            const endIndex = Math.min(currentPage * scriptsPerPage, filteredScripts.length);
+            const scriptsToShow = filteredScripts.slice(startIndex, endIndex);
+            
+            scriptsToShow.forEach(script => {
+                const card = createScriptCard(script);
+                scriptsGrid.appendChild(card);
+            });
+            
+            // Show/hide load more button
+            if (filteredScripts.length > currentPage * scriptsPerPage) {
+                loadMoreBtn.classList.remove('hidden');
+            } else {
+                loadMoreBtn.classList.add('hidden');
+            }
+            
+            // Update visible count
+            visibleCount.textContent = endIndex;
+            
+            // Add fade-in animation
+            setTimeout(() => {
+                document.querySelectorAll('.script-card').forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.05}s`;
+                    card.classList.add('fade-in');
+                });
+            }, 100);
+        }
+
+        // Create Script Card Element
+        function createScriptCard(script) {
+            const card = document.createElement('div');
+            card.className = 'script-card glass-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 cursor-pointer';
+            card.setAttribute('data-id', script.id);
+            
+            // Highlight search term in name and description
+            const highlightedName = highlightSearchTerm(script.name || 'بدون اسم', currentSearchTerm);
+            const highlightedDesc = highlightSearchTerm(script.description || 'لا يوجد وصف', currentSearchTerm);
+            
+            // Format numbers
+            const views = script.views || 0;
+            const downloads = script.downloads || 0;
+            const formattedViews = views >= 1000 ? `${(views/1000).toFixed(1)}K` : views;
+            const formattedDownloads = downloads >= 1000 ? `${(downloads/1000).toFixed(1)}K` : downloads;
+            
+            // Determine badge based on script data
+            let badgeHTML = '';
+            if (script.isNew) {
+                badgeHTML = '<span class="script-badge">جديد</span>';
+            } else if (script.isUpdated) {
+                badgeHTML = '<span class="script-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">محدث</span>';
+            } else if (downloads > 1000) {
+                badgeHTML = '<span class="script-badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">شائع</span>';
+            }
+            
+            // Get game icon
+            const gameIcon = getGameIcon(script.game);
+            
+            card.innerHTML = `
+                ${badgeHTML}
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg md:text-xl text-gray-800 mb-2">${highlightedName}</h3>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="inline-flex items-center bg-gray-100 px-2 py-1 rounded-lg">
+                                ${gameIcon}
+                                <span class="mr-1">${script.game || 'عام'}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">${highlightedDesc}</p>
+                
+                <div class="mt-auto">
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <span class="flex items-center">
+                                <i class="fas fa-eye ml-1"></i>
+                                <span>${formattedViews}</span>
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-download ml-1"></i>
+                                <span>${formattedDownloads}</span>
+                            </span>
+                        </div>
+                        <span class="text-xs">${formatDate(script.createdAt)}</span>
+                    </div>
+                    
+                    <button class="w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base">
+                        <i class="fas fa-download ml-2"></i> تحميل السكربت
+                    </button>
+                </div>
+            `;
+            
+            // Add click event
+            card.addEventListener('click', () => {
+                window.location.href = `script-view.html?id=${encodeURIComponent(script.id)}`;
+            });
+            
+            return card;
+        }
+
+        // Helper Functions
+        function highlightSearchTerm(text, searchTerm) {
+            if (!searchTerm.trim()) return text;
+            
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function getGameIcon(gameName) {
+            const icons = {
+                'Blox Fruits': '<i class="fas fa-apple-alt text-orange-500"></i>',
+                'Da Hood': '<i class="fas fa-home text-purple-500"></i>',
+                'Pet Simulator X': '<i class="fas fa-paw text-green-500"></i>',
+                'BedWars': '<i class="fas fa-bed text-red-500"></i>',
+                'Brookhaven': '<i class="fas fa-city text-indigo-500"></i>',
+                'King Legacy': '<i class="fas fa-crown text-yellow-500"></i>',
+                'Shindo Life': '<i class="fas fa-fist-raised text-blue-500"></i>',
+                'Project Slayers': '<i class="fas fa-skull text-gray-700"></i>',
+                'Arsenal': '<i class="fas fa-gun text-gray-600"></i>'
+            };
+            
+            return icons[gameName] || '<i class="fas fa-gamepad text-gray-500"></i>';
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'تاريخ غير معروف';
+            
+            try {
+                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+                return date.toLocaleDateString('ar-EG', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return 'تاريخ غير معروف';
+            }
+        }
+
+        // Load More Functionality
+        loadMoreBtn?.addEventListener('click', function() {
+            currentPage++;
+            renderScripts();
+        });
+
+        // Back to Top Button
+        function initBackToTop() {
+            const backToTopButton = document.getElementById('back-to-top');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.remove('hidden');
+                } else {
+                    backToTopButton.classList.add('hidden');
+                }
+            });
+            
+            backToTopButton?.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Touch device optimizations
+        if ('ontouchstart' in window) {
+            document.body.classList.add('touch-device');
+            
+            // Increase tap target sizes for mobile
+            document.querySelectorAll('button, a').forEach(el => {
+                if (el.offsetWidth < 44 || el.offsetHeight < 44) {
+                    el.style.minHeight = '44px';
+                    el.style.minWidth = '44px';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
