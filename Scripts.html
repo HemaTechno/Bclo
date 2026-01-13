@@ -9,19 +9,16 @@
     <meta name="description" content="استعرض جميع سكربتات Roblox مجاناً على ScriptBot. تصفية حسب اللعبة، الترتيب حسب الأحدث، الأكثر تحميلاً. سكربتات آمنة ومحدثة لـ Blox Fruits, Da Hood, Pet Simulator X والمزيد." />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
     
-    <!-- Open Graph Tags -->
     <meta property="og:title" content="جميع سكربتات Roblox | ScriptBot - مكتبة السكربتات المجانية" />
     <meta property="og:description" content="استعرض وتحميل جميع سكربتات Roblox مجاناً. تصفية حسب اللعبة، الترتيب حسب الأحدث، الأكثر تحميلاً." />
     <meta property="og:image" content="https://scriptbot.cloud/assets/scripts-banner.png" />
     <meta property="og:url" content="https://scriptbot.cloud/scripts.html" />
     <meta property="og:type" content="website" />
     
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="جميع سكربتات Roblox | ScriptBot" />
     <meta name="twitter:description" content="مكتبة شاملة لجميع سكربتات Roblox مجاناً. تحديثات يومية وسكربتات آمنة." />
     
-    <!-- Keywords -->
     <meta name="keywords" content="سكربتات روبلوكس, جميع سكربتات روبلوكس, تحميل سكربتات روبلوكس, سكربتات مجانية, Blox Fruits scripts, Da Hood scripts, Pet Simulator X scripts, BedWars scripts, مكتبة السكربتات, سكربتات آمنة" />
     
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -88,17 +85,7 @@
             border-radius: inherit;
         }
         
-        .glass-input {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.05),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
-        
-        .glass-select {
+        .glass-input, .glass-select {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -145,14 +132,6 @@
             transform: translateY(-2px);
         }
         
-        .tab-active {
-            background: var(--primary-gradient);
-            color: white;
-            box-shadow: 
-                0 4px 15px rgba(102, 126, 234, 0.4),
-                0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
         .script-badge {
             position: absolute;
             top: -8px;
@@ -169,9 +148,10 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
         }
         
-        /* Linkvertise Styles */
+        /* Linkvertise Overlay Styles (Removed Iframe Specifics) */
         .linkvertise-overlay {
             position: fixed;
             top: 0;
@@ -189,209 +169,50 @@
         .linkvertise-container {
             background: white;
             border-radius: 20px;
-            padding: 0;
-            width: 95%;
-            height: 85%;
-            max-width: 900px;
-            overflow: hidden;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
         }
-        
-        .close-linkvertise {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 20px;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
-        }
-        
-        .linkvertise-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 20px;
-        }
-        
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .section-title {
-                font-size: 2rem !important;
-            }
-            
-            .script-card {
-                padding: 1rem !important;
-            }
-            
-            .search-bar {
-                width: 100% !important;
-                margin-bottom: 1rem;
-            }
-            
-            .filter-container {
-                flex-direction: column !important;
-                align-items: stretch !important;
-            }
-            
-            .filter-select {
-                width: 100% !important;
-                margin-bottom: 0.5rem;
-            }
-            
-            .linkvertise-container {
-                width: 98%;
-                height: 90%;
-                border-radius: 15px;
-            }
+            .section-title { font-size: 2rem !important; }
+            .script-card { padding: 1rem !important; }
+            .search-bar { width: 100% !important; margin-bottom: 1rem; }
+            .filter-container { flex-direction: column !important; align-items: stretch !important; }
+            .filter-select { width: 100% !important; margin-bottom: 0.5rem; }
         }
         
         @media (max-width: 480px) {
-            .section-title {
-                font-size: 1.75rem !important;
-            }
-            
-            .hero-title {
-                font-size: 1.8rem !important;
-                padding: 0 1rem !important;
-            }
-            
-            .scripts-grid {
-                grid-template-columns: 1fr !important;
-                padding: 0 1rem !important;
-            }
-            
-            .linkvertise-container {
-                height: 95%;
-                border-radius: 10px;
-            }
-            
-            .close-linkvertise {
-                width: 35px;
-                height: 35px;
-                font-size: 18px;
-            }
+            .section-title { font-size: 1.75rem !important; }
+            .hero-title { font-size: 1.8rem !important; padding: 0 1rem !important; }
+            .scripts-grid { grid-template-columns: 1fr !important; padding: 0 1rem !important; }
         }
         
-        /* Search highlight */
         .highlight {
-            background-color: rgba(255, 235, 59, 0.3);
+            background-color: rgba(255, 235, 59, 0.5);
             padding: 0 2px;
             border-radius: 3px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
         }
         
         /* Animations */
         @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(10px) scale(0.98); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            }
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
         
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
+        .floating { animation: float 6s ease-in-out infinite; }
         
-        /* Loading animation */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .loading {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        /* Shine effect on cards */
-        .shine-effect {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .shine-effect::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.3) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            transform: rotate(30deg);
-            transition: transform 0.6s;
-        }
-        
-        .shine-effect:hover::after {
-            transform: rotate(30deg) translate(100%, 100%);
-        }
-        
-        /* Mobile menu */
-        .mobile-menu {
-            transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .mobile-menu.active {
-            transform: translateX(0);
-        }
-        
-        /* Line clamp for text */
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        /* Game badge styles */
         .game-badge {
             display: inline-flex;
             align-items: center;
@@ -403,11 +224,19 @@
             font-size: 12px;
             font-weight: 600;
         }
+
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+        }
+        
+        .mobile-menu.active { transform: translateX(0); }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col">
     
-    <!-- Header -->
     <header class="sticky top-0 z-50 p-4">
         <div class="container mx-auto">
             <div class="glass-card p-4 flex justify-between items-center">
@@ -421,30 +250,20 @@
                         </div>
                         <div>
                             <h1 class="text-xl md:text-2xl font-bold gradient-text">ScriptBot<span class="text-blue-600">.cloud</span></h1>
-                            <p class="text-xs text-gray-500 hidden md:block">سكربتات روبلوكس مجانية وآمنة</p>
                         </div>
                     </a>
                 </div>
                 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-xl glass-input flex items-center justify-center">
                     <i class="fas fa-bars text-gray-700"></i>
                 </button>
                 
-                <!-- Desktop Navigation -->
                 <div class="desktop-nav hidden md:flex items-center space-x-4 space-x-reverse">
-                    <!-- Search Bar -->
                     <div class="relative">
-                        <input 
-                            id="search-input"
-                            type="text" 
-                            placeholder="ابحث عن سكربت..." 
-                            class="glass-input pl-12 pr-4 py-2 md:py-3 rounded-2xl w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                        >
+                        <input id="search-input" type="text" placeholder="ابحث عن سكربت..." class="glass-input pl-12 pr-4 py-2 md:py-3 rounded-2xl w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                     </div>
                     
-                    <!-- Navigation Buttons -->
                     <div class="flex space-x-2 space-x-reverse">
                         <a href="index.html" class="glass-input text-blue-600 px-4 md:px-5 py-2 rounded-xl font-medium hover:bg-white transition">
                             <i class="fas fa-home ml-2"></i> الرئيسية
@@ -457,7 +276,6 @@
             </div>
         </div>
 
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 shadow-2xl z-50 p-6 md:hidden">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-xl font-bold gradient-text">القائمة</h2>
@@ -466,55 +284,30 @@
                 </button>
             </div>
             
-            <!-- Mobile Search -->
             <div class="relative mb-6">
-                <input 
-                    id="mobile-search-input"
-                    type="text" 
-                    placeholder="ابحث عن سكربت..." 
-                    class="w-full pl-12 pr-4 py-3 rounded-xl glass-input focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
+                <input id="mobile-search-input" type="text" placeholder="ابحث عن سكربت..." class="w-full pl-12 pr-4 py-3 rounded-xl glass-input focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
             </div>
             
-            <!-- Mobile Navigation Links -->
             <nav class="space-y-4">
                 <a href="index.html" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
-                    <i class="fas fa-home ml-3"></i>
-                    <span>الرئيسية</span>
+                    <i class="fas fa-home ml-3"></i> <span>الرئيسية</span>
                 </a>
                 <a href="scripts.html" class="flex items-center p-3 rounded-xl bg-blue-50/50 text-blue-700">
-                    <i class="fas fa-code ml-3"></i>
-                    <span>السكربتات</span>
+                    <i class="fas fa-code ml-3"></i> <span>السكربتات</span>
                 </a>
                 <a href="Apps.html" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
-                    <i class="fas fa-download ml-3"></i>
-                    <span>التطبيقات</span>
-                </a>
-                <a href="about.txt" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
-                    <i class="fas fa-info-circle ml-3"></i>
-                    <span>من نحن</span>
-                </a>
-                <a href="privacy.txt" class="flex items-center p-3 rounded-xl hover:bg-white/50 transition">
-                    <i class="fas fa-shield-alt ml-3"></i>
-                    <span>سياسة الخصوصية</span>
+                    <i class="fas fa-download ml-3"></i> <span>التطبيقات</span>
                 </a>
                 <a href="https://discord.gg/hema1" class="flex items-center p-3 rounded-xl bg-indigo-50/50 text-indigo-700 mt-8">
-                    <i class="fab fa-discord ml-3"></i>
-                    <span>الدعم على Discord</span>
+                    <i class="fab fa-discord ml-3"></i> <span>الدعم على Discord</span>
                 </a>
             </nav>
-            
-            <div class="absolute bottom-6 right-6 left-6">
-                <p class="text-xs text-gray-500 text-center">ScriptBot.cloud © 2025</p>
-            </div>
         </div>
         
-        <!-- Mobile Menu Overlay -->
         <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
     </header>
 
-    <!-- Hero Section -->
     <section class="py-8 md:py-12 px-4">
         <div class="container mx-auto">
             <div class="text-center mb-8 md:mb-12">
@@ -528,20 +321,13 @@
                     استعرض وتصفح جميع السكربتات المجانية لأشهر ألعاب Roblox. استخدم نظام البحث والتصفية المتقدم للعثور على السكربت المناسب لك.
                 </p>
                 
-                <!-- Search Bar for Mobile -->
                 <div class="md:hidden mb-6">
                     <div class="relative">
-                        <input 
-                            id="hero-search-input"
-                            type="text" 
-                            placeholder="ابحث عن سكربت أو لعبة..." 
-                            class="glass-input pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                        >
+                        <input id="hero-search-input" type="text" placeholder="ابحث عن سكربت أو لعبة..." class="glass-input pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                     </div>
                 </div>
                 
-                <!-- Quick Stats -->
                 <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-6">
                     <div class="text-center glass-card p-4 min-w-[120px]">
                         <div class="text-2xl md:text-3xl font-bold gradient-text" id="total-scripts-count">0</div>
@@ -560,31 +346,21 @@
         </div>
     </section>
 
-    <!-- Main Content -->
     <main class="flex-1 pb-12">
         <div class="container mx-auto px-4">
-            <!-- Filters Section -->
             <div class="glass-card p-4 md:p-6 mb-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 filter-container">
-                    <!-- Search Bar for Desktop -->
                     <div class="relative flex-1">
-                        <input 
-                            id="main-search-input"
-                            type="text" 
-                            placeholder="ابحث بالسكربت أو الوصف أو اللعبة..." 
-                            class="glass-input pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 search-bar"
-                        >
+                        <input id="main-search-input" type="text" placeholder="ابحث بالسكربت أو الوصف أو اللعبة..." class="glass-input pl-12 pr-4 py-3 rounded-2xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 search-bar">
                         <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                         <button id="clear-search" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 hidden">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     
-                    <!-- Filters -->
                     <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                         <select id="filter-game" class="glass-select px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
                             <option value="all">جميع الألعاب</option>
-                            <!-- Games will be loaded dynamically from database -->
                         </select>
                         
                         <select id="filter-sort" class="glass-select px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer filter-select">
@@ -600,13 +376,9 @@
                     </div>
                 </div>
                 
-                <!-- Active Filters -->
-                <div id="active-filters" class="mt-4 flex flex-wrap gap-2 hidden">
-                    <!-- Active filters will be added here dynamically -->
-                </div>
+                <div id="active-filters" class="mt-4 flex flex-wrap gap-2 hidden"></div>
             </div>
             
-            <!-- Scripts Grid -->
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl md:text-2xl font-bold text-gray-800" id="scripts-count">جارٍ التحميل...</h2>
@@ -615,30 +387,23 @@
                     </div>
                 </div>
                 
-                <!-- Loading State -->
                 <div id="loading-indicator" class="text-center py-12">
                     <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
                     <p class="text-gray-600">جارٍ تحميل السكربتات...</p>
                 </div>
                 
-                <!-- Scripts Grid -->
-                <div id="scripts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 scripts-grid">
-                    <!-- Script cards will be loaded here -->
-                </div>
+                <div id="scripts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 scripts-grid"></div>
                 
-                <!-- No Results -->
                 <div id="no-results" class="text-center py-16 hidden">
                     <div class="text-gray-400 mb-4">
                         <i class="fas fa-search text-5xl"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-700 mb-2">لم يتم العثور على سكربتات</h3>
-                    <p class="text-gray-600 mb-6">جرب استخدام كلمات بحث مختلفة أو قم بإعادة تعيين الفلاتر</p>
                     <button id="reset-search" class="gradient-bg text-white px-6 py-3 rounded-xl font-medium btn-glow">
                         <i class="fas fa-redo ml-2"></i> إعادة تعيين البحث
                     </button>
                 </div>
                 
-                <!-- Load More Button -->
                 <div class="text-center mt-8" id="load-more-container">
                     <button id="load-more" class="glass-input px-8 py-3 rounded-xl font-medium hover:bg-white transition hidden">
                         <i class="fas fa-sync-alt ml-2"></i> تحميل المزيد
@@ -646,12 +411,10 @@
                 </div>
             </div>
             
-            <!-- Popular Games Quick Access -->
             <div class="glass-card p-6 mb-8" id="popular-games-section">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">استكشف حسب اللعبة</h3>
                 <div id="popular-games-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                    <!-- Popular games will be loaded dynamically from database -->
-                    <div class="text-center">
+                    <div class="text-center col-span-full">
                         <p class="text-gray-500">جارٍ تحميل الألعاب...</p>
                     </div>
                 </div>
@@ -659,7 +422,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="mt-auto pt-8 md:pt-12 pb-4 md:pb-6 px-4">
         <div class="container mx-auto">
             <div class="glass-card p-6 md:p-8">
@@ -676,34 +438,20 @@
                             <a href="https://discord.gg/hema1" class="w-8 h-8 md:w-10 md:h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
                                 <i class="fab fa-discord text-blue-600 text-sm md:text-base"></i>
                             </a>
-                            <a href="#" class="w-8 h-8 md:w-10 md:h-10 glass-input rounded-full flex items-center justify-center hover:bg-white transition">
-                                <i class="fab fa-telegram text-blue-600 text-sm md:text-base"></i>
-                            </a>
                         </div>
                     </div>
                     
                     <div>
                         <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4 text-gray-800">روابط سريعة</h3>
                         <ul class="space-y-1 md:space-y-2">
-                            <li><a href="index.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
-                                <i class="fas fa-arrow-left ml-2 text-xs"></i> الرئيسية
-                            </a></li>
-                            <li><a href="scripts.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
-                                <i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات
-                            </a></li>
-                            <li><a href="Apps.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
-                                <i class="fas fa-arrow-left ml-2 text-xs"></i> التطبيقات
-                            </a></li>
-                            <li><a href="privacy.txt" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
-                                <i class="fas fa-arrow-left ml-2 text-xs"></i> سياسة الخصوصية
-                            </a></li>
+                            <li><a href="index.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center"><i class="fas fa-arrow-left ml-2 text-xs"></i> الرئيسية</a></li>
+                            <li><a href="scripts.html" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center"><i class="fas fa-arrow-left ml-2 text-xs"></i> جميع السكربتات</a></li>
                         </ul>
                     </div>
                     
                     <div>
                         <h3 class="font-bold text-base md:text-lg mb-2 md:mb-4 text-gray-800">أشهر الألعاب</h3>
                         <ul class="space-y-1 md:space-y-2" id="footer-games-list">
-                            <!-- Games will be loaded dynamically -->
                             <li><span class="text-gray-500 text-sm">جارٍ التحميل...</span></li>
                         </ul>
                     </div>
@@ -711,36 +459,23 @@
                 
                 <div class="pt-6 md:pt-8 border-t border-gray-200 text-center text-gray-600">
                     <div class="mb-1 md:mb-2 text-sm">&copy; 2025 ScriptBot.cloud - جميع الحقوق محفوظة</div>
-                    <div class="text-xs md:text-sm">هذا الموقع ليس تابعًا لشركة Roblox Corporation. Roblox هي علامة تجارية مسجلة لشركة Roblox Corporation.</div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Linkvertise Overlay -->
-    <div id="linkvertise-overlay" class="linkvertise-overlay">
-        <div class="linkvertise-container">
-            <button id="close-linkvertise" class="close-linkvertise">
-                <i class="fas fa-times"></i>
-            </button>
-            <div id="linkvertise-content"></div>
-        </div>
-    </div>
-
-    <!-- Back to Top Button -->
     <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40 btn-glow">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // Firebase Configuration
+        // --- هام جداً: قم بوضع إعدادات فايربيس الخاصة بمشروعك هنا ---
         const firebaseConfig = {
-            apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
-            authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+            apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg", // استبدل هذا بمفتاحك الحقيقي
+            authDomain: "hhhhhh-d4fb8.firebaseapp.com", // تأكد من أن هذا النطاق صحيح
             projectId: "hhhhhh-d4fb8",
             storageBucket: "hhhhhh-d4fb8.appspot.com",
             messagingSenderId: "24512338206",
@@ -748,11 +483,11 @@
             measurementId: "G-HD4R7GNQ5H"
         };
         
-        // Initialize Firebase
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // DOM Elements
+        // عناصر DOM
         const scriptsGrid = document.getElementById('scripts-grid');
         const loadingIndicator = document.getElementById('loading-indicator');
         const noResults = document.getElementById('no-results');
@@ -763,12 +498,10 @@
         const loadMoreContainer = document.getElementById('load-more-container');
         const resetSearchBtn = document.getElementById('reset-search');
         
-        // Stats elements
         const totalScriptsCount = document.getElementById('total-scripts-count');
         const totalGamesCount = document.getElementById('total-games-count');
         const totalDownloadsCount = document.getElementById('total-downloads-count');
         
-        // Search and Filter Elements
         const searchInputs = [
             document.getElementById('search-input'),
             document.getElementById('mobile-search-input'),
@@ -781,17 +514,10 @@
         const filterSort = document.getElementById('filter-sort');
         const resetFiltersBtn = document.getElementById('reset-filters');
         const activeFiltersContainer = document.getElementById('active-filters');
-        
-        // Games sections
         const popularGamesGrid = document.getElementById('popular-games-grid');
         const footerGamesList = document.getElementById('footer-games-list');
-        
-        // Linkvertise Elements
-        const linkvertiseOverlay = document.getElementById('linkvertise-overlay');
-        const linkvertiseContent = document.getElementById('linkvertise-content');
-        const closeLinkvertiseBtn = document.getElementById('close-linkvertise');
 
-        // State
+        // متغيرات الحالة
         let allScripts = [];
         let filteredScripts = [];
         let allGames = new Set();
@@ -801,20 +527,15 @@
         let currentGameFilter = 'all';
         let currentSort = 'newest';
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             initMobileMenu();
             initSearch();
             initFilters();
             initBackToTop();
-            initLinkvertise();
             fetchScripts();
-            
-            // Check for URL parameters
             checkUrlParams();
         });
 
-        // Mobile Menu
         function initMobileMenu() {
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const closeMenuBtn = document.getElementById('close-menu');
@@ -833,137 +554,33 @@
                 document.body.style.overflow = 'auto';
             }
             
-            mobileMenuBtn?.addEventListener('click', openMobileMenu);
-            closeMenuBtn?.addEventListener('click', closeMobileMenu);
-            menuOverlay?.addEventListener('click', closeMobileMenu);
+            if(mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileMenu);
+            if(closeMenuBtn) closeMenuBtn.addEventListener('click', closeMobileMenu);
+            if(menuOverlay) menuOverlay.addEventListener('click', closeMobileMenu);
             
-            // Close menu when clicking on a link
             document.querySelectorAll('#mobile-menu a').forEach(link => {
                 link.addEventListener('click', closeMobileMenu);
             });
         }
 
-        // Initialize Linkvertise
-        function initLinkvertise() {
-            // Close button functionality
-            closeLinkvertiseBtn?.addEventListener('click', closeLinkvertise);
-            
-            // Close when clicking outside
-            linkvertiseOverlay?.addEventListener('click', function(e) {
-                if (e.target === linkvertiseOverlay) {
-                    closeLinkvertise();
-                }
-            });
-            
-            // Close with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && linkvertiseOverlay.style.display === 'flex') {
-                    closeLinkvertise();
-                }
-            });
-        }
-        
-        // Show Linkvertise - UPDATED: Get linkvertiseUrl from Firebase
-        async function showLinkvertise(scriptId, scriptName) {
-            try {
-                // Get script data from Firebase to get linkvertiseUrl
-                const doc = await db.collection('scripts').doc(scriptId).get();
-                
-                if (doc.exists) {
-                    const scriptData = doc.data();
-                    let linkvertiseUrl = scriptData.linkvertiseUrl || scriptData.downloadUrl || scriptData.url;
-                    
-                    // If no linkvertiseUrl in database, use default with script name
-                    if (!linkvertiseUrl) {
-                        linkvertiseUrl = `https://linkvertise.com/1264869/${encodeURIComponent(scriptName)}`;
-                    }
-                    
-                    // Load Linkvertise script dynamically
-                    if (!window.linkvertiseLoaded) {
-                        const script = document.createElement('script');
-                        script.src = 'https://publisher.linkvertise.com/cdn/linkvertise.js';
-                        script.onload = function() {
-                            window.linkvertiseLoaded = true;
-                            linkvertiseContent.innerHTML = '';
-                            
-                            // Create new script element for Linkvertise
-                            const linkvertiseScript = document.createElement('script');
-                            linkvertiseScript.textContent = `
-                                linkvertise(1264869, {
-                                    whitelist: [],
-                                    blacklist: [],
-                                    language: "en",
-                                    country: "US",
-                                    refresh: false
-                                });
-                            `;
-                            
-                            // Create iframe or redirect
-                            if (linkvertiseUrl.includes('linkvertise.com')) {
-                                // Create iframe for Linkvertise
-                                const iframe = document.createElement('iframe');
-                                iframe.src = linkvertiseUrl;
-                                iframe.className = 'linkvertise-frame';
-                                iframe.frameBorder = "0";
-                                iframe.allow = "clipboard-write";
-                                linkvertiseContent.appendChild(iframe);
-                            } else {
-                                // Direct redirect for other URLs
-                                window.open(linkvertiseUrl, '_blank');
-                                return;
-                            }
-                            
-                            linkvertiseOverlay.style.display = 'flex';
-                            document.body.style.overflow = 'hidden';
-                        };
-                        document.body.appendChild(script);
-                    } else {
-                        // Already loaded, just update content
-                        linkvertiseContent.innerHTML = '';
-                        
-                        if (linkvertiseUrl.includes('linkvertise.com')) {
-                            const iframe = document.createElement('iframe');
-                            iframe.src = linkvertiseUrl;
-                            iframe.className = 'linkvertise-frame';
-                            iframe.frameBorder = "0";
-                            iframe.allow = "clipboard-write";
-                            linkvertiseContent.appendChild(iframe);
-                        } else {
-                            window.open(linkvertiseUrl, '_blank');
-                            return;
-                        }
-                        
-                        linkvertiseOverlay.style.display = 'flex';
-                        document.body.style.overflow = 'hidden';
-                    }
-                } else {
-                    // If script not found, use default Linkvertise
-                    alert('لا يمكن تحميل السكربت حالياً. الرجاء المحاولة لاحقاً.');
-                }
-            } catch (error) {
-                console.error('Error showing Linkvertise:', error);
-                // Fallback to default Linkvertise
-                const fallbackUrl = `https://linkvertise.com/1264869/${encodeURIComponent(scriptName)}`;
+        // التعامل مع روابط Linkvertise (محدث)
+        function handleDownload(scriptId, scriptName, fallbackUrl) {
+            // نحاول فتح الرابط في نافذة جديدة مباشرة
+            // لأن معظم مواقع Linkvertise تمنع الفتح داخل iframe
+            if (fallbackUrl) {
                 window.open(fallbackUrl, '_blank');
+            } else {
+                const defaultUrl = `https://linkvertise.com/1264869/${encodeURIComponent(scriptName)}`;
+                window.open(defaultUrl, '_blank');
             }
         }
-        
-        // Close Linkvertise
-        function closeLinkvertise() {
-            linkvertiseOverlay.style.display = 'none';
-            linkvertiseContent.innerHTML = '';
-            document.body.style.overflow = 'auto';
-        }
 
-        // Search Functionality
         function initSearch() {
             searchInputs.forEach(input => {
                 input.addEventListener('input', function(e) {
                     const value = e.target.value;
                     searchInputs.forEach(otherInput => {
-                        if (otherInput !== e.target) {
-                            otherInput.value = value;
-                        }
+                        if (otherInput !== e.target) otherInput.value = value;
                     });
                     currentSearchTerm = value;
                     updateClearButton();
@@ -971,20 +588,20 @@
                 });
                 
                 input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        filterScripts();
-                    }
+                    if (e.key === 'Enter') filterScripts();
                 });
             });
             
-            clearSearchBtn?.addEventListener('click', function() {
-                searchInputs.forEach(input => input.value = '');
-                currentSearchTerm = '';
-                updateClearButton();
-                filterScripts();
-            });
+            if(clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', function() {
+                    searchInputs.forEach(input => input.value = '');
+                    currentSearchTerm = '';
+                    updateClearButton();
+                    filterScripts();
+                });
+            }
             
-            resetSearchBtn?.addEventListener('click', resetAllFilters);
+            if(resetSearchBtn) resetSearchBtn.addEventListener('click', resetAllFilters);
         }
         
         function updateClearButton() {
@@ -997,54 +614,44 @@
             }
         }
 
-        // Filter Functionality
         function initFilters() {
-            filterGame?.addEventListener('change', function() {
-                currentGameFilter = this.value;
-                updateActiveFilters();
-                filterScripts();
-            });
+            if(filterGame) {
+                filterGame.addEventListener('change', function() {
+                    currentGameFilter = this.value;
+                    updateActiveFilters();
+                    filterScripts();
+                });
+            }
             
-            filterSort?.addEventListener('change', function() {
-                currentSort = this.value;
-                filterScripts();
-            });
+            if(filterSort) {
+                filterSort.addEventListener('change', function() {
+                    currentSort = this.value;
+                    filterScripts();
+                });
+            }
             
-            resetFiltersBtn?.addEventListener('click', resetAllFilters);
+            if(resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetAllFilters);
         }
         
         function updateActiveFilters() {
+            if(!activeFiltersContainer) return;
             activeFiltersContainer.innerHTML = '';
             const filters = [];
             
             if (currentGameFilter !== 'all') {
-                filters.push({
-                    type: 'game',
-                    value: currentGameFilter,
-                    label: `اللعبة: ${currentGameFilter}`
-                });
+                filters.push({ type: 'game', value: currentGameFilter, label: `اللعبة: ${currentGameFilter}` });
             }
             
             if (currentSearchTerm.trim() !== '') {
-                filters.push({
-                    type: 'search',
-                    value: currentSearchTerm,
-                    label: `بحث: ${currentSearchTerm}`
-                });
+                filters.push({ type: 'search', value: currentSearchTerm, label: `بحث: ${currentSearchTerm}` });
             }
             
             if (filters.length > 0) {
                 activeFiltersContainer.classList.remove('hidden');
-                
                 filters.forEach(filter => {
                     const filterElement = document.createElement('div');
                     filterElement.className = 'inline-flex items-center bg-blue-100/50 backdrop-blur-sm border border-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm';
-                    filterElement.innerHTML = `
-                        ${filter.label}
-                        <button type="button" class="mr-2 text-blue-600 hover:text-blue-800" data-type="${filter.type}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
+                    filterElement.innerHTML = `${filter.label} <button type="button" class="mr-2 text-blue-600 hover:text-blue-800" data-type="${filter.type}"><i class="fas fa-times"></i></button>`;
                     activeFiltersContainer.appendChild(filterElement);
                 });
                 
@@ -1070,8 +677,8 @@
         
         function resetAllFilters() {
             searchInputs.forEach(input => input.value = '');
-            filterGame.value = 'all';
-            filterSort.value = 'newest';
+            if(filterGame) filterGame.value = 'all';
+            if(filterSort) filterSort.value = 'newest';
             currentSearchTerm = '';
             currentGameFilter = 'all';
             currentSort = 'newest';
@@ -1080,35 +687,22 @@
             filterScripts();
         }
 
-        // Check URL Parameters
         function checkUrlParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            
             if (urlParams.has('game')) {
                 const game = urlParams.get('game');
-                filterGame.value = game;
+                if(filterGame) filterGame.value = game;
                 currentGameFilter = game;
             }
-            
             if (urlParams.has('search')) {
                 const search = urlParams.get('search');
                 searchInputs.forEach(input => input.value = search);
                 currentSearchTerm = search;
             }
-            
-            if (urlParams.has('sort')) {
-                const sort = urlParams.get('sort');
-                if (['newest', 'popular', 'downloads', 'views'].includes(sort)) {
-                    filterSort.value = sort;
-                    currentSort = sort;
-                }
-            }
-            
             updateClearButton();
             updateActiveFilters();
         }
 
-        // Fetch Scripts from Firestore - UPDATED: Include all script data
         async function fetchScripts() {
             try {
                 loadingIndicator.classList.remove('hidden');
@@ -1117,78 +711,46 @@
                 const querySnapshot = await db.collection('scripts').get();
                 allScripts = [];
                 allGames.clear();
-                
                 let totalDownloads = 0;
                 
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     data.id = doc.id;
-                    
-                    // Ensure all required fields exist
                     data.name = data.name || 'بدون اسم';
                     data.description = data.description || 'لا يوجد وصف';
                     data.map = data.map || data.game || 'عام';
                     data.views = data.views || 0;
                     data.downloads = data.downloads || 0;
-                    data.createdAt = data.createdAt || data.date || new Date();
+                    // تحويل التاريخ بشكل آمن
+                    data.createdAt = data.createdAt ? (data.createdAt.toDate ? data.createdAt : new Date(data.createdAt)) : new Date(0);
                     
                     allScripts.push(data);
-                    
-                    // Add game to games list
-                    const gameName = data.map;
-                    if (gameName) {
-                        allGames.add(gameName);
-                    }
-                    
+                    if (data.map) allGames.add(data.map);
                     totalDownloads += data.downloads;
                 });
                 
-                // Update stats
                 totalScriptsCount.textContent = allScripts.length;
                 totalGamesCount.textContent = allGames.size;
                 totalDownloadsCount.textContent = formatNumber(totalDownloads);
                 
-                // Update filter dropdown with games from database
                 updateGameFilter();
-                
-                // Update popular games grid
                 updatePopularGames();
-                
-                // Update footer games list
                 updateFooterGames();
                 
-                // Update counts
-                totalCount.textContent = allScripts.length;
-                scriptsCount.textContent = `جميع السكربتات (${allScripts.length})`;
-                
-                // Apply initial filters
                 filterScripts();
                 
             } catch (error) {
                 console.error('Error fetching scripts:', error);
-                scriptsGrid.innerHTML = `
-                    <div class="col-span-full text-center py-12">
-                        <div class="text-red-500 mb-4">
-                            <i class="fas fa-exclamation-triangle text-5xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-700 mb-2">حدث خطأ في تحميل السكربتات</h3>
-                        <p class="text-gray-600">يرجى المحاولة مرة أخرى لاحقاً</p>
-                    </div>
-                `;
+                scriptsGrid.innerHTML = `<div class="col-span-full text-center py-12 text-red-500">حدث خطأ في تحميل البيانات. يرجى التحقق من اتصالك أو إعدادات قاعدة البيانات.</div>`;
             } finally {
                 loadingIndicator.classList.add('hidden');
             }
         }
 
-        // Update Game Filter Dropdown
         function updateGameFilter() {
             if (!filterGame) return;
-            
             filterGame.innerHTML = '<option value="all">جميع الألعاب</option>';
-            
-            const sortedGames = Array.from(allGames).sort();
-            
-            sortedGames.forEach(game => {
+            Array.from(allGames).sort().forEach(game => {
                 const option = document.createElement('option');
                 option.value = game;
                 option.textContent = game;
@@ -1196,147 +758,65 @@
             });
         }
 
-        // Update Popular Games Grid
         function updatePopularGames() {
             if (!popularGamesGrid) return;
-            
             popularGamesGrid.innerHTML = '';
-            
             const gameCounts = {};
             allScripts.forEach(script => {
-                const gameName = script.map;
-                if (gameName) {
-                    gameCounts[gameName] = (gameCounts[gameName] || 0) + 1;
-                }
+                if (script.map) gameCounts[script.map] = (gameCounts[script.map] || 0) + 1;
             });
             
-            const sortedGames = Object.entries(gameCounts)
+            Object.entries(gameCounts)
                 .sort(([,a], [,b]) => b - a)
                 .slice(0, 10)
-                .map(([game]) => game);
-            
-            sortedGames.forEach((game, index) => {
-                const button = document.createElement('button');
-                button.className = 'game-filter-btn glass-input p-3 rounded-xl hover:bg-white transition text-center';
-                button.setAttribute('data-game', game);
-                button.setAttribute('title', `${game} (${gameCounts[game]} سكربت)`);
-                
-                const colors = [
-                    'text-orange-600 hover:bg-orange-50',
-                    'text-purple-600 hover:bg-purple-50',
-                    'text-blue-600 hover:bg-blue-50',
-                    'text-green-600 hover:bg-green-50',
-                    'text-red-600 hover:bg-red-50'
-                ];
-                const colorClass = colors[index % colors.length];
-                
-                const gameIcon = getGameIcon(game);
-                
-                button.innerHTML = `
-                    <div class="${colorClass}">
-                        ${gameIcon}
-                        <div class="font-medium mt-2">${game}</div>
-                        <div class="text-xs text-gray-500 mt-1">${gameCounts[game]} سكربت</div>
-                    </div>
-                `;
-                
-                button.addEventListener('click', function() {
-                    const game = this.getAttribute('data-game');
-                    filterGame.value = game;
-                    currentGameFilter = game;
-                    updateActiveFilters();
-                    filterScripts();
+                .forEach(([game, count], index) => {
+                    const button = document.createElement('button');
+                    button.className = 'glass-input p-3 rounded-xl hover:bg-white transition text-center w-full';
+                    button.innerHTML = `<div class="font-medium text-blue-600">${game}</div><div class="text-xs text-gray-500">${count} سكربت</div>`;
+                    button.onclick = () => {
+                        if(filterGame) filterGame.value = game;
+                        currentGameFilter = game;
+                        updateActiveFilters();
+                        filterScripts();
+                    };
+                    popularGamesGrid.appendChild(button);
                 });
-                
-                popularGamesGrid.appendChild(button);
-            });
         }
-
-        // Update Footer Games List
+        
         function updateFooterGames() {
             if (!footerGamesList) return;
-            
             footerGamesList.innerHTML = '';
-            
-            const gamesToShow = Array.from(allGames).slice(0, 6);
-            
-            gamesToShow.forEach(game => {
+            Array.from(allGames).slice(0, 6).forEach(game => {
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <a href="?game=${encodeURIComponent(game)}" class="text-gray-600 hover:text-blue-600 transition text-sm md:text-base flex items-center">
-                        <i class="fas fa-gamepad ml-2 text-xs"></i> ${game}
-                    </a>
-                `;
+                li.innerHTML = `<a href="?game=${encodeURIComponent(game)}" class="text-gray-600 hover:text-blue-600 transition text-sm flex items-center"><i class="fas fa-gamepad ml-2 text-xs"></i> ${game}</a>`;
                 footerGamesList.appendChild(li);
             });
         }
 
-        // Filter and Sort Scripts
         function filterScripts() {
             currentPage = 1;
-            filteredScripts = [...allScripts];
-            
-            // Apply search filter
-            if (currentSearchTerm.trim() !== '') {
-                const searchTerm = currentSearchTerm.toLowerCase();
-                filteredScripts = filteredScripts.filter(script => {
-                    return (
-                        (script.name && script.name.toLowerCase().includes(searchTerm)) ||
-                        (script.description && script.description.toLowerCase().includes(searchTerm)) ||
-                        (script.map && script.map.toLowerCase().includes(searchTerm)) ||
-                        (script.game && script.game.toLowerCase().includes(searchTerm)) ||
-                        (script.tags && Array.isArray(script.tags) && 
-                         script.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
-                    );
-                });
+            filteredScripts = allScripts.filter(script => {
+                const matchSearch = currentSearchTerm === '' || 
+                    script.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+                    script.map.toLowerCase().includes(currentSearchTerm.toLowerCase());
+                const matchGame = currentGameFilter === 'all' || script.map === currentGameFilter;
+                return matchSearch && matchGame;
+            });
+
+            // الفرز
+            if (currentSort === 'newest') {
+                filteredScripts.sort((a, b) => b.createdAt - a.createdAt);
+            } else if (currentSort === 'popular') {
+                filteredScripts.sort((a, b) => b.downloads - a.downloads); // تبسيط للشهرة
+            } else if (currentSort === 'downloads') {
+                filteredScripts.sort((a, b) => b.downloads - a.downloads);
+            } else if (currentSort === 'views') {
+                filteredScripts.sort((a, b) => b.views - a.views);
             }
-            
-            // Apply game filter
-            if (currentGameFilter !== 'all') {
-                filteredScripts = filteredScripts.filter(script => {
-                    const gameName = script.map;
-                    return gameName === currentGameFilter;
-                });
-            }
-            
-            // Apply sorting
-            switch(currentSort) {
-                case 'newest':
-                    filteredScripts.sort((a, b) => {
-                        const dateA = a.createdAt?.toDate?.() || new Date(0);
-                        const dateB = b.createdAt?.toDate?.() || new Date(0);
-                        return dateB - dateA;
-                    });
-                    break;
-                case 'popular':
-                    filteredScripts.sort((a, b) => {
-                        const scoreA = (a.views || 0) * 0.3 + (a.downloads || 0) * 0.7;
-                        const scoreB = (b.views || 0) * 0.3 + (b.downloads || 0) * 0.7;
-                        return scoreB - scoreA;
-                    });
-                    break;
-                case 'downloads':
-                    filteredScripts.sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
-                    break;
-                case 'views':
-                    filteredScripts.sort((a, b) => (b.views || 0) - (a.views || 0));
-                    break;
-            }
-            
-            // Update counts
-            visibleCount.textContent = Math.min(filteredScripts.length, currentPage * scriptsPerPage);
+
+            visibleCount.textContent = Math.min(filteredScripts.length, scriptsPerPage);
             totalCount.textContent = filteredScripts.length;
             
-            // Update title based on filters
-            if (currentGameFilter !== 'all') {
-                scriptsCount.textContent = `سكربتات ${currentGameFilter} (${filteredScripts.length})`;
-            } else if (currentSearchTerm.trim() !== '') {
-                scriptsCount.textContent = `نتائج البحث (${filteredScripts.length})`;
-            } else {
-                scriptsCount.textContent = `جميع السكربتات (${filteredScripts.length})`;
-            }
-            
-            // Show/hide no results
             if (filteredScripts.length === 0) {
                 noResults.classList.remove('hidden');
                 scriptsGrid.classList.add('hidden');
@@ -1348,239 +828,113 @@
             }
         }
 
-        // Render Scripts to Grid - UPDATED: Pass script data to Linkvertise
         function renderScripts() {
             scriptsGrid.innerHTML = '';
+            const scriptsToShow = filteredScripts.slice(0, currentPage * scriptsPerPage);
             
-            const startIndex = 0;
-            const endIndex = Math.min(currentPage * scriptsPerPage, filteredScripts.length);
-            const scriptsToShow = filteredScripts.slice(startIndex, endIndex);
-            
-            scriptsToShow.forEach(script => {
+            scriptsToShow.forEach((script, index) => {
                 const card = createScriptCard(script);
+                card.style.animationDelay = `${index * 0.05}s`;
+                card.classList.add('fade-in');
                 scriptsGrid.appendChild(card);
             });
-            
-            // Show/hide load more button
+
             if (filteredScripts.length > currentPage * scriptsPerPage) {
                 loadMoreBtn.classList.remove('hidden');
             } else {
                 loadMoreBtn.classList.add('hidden');
             }
             
-            // Update visible count
-            visibleCount.textContent = endIndex;
-            
-            // Add fade-in animation
-            setTimeout(() => {
-                document.querySelectorAll('.script-card').forEach((card, index) => {
-                    card.style.animationDelay = `${index * 0.05}s`;
-                    card.classList.add('fade-in');
-                });
-            }, 100);
+            visibleCount.textContent = scriptsToShow.length;
         }
 
-        // Create Script Card Element - UPDATED: Pass script name to Linkvertise
+        // دالة لمنع ثغرات XSS عند عرض النصوص
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function highlightSearchTerm(text, searchTerm) {
+            // نقوم بتنظيف النص أولاً للحماية
+            const safeText = escapeHtml(text);
+            if (!searchTerm.trim()) return safeText;
+            
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return safeText.replace(regex, '<span class="highlight">$1</span>');
+        }
+
         function createScriptCard(script) {
             const card = document.createElement('div');
-            card.className = 'script-card glass-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 cursor-pointer shine-effect';
-            card.setAttribute('data-id', script.id);
+            card.className = 'script-card glass-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 cursor-pointer';
             
-            // Get game name
-            const gameName = script.map || 'عام';
-            
-            // Highlight search term
-            const highlightedName = highlightSearchTerm(script.name || 'بدون اسم', currentSearchTerm);
-            const highlightedDesc = highlightSearchTerm(script.description || 'لا يوجد وصف', currentSearchTerm);
-            
-            // Format numbers
-            const views = script.views || 0;
-            const downloads = script.downloads || 0;
-            const formattedViews = formatNumber(views);
-            const formattedDownloads = formatNumber(downloads);
-            
-            // Determine badge
-            let badgeHTML = '';
-            if (script.isNew || script.status === 'new') {
-                badgeHTML = '<span class="script-badge">جديد</span>';
-            } else if (script.isUpdated || script.status === 'updated') {
-                badgeHTML = '<span class="script-badge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">محدث</span>';
-            } else if (downloads > 1000) {
-                badgeHTML = '<span class="script-badge" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">شائع</span>';
-            }
-            
-            // Get game icon
-            const gameIcon = getGameIcon(gameName);
+            // استخدام رابط التحميل المباشر أو Linkvertise
+            const linkUrl = script.linkvertiseUrl || script.url || script.downloadUrl;
             
             card.innerHTML = `
-                ${badgeHTML}
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex-1">
-                        <h3 class="font-bold text-lg md:text-xl text-gray-800 mb-2">${highlightedName}</h3>
-                        <div class="flex items-center text-sm text-gray-600">
-                            <span class="game-badge">
-                                ${gameIcon}
-                                <span class="mr-1">${gameName}</span>
-                            </span>
+                        <h3 class="font-bold text-lg text-gray-800 mb-2">${highlightSearchTerm(script.name, currentSearchTerm)}</h3>
+                        <div class="text-sm text-gray-600 bg-gray-100 inline-block px-2 py-1 rounded-lg">
+                            <i class="fas fa-gamepad ml-1"></i> ${escapeHtml(script.map)}
                         </div>
                     </div>
                 </div>
-                
-                <p class="text-gray-600 text-sm md:text-base mb-4 line-clamp-2">${highlightedDesc}</p>
-                
-                <div class="mt-auto">
-                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-                        <div class="flex items-center space-x-3 space-x-reverse">
-                            <span class="flex items-center">
-                                <i class="fas fa-eye ml-1"></i>
-                                <span>${formattedViews}</span>
-                            </span>
-                            <span class="flex items-center">
-                                <i class="fas fa-download ml-1"></i>
-                                <span>${formattedDownloads}</span>
-                            </span>
-                        </div>
-                        <span class="text-xs">${formatDate(script.createdAt)}</span>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">${highlightSearchTerm(script.description, currentSearchTerm)}</p>
+                <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="text-xs text-gray-500">
+                        <span class="ml-2"><i class="fas fa-eye"></i> ${formatNumber(script.views)}</span>
+                        <span><i class="fas fa-download"></i> ${formatNumber(script.downloads)}</span>
                     </div>
-                    
-                    <button class="download-btn w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base" 
-                            data-script-id="${script.id}" 
-                            data-script-name="${script.name}">
-                        <i class="fas fa-download ml-2"></i> تحميل السكربت
+                    <button class="download-btn gradient-bg text-white py-2 px-4 rounded-xl text-sm font-medium btn-glow">
+                        <i class="fas fa-download ml-2"></i> تحميل
                     </button>
                 </div>
             `;
             
-            // Add click event for card (go to script view)
+            // عند الضغط على الكارد بالكامل يفتح صفحة التفاصيل (إذا كانت موجودة)
             card.addEventListener('click', (e) => {
                 if (!e.target.closest('.download-btn')) {
+                    // تأكد من أن ملف script-view.html موجود لديك
                     window.location.href = `script-view.html?id=${encodeURIComponent(script.id)}`;
                 }
             });
-            
-            // Add click event for download button (Linkvertise) - UPDATED
-            const downloadBtn = card.querySelector('.download-btn');
-            downloadBtn.addEventListener('click', async (e) => {
+
+            // زر التحميل
+            const btn = card.querySelector('.download-btn');
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const scriptId = downloadBtn.getAttribute('data-script-id');
-                const scriptName = downloadBtn.getAttribute('data-script-name');
-                
-                // Show loading state
-                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري التحميل...';
-                downloadBtn.disabled = true;
-                
-                try {
-                    await showLinkvertise(scriptId, scriptName);
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('حدث خطأ أثناء التحميل. الرجاء المحاولة مرة أخرى.');
-                } finally {
-                    // Reset button state
-                    setTimeout(() => {
-                        downloadBtn.innerHTML = '<i class="fas fa-download ml-2"></i> تحميل السكربت';
-                        downloadBtn.disabled = false;
-                    }, 2000);
-                }
+                handleDownload(script.id, script.name, linkUrl);
             });
             
             return card;
         }
 
-        // Helper Functions
-        function highlightSearchTerm(text, searchTerm) {
-            if (!searchTerm.trim()) return text;
-            
-            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            return text.replace(regex, '<span class="highlight">$1</span>');
-        }
-
-        function getGameIcon(gameName) {
-            const icons = {
-                'Blox Fruits': '<i class="fas fa-apple-alt text-orange-500"></i>',
-                'Da Hood': '<i class="fas fa-home text-purple-500"></i>',
-                'Pet Simulator X': '<i class="fas fa-paw text-green-500"></i>',
-                'Pet Simulator': '<i class="fas fa-paw text-green-500"></i>',
-                'BedWars': '<i class="fas fa-bed text-red-500"></i>',
-                'Bed Wars': '<i class="fas fa-bed text-red-500"></i>',
-                'Brookhaven': '<i class="fas fa-city text-indigo-500"></i>',
-                'King Legacy': '<i class="fas fa-crown text-yellow-500"></i>',
-                'Shindo Life': '<i class="fas fa-fist-raised text-blue-500"></i>',
-                'Project Slayers': '<i class="fas fa-skull text-gray-700"></i>',
-                'Arsenal': '<i class="fas fa-gun text-gray-600"></i>',
-                'MM2': '<i class="fas fa-user-secret text-gray-600"></i>',
-                'Murder Mystery 2': '<i class="fas fa-user-secret text-gray-600"></i>',
-                'Anime Fighters': '<i class="fas fa-user-ninja text-pink-500"></i>'
-            };
-            
-            if (icons[gameName]) {
-                return icons[gameName];
-            }
-            
-            for (const [key, icon] of Object.entries(icons)) {
-                if (gameName.toLowerCase().includes(key.toLowerCase())) {
-                    return icon;
-                }
-            }
-            
-            return '<i class="fas fa-gamepad text-gray-500"></i>';
-        }
-
-        function formatDate(timestamp) {
-            if (!timestamp) return 'تاريخ غير معروف';
-            
-            try {
-                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-                return date.toLocaleDateString('ar-EG', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-            } catch (e) {
-                return 'تاريخ غير معروف';
-            }
-        }
-
         function formatNumber(num) {
-            if (num >= 1000000) {
-                return (num / 1000000).toFixed(1) + 'M';
-            } else if (num >= 1000) {
-                return (num / 1000).toFixed(1) + 'K';
-            }
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
             return num.toString();
         }
 
-        // Load More Functionality
-        loadMoreBtn?.addEventListener('click', function() {
-            currentPage++;
-            renderScripts();
-        });
-
-        // Back to Top Button
-        function initBackToTop() {
-            const backToTopButton = document.getElementById('back-to-top');
-            
-            window.addEventListener('scroll', () => {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.classList.remove('hidden');
-                } else {
-                    backToTopButton.classList.add('hidden');
-                }
-            });
-            
-            backToTopButton?.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+        if(loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function() {
+                currentPage++;
+                renderScripts();
             });
         }
 
-        // Touch device optimizations
-        if ('ontouchstart' in window) {
-            document.body.classList.add('touch-device');
-            
-            document.querySelectorAll('button, a').forEach(el => {
-                if (el.offsetWidth < 44 || el.offsetHeight < 44) {
-                    el.style.minHeight = '44px';
-                    el.style.minWidth = '44px';
-                }
+        function initBackToTop() {
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) backToTopButton.classList.remove('hidden');
+                else backToTopButton.classList.add('hidden');
+            });
+            backToTopButton?.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         }
     </script>
