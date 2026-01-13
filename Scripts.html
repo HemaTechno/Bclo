@@ -723,7 +723,7 @@
             <button id="close-linkvertise" class="close-linkvertise">
                 <i class="fas fa-times"></i>
             </button>
-            <iframe id="linkvertise-frame" class="linkvertise-frame" src=""></iframe>
+            <div id="linkvertise-content"></div>
         </div>
     </div>
 
@@ -788,7 +788,7 @@
         
         // Linkvertise Elements
         const linkvertiseOverlay = document.getElementById('linkvertise-overlay');
-        const linkvertiseFrame = document.getElementById('linkvertise-frame');
+        const linkvertiseContent = document.getElementById('linkvertise-content');
         const closeLinkvertiseBtn = document.getElementById('close-linkvertise');
 
         // State
@@ -863,34 +863,95 @@
             });
         }
         
-        // Show Linkvertise
-        function showLinkvertise(scriptId) {
-            // Load Linkvertise script dynamically
-            if (!window.linkvertiseLoaded) {
-                const script = document.createElement('script');
-                script.src = 'https://publisher.linkvertise.com/cdn/linkvertise.js';
-                script.onload = function() {
-                    window.linkvertiseLoaded = true;
-                    // Show Linkvertise with script-specific URL
-                    const linkvertiseUrl = `https://linkvertise.com/1264869/roblox-script-${scriptId}`;
-                    linkvertiseFrame.src = linkvertiseUrl;
-                    linkvertiseOverlay.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
-                };
-                document.body.appendChild(script);
-            } else {
-                // Already loaded, just show
-                const linkvertiseUrl = `https://linkvertise.com/1264869/roblox-script-${scriptId}`;
-                linkvertiseFrame.src = linkvertiseUrl;
-                linkvertiseOverlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+        // Show Linkvertise - UPDATED: Get linkvertiseUrl from Firebase
+        async function showLinkvertise(scriptId, scriptName) {
+            try {
+                // Get script data from Firebase to get linkvertiseUrl
+                const doc = await db.collection('scripts').doc(scriptId).get();
+                
+                if (doc.exists) {
+                    const scriptData = doc.data();
+                    let linkvertiseUrl = scriptData.linkvertiseUrl || scriptData.downloadUrl || scriptData.url;
+                    
+                    // If no linkvertiseUrl in database, use default with script name
+                    if (!linkvertiseUrl) {
+                        linkvertiseUrl = `https://linkvertise.com/1264869/${encodeURIComponent(scriptName)}`;
+                    }
+                    
+                    // Load Linkvertise script dynamically
+                    if (!window.linkvertiseLoaded) {
+                        const script = document.createElement('script');
+                        script.src = 'https://publisher.linkvertise.com/cdn/linkvertise.js';
+                        script.onload = function() {
+                            window.linkvertiseLoaded = true;
+                            linkvertiseContent.innerHTML = '';
+                            
+                            // Create new script element for Linkvertise
+                            const linkvertiseScript = document.createElement('script');
+                            linkvertiseScript.textContent = `
+                                linkvertise(1264869, {
+                                    whitelist: [],
+                                    blacklist: [],
+                                    language: "en",
+                                    country: "US",
+                                    refresh: false
+                                });
+                            `;
+                            
+                            // Create iframe or redirect
+                            if (linkvertiseUrl.includes('linkvertise.com')) {
+                                // Create iframe for Linkvertise
+                                const iframe = document.createElement('iframe');
+                                iframe.src = linkvertiseUrl;
+                                iframe.className = 'linkvertise-frame';
+                                iframe.frameBorder = "0";
+                                iframe.allow = "clipboard-write";
+                                linkvertiseContent.appendChild(iframe);
+                            } else {
+                                // Direct redirect for other URLs
+                                window.open(linkvertiseUrl, '_blank');
+                                return;
+                            }
+                            
+                            linkvertiseOverlay.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                        };
+                        document.body.appendChild(script);
+                    } else {
+                        // Already loaded, just update content
+                        linkvertiseContent.innerHTML = '';
+                        
+                        if (linkvertiseUrl.includes('linkvertise.com')) {
+                            const iframe = document.createElement('iframe');
+                            iframe.src = linkvertiseUrl;
+                            iframe.className = 'linkvertise-frame';
+                            iframe.frameBorder = "0";
+                            iframe.allow = "clipboard-write";
+                            linkvertiseContent.appendChild(iframe);
+                        } else {
+                            window.open(linkvertiseUrl, '_blank');
+                            return;
+                        }
+                        
+                        linkvertiseOverlay.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    }
+                } else {
+                    // If script not found, use default Linkvertise
+                    alert('لا يمكن تحميل السكربت حالياً. الرجاء المحاولة لاحقاً.');
+                }
+            } catch (error) {
+                console.error('Error showing Linkvertise:', error);
+                // Fallback to default Linkvertise
+                const fallbackUrl = `https://linkvertise.com/1264869/${encodeURIComponent(scriptName)}`;
+                window.open(fallbackUrl, '_blank');
             }
         }
         
         // Close Linkvertise
         function closeLinkvertise() {
             linkvertiseOverlay.style.display = 'none';
-            linkvertiseFrame.src = '';
+            linkvertiseContent.innerHTML = '';
             document.body.style.overflow = 'auto';
         }
 
@@ -1047,7 +1108,7 @@
             updateActiveFilters();
         }
 
-        // Fetch Scripts from Firestore
+        // Fetch Scripts from Firestore - UPDATED: Include all script data
         async function fetchScripts() {
             try {
                 loadingIndicator.classList.remove('hidden');
@@ -1063,14 +1124,23 @@
                     const data = doc.data();
                     data.id = doc.id;
                     
+                    // Ensure all required fields exist
+                    data.name = data.name || 'بدون اسم';
+                    data.description = data.description || 'لا يوجد وصف';
+                    data.map = data.map || data.game || 'عام';
+                    data.views = data.views || 0;
+                    data.downloads = data.downloads || 0;
+                    data.createdAt = data.createdAt || data.date || new Date();
+                    
                     allScripts.push(data);
                     
-                    const gameName = data.map || data.game;
+                    // Add game to games list
+                    const gameName = data.map;
                     if (gameName) {
                         allGames.add(gameName);
                     }
                     
-                    totalDownloads += data.downloads || 0;
+                    totalDownloads += data.downloads;
                 });
                 
                 // Update stats
@@ -1134,7 +1204,7 @@
             
             const gameCounts = {};
             allScripts.forEach(script => {
-                const gameName = script.map || script.game;
+                const gameName = script.map;
                 if (gameName) {
                     gameCounts[gameName] = (gameCounts[gameName] || 0) + 1;
                 }
@@ -1224,7 +1294,7 @@
             // Apply game filter
             if (currentGameFilter !== 'all') {
                 filteredScripts = filteredScripts.filter(script => {
-                    const gameName = script.map || script.game;
+                    const gameName = script.map;
                     return gameName === currentGameFilter;
                 });
             }
@@ -1278,7 +1348,7 @@
             }
         }
 
-        // Render Scripts to Grid
+        // Render Scripts to Grid - UPDATED: Pass script data to Linkvertise
         function renderScripts() {
             scriptsGrid.innerHTML = '';
             
@@ -1310,16 +1380,16 @@
             }, 100);
         }
 
-        // Create Script Card Element
+        // Create Script Card Element - UPDATED: Pass script name to Linkvertise
         function createScriptCard(script) {
             const card = document.createElement('div');
             card.className = 'script-card glass-card p-4 md:p-6 hover:shadow-xl transition-all duration-300 cursor-pointer shine-effect';
             card.setAttribute('data-id', script.id);
             
-            // Get game name from either map or game field
-            const gameName = script.map || script.game || 'عام';
+            // Get game name
+            const gameName = script.map || 'عام';
             
-            // Highlight search term in name and description
+            // Highlight search term
             const highlightedName = highlightSearchTerm(script.name || 'بدون اسم', currentSearchTerm);
             const highlightedDesc = highlightSearchTerm(script.description || 'لا يوجد وصف', currentSearchTerm);
             
@@ -1329,7 +1399,7 @@
             const formattedViews = formatNumber(views);
             const formattedDownloads = formatNumber(downloads);
             
-            // Determine badge based on script data
+            // Determine badge
             let badgeHTML = '';
             if (script.isNew || script.status === 'new') {
                 badgeHTML = '<span class="script-badge">جديد</span>';
@@ -1370,28 +1440,47 @@
                                 <span>${formattedDownloads}</span>
                             </span>
                         </div>
-                        <span class="text-xs">${formatDate(script.createdAt || script.date)}</span>
+                        <span class="text-xs">${formatDate(script.createdAt)}</span>
                     </div>
                     
-                    <button class="download-btn w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base" data-script-id="${script.id}">
+                    <button class="download-btn w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base" 
+                            data-script-id="${script.id}" 
+                            data-script-name="${script.name}">
                         <i class="fas fa-download ml-2"></i> تحميل السكربت
                     </button>
                 </div>
             `;
             
-            // Add click event for the card (to go to script view)
+            // Add click event for card (go to script view)
             card.addEventListener('click', (e) => {
-                // Don't trigger if clicking on download button
                 if (!e.target.closest('.download-btn')) {
                     window.location.href = `script-view.html?id=${encodeURIComponent(script.id)}`;
                 }
             });
             
-            // Add click event for download button (Linkvertise)
+            // Add click event for download button (Linkvertise) - UPDATED
             const downloadBtn = card.querySelector('.download-btn');
-            downloadBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent card click event
-                showLinkvertise(script.id);
+            downloadBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const scriptId = downloadBtn.getAttribute('data-script-id');
+                const scriptName = downloadBtn.getAttribute('data-script-name');
+                
+                // Show loading state
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري التحميل...';
+                downloadBtn.disabled = true;
+                
+                try {
+                    await showLinkvertise(scriptId, scriptName);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ أثناء التحميل. الرجاء المحاولة مرة أخرى.');
+                } finally {
+                    // Reset button state
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = '<i class="fas fa-download ml-2"></i> تحميل السكربت';
+                        downloadBtn.disabled = false;
+                    }, 2000);
+                }
             });
             
             return card;
@@ -1494,11 +1583,6 @@
                 }
             });
         }
-    </script>
-
-    <!-- Linkvertise script loaded only when needed -->
-    <script>
-        // This will be loaded dynamically when needed
     </script>
 </body>
 </html>
