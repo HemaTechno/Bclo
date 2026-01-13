@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-     <script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script><script>linkvertise(1264869, {whitelist: [], blacklist: [""]});</script>
-     
     <script type="module" src="notification.js"></script>
     <script type="module" src="maintenance-check.js"></script>
 
@@ -173,6 +171,59 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
+        /* Linkvertise Styles */
+        .linkvertise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .linkvertise-container {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            width: 95%;
+            height: 85%;
+            max-width: 900px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .close-linkvertise {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+        
+        .linkvertise-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 20px;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .section-title {
@@ -197,6 +248,12 @@
                 width: 100% !important;
                 margin-bottom: 0.5rem;
             }
+            
+            .linkvertise-container {
+                width: 98%;
+                height: 90%;
+                border-radius: 15px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -212,6 +269,17 @@
             .scripts-grid {
                 grid-template-columns: 1fr !important;
                 padding: 0 1rem !important;
+            }
+            
+            .linkvertise-container {
+                height: 95%;
+                border-radius: 10px;
+            }
+            
+            .close-linkvertise {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
             }
         }
         
@@ -338,9 +406,7 @@
     </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col">
-
-
-
+    
     <!-- Header -->
     <header class="sticky top-0 z-50 p-4">
         <div class="container mx-auto">
@@ -391,9 +457,6 @@
             </div>
         </div>
 
-
-
-                                
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 shadow-2xl z-50 p-6 md:hidden">
             <div class="flex justify-between items-center mb-8">
@@ -595,6 +658,7 @@
             </div>
         </div>
     </main>
+
     <!-- Footer -->
     <footer class="mt-auto pt-8 md:pt-12 pb-4 md:pb-6 px-4">
         <div class="container mx-auto">
@@ -653,6 +717,16 @@
         </div>
     </footer>
 
+    <!-- Linkvertise Overlay -->
+    <div id="linkvertise-overlay" class="linkvertise-overlay">
+        <div class="linkvertise-container">
+            <button id="close-linkvertise" class="close-linkvertise">
+                <i class="fas fa-times"></i>
+            </button>
+            <iframe id="linkvertise-frame" class="linkvertise-frame" src=""></iframe>
+        </div>
+    </div>
+
     <!-- Back to Top Button -->
     <button id="back-to-top" class="fixed bottom-4 right-4 md:bottom-6 md:left-6 w-10 h-10 md:w-12 md:h-12 gradient-bg text-white rounded-full shadow-lg flex items-center justify-center hidden z-40 btn-glow">
         <i class="fas fa-arrow-up"></i>
@@ -700,7 +774,7 @@
             document.getElementById('mobile-search-input'),
             document.getElementById('hero-search-input'),
             document.getElementById('main-search-input')
-        ].filter(input => input); // Filter out null elements
+        ].filter(input => input);
         
         const clearSearchBtn = document.getElementById('clear-search');
         const filterGame = document.getElementById('filter-game');
@@ -711,11 +785,16 @@
         // Games sections
         const popularGamesGrid = document.getElementById('popular-games-grid');
         const footerGamesList = document.getElementById('footer-games-list');
+        
+        // Linkvertise Elements
+        const linkvertiseOverlay = document.getElementById('linkvertise-overlay');
+        const linkvertiseFrame = document.getElementById('linkvertise-frame');
+        const closeLinkvertiseBtn = document.getElementById('close-linkvertise');
 
         // State
         let allScripts = [];
         let filteredScripts = [];
-        let allGames = new Set(); // Use Set to avoid duplicates
+        let allGames = new Set();
         let currentPage = 1;
         const scriptsPerPage = 12;
         let currentSearchTerm = '';
@@ -728,6 +807,7 @@
             initSearch();
             initFilters();
             initBackToTop();
+            initLinkvertise();
             fetchScripts();
             
             // Check for URL parameters
@@ -763,9 +843,59 @@
             });
         }
 
+        // Initialize Linkvertise
+        function initLinkvertise() {
+            // Close button functionality
+            closeLinkvertiseBtn?.addEventListener('click', closeLinkvertise);
+            
+            // Close when clicking outside
+            linkvertiseOverlay?.addEventListener('click', function(e) {
+                if (e.target === linkvertiseOverlay) {
+                    closeLinkvertise();
+                }
+            });
+            
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && linkvertiseOverlay.style.display === 'flex') {
+                    closeLinkvertise();
+                }
+            });
+        }
+        
+        // Show Linkvertise
+        function showLinkvertise(scriptId) {
+            // Load Linkvertise script dynamically
+            if (!window.linkvertiseLoaded) {
+                const script = document.createElement('script');
+                script.src = 'https://publisher.linkvertise.com/cdn/linkvertise.js';
+                script.onload = function() {
+                    window.linkvertiseLoaded = true;
+                    // Show Linkvertise with script-specific URL
+                    const linkvertiseUrl = `https://linkvertise.com/1264869/roblox-script-${scriptId}`;
+                    linkvertiseFrame.src = linkvertiseUrl;
+                    linkvertiseOverlay.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                };
+                document.body.appendChild(script);
+            } else {
+                // Already loaded, just show
+                const linkvertiseUrl = `https://linkvertise.com/1264869/roblox-script-${scriptId}`;
+                linkvertiseFrame.src = linkvertiseUrl;
+                linkvertiseOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Close Linkvertise
+        function closeLinkvertise() {
+            linkvertiseOverlay.style.display = 'none';
+            linkvertiseFrame.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
         // Search Functionality
         function initSearch() {
-            // Sync all search inputs
             searchInputs.forEach(input => {
                 input.addEventListener('input', function(e) {
                     const value = e.target.value;
@@ -779,7 +909,6 @@
                     filterScripts();
                 });
                 
-                // Add enter key support
                 input.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         filterScripts();
@@ -787,7 +916,6 @@
                 });
             });
             
-            // Clear search button
             clearSearchBtn?.addEventListener('click', function() {
                 searchInputs.forEach(input => input.value = '');
                 currentSearchTerm = '';
@@ -795,7 +923,6 @@
                 filterScripts();
             });
             
-            // Reset search button
             resetSearchBtn?.addEventListener('click', resetAllFilters);
         }
         
@@ -811,20 +938,17 @@
 
         // Filter Functionality
         function initFilters() {
-            // Game filter
             filterGame?.addEventListener('change', function() {
                 currentGameFilter = this.value;
                 updateActiveFilters();
                 filterScripts();
             });
             
-            // Sort filter
             filterSort?.addEventListener('change', function() {
                 currentSort = this.value;
                 filterScripts();
             });
             
-            // Reset filters
             resetFiltersBtn?.addEventListener('click', resetAllFilters);
         }
         
@@ -863,7 +987,6 @@
                     activeFiltersContainer.appendChild(filterElement);
                 });
                 
-                // Add event listeners to remove buttons
                 activeFiltersContainer.querySelectorAll('button').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const type = this.getAttribute('data-type');
@@ -940,16 +1063,13 @@
                     const data = doc.data();
                     data.id = doc.id;
                     
-                    // Add to all scripts
                     allScripts.push(data);
                     
-                    // Add game to games list (using 'map' or 'game' field)
                     const gameName = data.map || data.game;
                     if (gameName) {
                         allGames.add(gameName);
                     }
                     
-                    // Calculate total downloads
                     totalDownloads += data.downloads || 0;
                 });
                 
@@ -990,17 +1110,14 @@
             }
         }
 
-        // Update Game Filter Dropdown with games from database
+        // Update Game Filter Dropdown
         function updateGameFilter() {
             if (!filterGame) return;
             
-            // Clear existing options except first one
             filterGame.innerHTML = '<option value="all">جميع الألعاب</option>';
             
-            // Sort games alphabetically
             const sortedGames = Array.from(allGames).sort();
             
-            // Add games from database
             sortedGames.forEach(game => {
                 const option = document.createElement('option');
                 option.value = game;
@@ -1015,7 +1132,6 @@
             
             popularGamesGrid.innerHTML = '';
             
-            // Count script frequency per game
             const gameCounts = {};
             allScripts.forEach(script => {
                 const gameName = script.map || script.game;
@@ -1024,20 +1140,17 @@
                 }
             });
             
-            // Sort games by count (most scripts first)
             const sortedGames = Object.entries(gameCounts)
                 .sort(([,a], [,b]) => b - a)
-                .slice(0, 10) // Top 10 games
+                .slice(0, 10)
                 .map(([game]) => game);
             
-            // Create game buttons
             sortedGames.forEach((game, index) => {
                 const button = document.createElement('button');
                 button.className = 'game-filter-btn glass-input p-3 rounded-xl hover:bg-white transition text-center';
                 button.setAttribute('data-game', game);
                 button.setAttribute('title', `${game} (${gameCounts[game]} سكربت)`);
                 
-                // Different colors for different positions
                 const colors = [
                     'text-orange-600 hover:bg-orange-50',
                     'text-purple-600 hover:bg-purple-50',
@@ -1047,7 +1160,6 @@
                 ];
                 const colorClass = colors[index % colors.length];
                 
-                // Get game icon
                 const gameIcon = getGameIcon(game);
                 
                 button.innerHTML = `
@@ -1076,7 +1188,6 @@
             
             footerGamesList.innerHTML = '';
             
-            // Take first 6 games
             const gamesToShow = Array.from(allGames).slice(0, 6);
             
             gamesToShow.forEach(game => {
@@ -1262,15 +1373,25 @@
                         <span class="text-xs">${formatDate(script.createdAt || script.date)}</span>
                     </div>
                     
-                    <button class="w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base">
+                    <button class="download-btn w-full gradient-bg text-white py-2 px-4 rounded-xl font-medium btn-glow text-sm md:text-base" data-script-id="${script.id}">
                         <i class="fas fa-download ml-2"></i> تحميل السكربت
                     </button>
                 </div>
             `;
             
-            // Add click event
-            card.addEventListener('click', () => {
-                window.location.href = `script-view.html?id=${encodeURIComponent(script.id)}`;
+            // Add click event for the card (to go to script view)
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on download button
+                if (!e.target.closest('.download-btn')) {
+                    window.location.href = `script-view.html?id=${encodeURIComponent(script.id)}`;
+                }
+            });
+            
+            // Add click event for download button (Linkvertise)
+            const downloadBtn = card.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click event
+                showLinkvertise(script.id);
             });
             
             return card;
@@ -1302,12 +1423,10 @@
                 'Anime Fighters': '<i class="fas fa-user-ninja text-pink-500"></i>'
             };
             
-            // Check for exact match first
             if (icons[gameName]) {
                 return icons[gameName];
             }
             
-            // Check for partial matches
             for (const [key, icon] of Object.entries(icons)) {
                 if (gameName.toLowerCase().includes(key.toLowerCase())) {
                     return icon;
@@ -1368,7 +1487,6 @@
         if ('ontouchstart' in window) {
             document.body.classList.add('touch-device');
             
-            // Increase tap target sizes for mobile
             document.querySelectorAll('button, a').forEach(el => {
                 if (el.offsetWidth < 44 || el.offsetHeight < 44) {
                     el.style.minHeight = '44px';
@@ -1376,6 +1494,11 @@
                 }
             });
         }
+    </script>
+
+    <!-- Linkvertise script loaded only when needed -->
+    <script>
+        // This will be loaded dynamically when needed
     </script>
 </body>
 </html>
