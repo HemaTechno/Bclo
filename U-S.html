@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="ads" content="no-ads">
+    <title>رفع سكربت جديد | ScriptBot - مشاركة السكربتات</title>
+    <meta name="description" content="أضف سكربت Roblox جديد إلى مكتبتنا. رفع آمن، دعم جميع الألعاب، وتحميل سريع للصور." />
+    
+    <meta property="og:title" content="رفع سكربت جديد | ScriptBot" />
+    <meta property="og:description" content="شارك سكربت Roblox الخاص بك مع مجتمعنا. رفع آمن وسريع." />
+    <meta property="og:image" content="https://scriptbot.cloud/assets/upload-banner.png" />
+    <meta property="og:url" content="https://scriptbot.cloud/upload.html" />
+    <meta property="og:type" content="website" />
+    
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+            min-height: 100vh;
+            margin: 0;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            background: #fff;
+            border-color: #667eea;
+        }
+        
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-bg {
+            background: var(--primary-gradient);
+            transition: transform 0.2s;
+        }
+
+        .gradient-bg:hover {
+            transform: translateY(-2px);
+        }
+
+        /* File upload styles */
+        .file-upload-container {
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .file-upload-container:hover {
+            border-color: rgba(102, 126, 234, 0.6);
+            background: rgba(255, 255, 255, 0.7);
+        }
+        
+        .file-preview {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .file-preview img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+        }
+        
+        .remove-file {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px; right: -300px;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: right 0.5s ease;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show { right: 20px; }
+        
+        /* Error Message */
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .form-group.error .glass-input { border-color: #ef4444; }
+
+        /* Tags */
+        .tags-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .tag { background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.875rem; display: flex; items-center: center; gap: 5px; }
+        .tag button { color: #4338ca; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <p class="mt-4 text-gray-700 font-bold" id="loading-text">جاري المعالجة...</p>
+    </div>
+
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <header class="fixed top-0 left-0 right-0 z-50 p-4">
+        <div class="container mx-auto">
+            <div class="glass-card p-4 flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">ScriptBot</span>
+                </a>
+                <a href="scripts.html" class="glass-input text-blue-600 px-4 py-2 rounded-xl font-medium hover:bg-white transition">
+                    السكربتات
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto mt-24 mb-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    رفع <span class="gradient-text">سكربت</span> جديد
+                </h1>
+                <p class="text-gray-600">شارك إبداعك مع مجتمع ScriptBot</p>
+            </div>
+
+            <div class="glass-card p-6 md:p-8 upload-container">
+                <form id="upload-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="block mb-2 font-semibold text-gray-700">اسم السكربت</label>
+                            <input type="text" id="script-name" class="glass-input w-full p-3 rounded-xl focus:outline-none" placeholder="مثال: Blox Fruits Auto Farm" maxlength="100">
+                            <div class="text-xs text-gray-500 mt-1" id="name-counter">0/100</div>
+                            <div class="error-message" id="script-name-error">يرجى إدخال اسم صحيح</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block mb-2 font-semibold text-gray-700">العبة</label>
+                            <select id="game-select" class="glass-input w-full p-3 rounded-xl focus:outline-none">
+                                <option value="">-- اختر اللعبة --</option>
+                            </select>
+                            <div class="mt-2 flex gap-2">
+                                <input type="text" id="new-game" placeholder="أضف لعبة جديدة" class="glass-input flex-1 p-2 rounded-lg text-sm">
+                                <button type="button" id="add-game-btn" class="bg-blue-100 text-blue-600 px-3 rounded-lg text-sm">إضافة</button>
+                            </div>
+                            <div class="error-message" id="game-select-error">يرجى اختيار لعبة</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block mb-2 font-semibold text-gray-700">وصف السكربت</label>
+                        <textarea id="script-desc" rows="3" class="glass-input w-full p-3 rounded-xl focus:outline-none" placeholder="وصف ميزات السكربت..." maxlength="500"></textarea>
+                        <div class="text-xs text-gray-500 mt-1" id="desc-counter">0/500</div>
+                        <div class="error-message" id="script-desc-error">يرجى كتابة وصف</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block mb-2 font-semibold text-gray-700">الكود</label>
+                        <div class="flex gap-2 mb-2">
+                            <button type="button" id="paste-code" class="text-xs bg-gray-100 px-2 py-1 rounded">لصق</button>
+                            <button type="button" id="format-code" class="text-xs bg-gray-100 px-2 py-1 rounded">تنسيق</button>
+                        </div>
+                        <textarea id="script-content" rows="8" class="glass-input w-full p-3 rounded-xl focus:outline-none font-mono text-sm dir-ltr" placeholder="loadstring(game:HttpGet(...))" spellcheck="false"></textarea>
+                        <div class="text-xs text-gray-500 mt-1" id="content-counter">0 حرف</div>
+                        <div class="error-message" id="script-content-error">الكود مطلوب</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block mb-2 font-semibold text-gray-700">الوسوم</label>
+                        <input type="text" id="tag-input" class="glass-input w-full p-3 rounded-xl focus:outline-none" placeholder="أكتب واضغط Enter (مثال: Auto Farm)">
+                        <div class="tags-container" id="tags-container"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block mb-2 font-semibold text-gray-700">صورة السكربت</label>
+                        <div id="file-upload-area" class="file-upload-container">
+                            <input type="file" id="script-image" accept="image/*" class="hidden">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-2"></i>
+                            <p class="text-gray-600">اختر صورة أو اسحبها هنا</p>
+                        </div>
+                        <div id="file-preview" class="file-preview hidden"></div>
+                        <div class="error-message" id="script-image-error">صورة السكربت مطلوبة</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6LcUz1MrAAAAAHXX9VUHoA2jR2oGxjU87Jz8go7i"></div>
+                        <div class="error-message" id="captcha-error">أثبت أنك لست روبوت</div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="gradient-bg text-white w-full py-4 rounded-xl font-bold text-lg shadow-lg">
+                        رفع السكربت
+                    </button>
+                    
+                    <div id="form-status" class="mt-4"></div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-12 py-6 text-center text-gray-500 text-sm">
+        <p>ScriptBot.cloud © 2026</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+        import { getFirestore, collection, addDoc, getDocs, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+        // ⚠️ مهم جداً: يجب استبدال هذه البيانات ببيانات مشروع Firebase الخاص بك
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg", 
+            authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+            projectId: "hhhhhh-d4fb8",
+            storageBucket: "hhhhhh-d4fb8.appspot.com",
+            messagingSenderId: "24512338206",
+            appId: "1:24512338206:web:dfe045db59bd3434a2110f"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Variables
+        let tags = [];
+        let selectedFile = null;
+        let isUploading = false;
+
+        // DOM Elements
+        const uploadForm = document.getElementById('upload-form');
+        const fileUploadArea = document.getElementById('file-upload-area');
+        const scriptImage = document.getElementById('script-image');
+        const filePreview = document.getElementById('file-preview');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const gameSelect = document.getElementById('game-select');
+        const tagsContainer = document.getElementById('tags-container');
+        const formStatus = document.getElementById('form-status');
+
+        // === Helper Functions (Global) ===
+        
+        function showLoading(msg) {
+            document.getElementById('loading-text').innerText = msg;
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const text = document.getElementById('toast-message');
+            
+            text.innerText = message;
+            toast.className = `toast show border-r-4 ${type === 'success' ? 'border-green-500' : 'border-red-500'}`;
+            icon.className = `fas ${type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'}`;
+            
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            if (errorElement) {
+                errorElement.innerText = message;
+                errorElement.style.display = 'block';
+                errorElement.closest('.form-group').classList.add('error');
+            } else {
+                console.warn(`Error element #${fieldId}-error not found`);
+            }
+        }
+
+        // === Event Listeners ===
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadGames();
+            
+            // Image Upload Logic
+            fileUploadArea.addEventListener('click', () => scriptImage.click());
+            
+            scriptImage.addEventListener('change', (e) => {
+                if (e.target.files[0]) handleFile(e.target.files[0]);
+            });
+
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('bg-blue-50');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('bg-blue-50');
+                if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+            });
+        });
+
+        // Handle File Selection
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('يرجى رفع صورة فقط', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('حجم الصورة يجب أن يكون أقل من 5 ميجا', 'error');
+                return;
+            }
+
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                filePreview.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview">
+                    <button type="button" class="remove-file" onclick="window.removeImageGlobal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                filePreview.classList.remove('hidden');
+                document.getElementById('script-image-error').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Tag System
+        document.getElementById('tag-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const tag = this.value.trim();
+                if (tag && !tags.includes(tag) && tags.length < 10) {
+                    tags.push(tag);
+                    renderTags();
+                    this.value = '';
+                }
+            }
+        });
+
+        function renderTags() {
+            tagsContainer.innerHTML = tags.map((tag, i) => `
+                <div class="tag">
+                    ${tag}
+                    <button type="button" onclick="window.removeTagGlobal(${i})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        // Auth Check
+        function checkAuth() {
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    // يمكنك إعادة توجيه المستخدم لصفحة الدخول هنا
+                    // window.location.href = 'login.html';
+                    console.log("User not logged in");
+                }
+            });
+        }
+
+        // Load Games
+        async function loadGames() {
+            try {
+                const snapshot = await getDocs(collection(db, "maps"));
+                const games = [];
+                snapshot.forEach(doc => games.push(doc.data().name));
+                
+                games.sort().forEach(game => {
+                    const opt = document.createElement('option');
+                    opt.value = game;
+                    opt.innerText = game;
+                    gameSelect.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Error loading games:", err);
+            }
+        }
+
+        // Add New Game
+        document.getElementById('add-game-btn').addEventListener('click', async () => {
+            const newGame = document.getElementById('new-game').value.trim();
+            if(!newGame) return;
+            
+            if(!auth.currentUser) {
+                showToast('يجب تسجيل الدخول لإضافة لعبة', 'error');
+                return;
+            }
+
+            showLoading('جاري إضافة اللعبة...');
+            try {
+                const docId = newGame.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                await setDoc(doc(db, "maps", docId), {
+                    name: newGame,
+                    createdBy: auth.currentUser.uid,
+                    createdAt: new Date()
+                });
+                
+                const opt = document.createElement('option');
+                opt.value = newGame;
+                opt.innerText = newGame;
+                gameSelect.appendChild(opt);
+                gameSelect.value = newGame;
+                document.getElementById('new-game').value = '';
+                showToast('تمت إضافة اللعبة', 'success');
+            } catch (err) {
+                showToast('فشل إضافة اللعبة', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Form Submit
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isUploading) return;
+
+            // Reset errors
+            document.querySelectorAll('.error-message').style?.display = 'none';
+            document.querySelectorAll('.form-group').forEach(el => el.classList.remove('error'));
+
+            // Validation
+            let isValid = true;
+            const name = document.getElementById('script-name').value.trim();
+            const desc = document.getElementById('script-desc').value.trim();
+            const content = document.getElementById('script-content').value.trim();
+            const game = gameSelect.value;
+
+            if (name.length < 3) { showError('script-name', 'الاسم قصير جداً'); isValid = false; }
+            if (!game) { showError('game-select', 'اختر اللعبة'); isValid = false; }
+            if (desc.length < 10) { showError('script-desc', 'الوصف قصير جداً'); isValid = false; }
+            if (content.length < 10) { showError('script-content', 'أين الكود؟'); isValid = false; }
+            if (!selectedFile) { showError('script-image', 'الصورة مطلوبة'); isValid = false; }
+            
+            const captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse) { showError('captcha', 'أكد أنك لست روبوت'); isValid = false; }
+
+            if (!isValid) return;
+            if (!auth.currentUser) { showToast('يجب تسجيل الدخول!', 'error'); return; }
+
+            try {
+                isUploading = true;
+                showLoading('جاري رفع السكربت...');
+                document.getElementById('submit-btn').disabled = true;
+
+                // 1. Upload Image
+                const imgRef = storageRef(storage, `scripts/images/${Date.now()}_${selectedFile.name}`);
+                await uploadBytes(imgRef, selectedFile);
+                const imgUrl = await getDownloadURL(imgRef);
+
+                // 2. Add Document
+                const docRef = await addDoc(collection(db, "scripts"), {
+                    name,
+                    desc,
+                    content,
+                    game,
+                    map: game, // للحفاظ على التوافق
+                    imageUrl: imgUrl,
+                    tags,
+                    userId: auth.currentUser.uid,
+                    userName: auth.currentUser.displayName || 'Anonymous',
+                    createdAt: new Date().toISOString(),
+                    views: 0,
+                    status: 'active'
+                });
+
+                const scriptUrl = `${window.location.origin}/script-view.html?id=${docRef.id}`;
+                
+                // Show Success
+                formStatus.innerHTML = `
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 text-center">
+                        <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
+                        <h3 class="text-xl font-bold text-green-700">تم الرفع بنجاح!</h3>
+                        <div class="flex gap-2 mt-4 justify-center">
+                            <button onclick="window.copyLinkGlobal('${scriptUrl}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg">نسخ الرابط</button>
+                            <button onclick="window.resetFormGlobal()" class="bg-gray-600 text-white px-4 py-2 rounded-lg">رفع آخر</button>
+                        </div>
+                    </div>
+                `;
+                
+                showToast('تم الرفع بنجاح!', 'success');
+                uploadForm.reset();
+                selectedFile = null;
+                filePreview.classList.add('hidden');
+                
+            } catch (err) {
+                console.error(err);
+                showToast('حدث خطأ أثناء الرفع: ' + err.message, 'error');
+            } finally {
+                isUploading = false;
+                hideLoading();
+                document.getElementById('submit-btn').disabled = false;
+            }
+        });
+
+        // === Expose functions to Global Scope (Window) ===
+        // هذا الجزء ضروري جداً لأننا داخل Module
+        window.removeImageGlobal = function() {
+            selectedFile = null;
+            scriptImage.value = '';
+            filePreview.classList.add('hidden');
+            filePreview.innerHTML = '';
+        };
+
+        window.removeTagGlobal = function(index) {
+            tags.splice(index, 1);
+            renderTags();
+        };
+
+        window.resetFormGlobal = function() {
+            window.location.reload(); // أسهل طريقة لتفريغ كل شيء
+        };
+
+        window.copyLinkGlobal = function(text) {
+            navigator.clipboard.writeText(text).then(() => showToast('تم النسخ!'));
+        };
+
+    </script>
+</body>
+</html>
