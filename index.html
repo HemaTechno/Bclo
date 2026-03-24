@@ -12,8 +12,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="monetag" content="2e726ac676b1744331273176c3082972">
-  <meta name="keywords" content="roblox scripts, roblox exploit, roblox hacks, free roblox scripts, roblox executor, roblox script injector, roblox auto farm, سكربتات روبلوكس, هاكات روبلوكس">
-  <meta name="description" content="Xscripty | أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة. تحديث يومي لسكربتات Blox Fruits, Executors, وتطبيقات مهكرة.">
+  <meta name="keywords" content="roblox scripts, roblox exploit, roblox hacks, free roblox scripts, roblox executor, سكربتات روبلوكس, هاكات روبلوكس">
+  <meta name="description" content="Xscripty | أكبر مكتبة سكربتات وهاكات Roblox مجانية وآمنة. تحديث يومي، إدارة محتوى عبر Firebase.">
   <title>Xscripty Pro | سكربتات + Executors + تطبيقات مهكرة</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   
@@ -23,8 +23,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Lottie -->
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   
   <style>
     * { transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease; }
@@ -32,7 +34,6 @@
       font-family: 'Cairo', sans-serif;
       transition: background 0.3s, color 0.2s;
     }
-    /* Light Mode (default) */
     body.light-mode {
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       color: #1f2937;
@@ -41,7 +42,6 @@
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #e2e8f0;
     }
-    /* Cards styling */
     .glass-card {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -55,11 +55,15 @@
       border-radius: 24px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     body.dark-mode .ios-card {
       background: rgba(30, 41, 59, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #e2e8f0;
+    }
+    .ios-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
     .gradient-text {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -86,31 +90,78 @@
     body.dark-mode .tab-active {
       background: linear-gradient(135deg, #8b5cf6 0%, #ec489a 100%);
     }
-    .section-title {
-      font-size: 2rem;
+    .section-title { font-size: 2rem; }
+    @media (max-width: 768px) { .section-title { font-size: 1.75rem; } }
+    
+    /* Admin Panel Styles */
+    .admin-panel {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1rem;
     }
-    @media (max-width: 768px) {
-      .section-title { font-size: 1.75rem; }
-      .hero-title { font-size: 2rem; }
+    .admin-btn {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
     }
-    /* Custom scroll */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #667eea; border-radius: 10px; }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      max-width: 500px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
     .floating { animation: floating 3s ease-in-out infinite; }
     @keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-    /* language specific - arabic default */
-    html[lang="ar"] { direction: rtl; }
-    html[lang="en"] { direction: ltr; }
-    .lang-ar-only, .lang-en-only { display: none; }
-    html[lang="ar"] .lang-ar-only { display: inline-block; }
-    html[lang="en"] .lang-en-only { display: inline-block; }
-    /* mobile menu */
-    .mobile-menu { transform: translateX(100%); transition: transform 0.3s ease-in-out; position: fixed; top: 0; right: 0; height: 100%; width: 260px; background: white; z-index: 60; padding: 1.5rem; box-shadow: -5px 0 30px rgba(0,0,0,0.2); }
-    body.dark-mode .mobile-menu { background: #1e293b; color: white; }
+    
+    /* Mobile Menu */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 280px;
+      background: white;
+      z-index: 60;
+      padding: 1.5rem;
+      box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    }
+    body.dark-mode .mobile-menu { background: #1e293b; }
     .mobile-menu.active { transform: translateX(0); }
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; display: none; }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 55;
+      display: none;
+    }
     .overlay.active { display: block; }
+    
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 3px solid #667eea;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body class="light-mode min-h-screen flex flex-col">
@@ -121,13 +172,15 @@
       <button id="close-mobile-menu" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"><i class="fas fa-times"></i></button>
     </div>
     <div class="relative mb-5">
-      <input type="text" id="mobile-search" placeholder="ابحث عن سكربت..." class="w-full pl-12 pr-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 focus:outline-none">
+      <input type="text" id="mobile-search" placeholder="ابحث..." class="w-full pl-12 pr-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 focus:outline-none">
       <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
     </div>
     <nav class="space-y-3">
       <a href="#" data-section="scripts" class="mobile-nav-link block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-code ml-2"></i> <span data-i18n="scripts_nav">السكربتات</span></a>
       <a href="#" data-section="executors" class="mobile-nav-link block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-bolt ml-2"></i> <span data-i18n="executors_nav">Executor</span></a>
       <a href="#" data-section="apps" class="mobile-nav-link block p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-mobile-alt ml-2"></i> <span data-i18n="apps_nav">تطبيقات مهكرة</span></a>
+      <hr class="my-3">
+      <button id="admin-login-btn-mobile" class="w-full admin-btn text-white px-4 py-2 rounded-lg font-bold"><i class="fas fa-lock ml-2"></i> دخول المشرف</button>
     </nav>
   </div>
 
@@ -136,98 +189,38 @@
     <div class="container mx-auto">
       <div class="glass-card p-3 flex flex-wrap justify-between items-center gap-2">
         <div class="flex items-center space-x-3 space-x-reverse">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23667eea' rx='12'/%3E%3Ctext x='20' y='28' text-anchor='middle' fill='white' font-size='22' font-weight='bold'%3EX%3C/text%3E%3C/svg%3E" class="w-10 h-10 rounded-xl">
+          <div class="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center text-white font-bold text-xl">X</div>
           <h1 class="text-xl font-bold gradient-text">Xscripty<span class="text-blue-600">.pro</span></h1>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Dark/Light Toggle -->
-          <button id="theme-toggle" class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center text-gray-700 dark:text-yellow-300">
-            <i class="fas fa-sun hidden dark:inline-block"></i>
-            <i class="fas fa-moon inline-block dark:hidden"></i>
-          </button>
-          <!-- Language Toggle -->
-          <button id="lang-toggle" class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center font-bold text-sm">AR</button>
-          <!-- Telegram & Discord Buttons -->
-          <a href="https://t.me/+example" target="_blank" class="w-10 h-10 rounded-full bg-[#0088cc] flex items-center justify-center text-white shadow hover:scale-105 transition"><i class="fab fa-telegram-plane"></i></a>
-          <a href="https://discord.gg/f9cJyhfS4H" target="_blank" class="w-10 h-10 rounded-full bg-[#5865F2] flex items-center justify-center text-white shadow hover:scale-105 transition"><i class="fab fa-discord"></i></a>
-          <!-- mobile menu btn -->
+          <button id="theme-toggle" class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow flex items-center justify-center"><i class="fas fa-sun hidden dark:inline-block"></i><i class="fas fa-moon inline-block dark:hidden"></i></button>
+          <button id="lang-toggle" class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow font-bold text-sm">AR</button>
+          <a href="https://t.me/+example" target="_blank" class="w-10 h-10 rounded-full bg-[#0088cc] flex items-center justify-center text-white"><i class="fab fa-telegram-plane"></i></a>
+          <a href="https://discord.gg/f9cJyhfS4H" target="_blank" class="w-10 h-10 rounded-full bg-[#5865F2] flex items-center justify-center text-white"><i class="fab fa-discord"></i></a>
+          <button id="admin-btn" class="w-10 h-10 rounded-full bg-orange-500 text-white shadow"><i class="fas fa-user-cog"></i></button>
           <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg bg-white dark:bg-gray-800 shadow"><i class="fas fa-bars"></i></button>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Sections: Scripts, Executors, Apps -->
   <main class="container mx-auto px-4 py-6 flex-1">
     <!-- Tabs Navigation -->
     <div class="flex flex-wrap justify-center gap-3 mb-8">
-      <button data-tab="scripts" class="tab-btn px-6 py-2 rounded-xl font-bold tab-active transition"><i class="fas fa-code ml-2"></i> <span data-i18n="scripts_tab">السكربتات</span></button>
-      <button data-tab="executors" class="tab-btn px-6 py-2 rounded-xl font-bold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600"><i class="fas fa-bolt ml-2"></i> <span data-i18n="executors_tab">Executor (هاكات)</span></button>
-      <button data-tab="apps" class="tab-btn px-6 py-2 rounded-xl font-bold bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600"><i class="fas fa-mobile-alt ml-2"></i> <span data-i18n="apps_tab">تطبيقات مهكرة (APK)</span></button>
+      <button data-tab="scripts" class="tab-btn px-6 py-2 rounded-xl font-bold tab-active"><i class="fas fa-code ml-2"></i> <span data-i18n="scripts_tab">السكربتات</span></button>
+      <button data-tab="executors" class="tab-btn px-6 py-2 rounded-xl font-bold bg-white dark:bg-gray-800 border"><i class="fas fa-bolt ml-2"></i> <span data-i18n="executors_tab">Executor</span></button>
+      <button data-tab="apps" class="tab-btn px-6 py-2 rounded-xl font-bold bg-white dark:bg-gray-800 border"><i class="fas fa-mobile-alt ml-2"></i> <span data-i18n="apps_tab">تطبيقات مهكرة</span></button>
     </div>
 
-    <!-- Section: Scripts -->
-    <div id="scripts-section" class="tab-section">
-      <div class="text-center mb-6">
-        <h2 class="section-title font-bold"><span class="gradient-text">أفضل سكربتات</span> Roblox</h2>
-        <p data-i18n="scripts_desc" class="text-gray-600 dark:text-gray-300">سكربتات مجانية محدثة لـ Blox Fruits, Pet Simulator, Da Hood والمزيد</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- script card 1 -->
-        <div class="ios-card p-5 hover:shadow-xl transition">
-          <div class="flex justify-between"><h3 class="font-bold text-xl">Blox Fruits Ultra</h3><span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">NEW</span></div>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Auto Farm, Teleport, Auto Buy</p>
-          <div class="my-2 flex gap-1"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">Auto Farm</span><span class="px-2 py-0.5 bg-purple-100 rounded-full text-xs">ESP</span></div>
-          <p class="text-sm mt-2" data-i18n="script_desc1">سكربت متكامل لـ Blox Fruits بأحدث التحديثات.</p>
-          <div class="flex justify-between items-center mt-3"><button class="gradient-bg text-white px-4 py-1.5 rounded-lg text-sm btn-glow"><i class="fas fa-download ml-1"></i> تحميل</button><span class="text-xs text-gray-400">v7.5</span></div>
-        </div>
-        <div class="ios-card p-5 hover:shadow-xl transition">
-          <h3 class="font-bold text-xl">Da Hood Xtreme</h3>
-          <p class="text-sm text-gray-500">Aimbot, ESP, Money Hack</p>
-          <div class="my-2 flex gap-1"><span class="px-2 py-0.5 bg-red-100 rounded-full text-xs">Aimbot</span><span class="px-2 py-0.5 bg-yellow-100 rounded-full text-xs">Money</span></div>
-          <p class="text-sm">هاك شامل مع تصويب تلقائي وسرعة لا نهائية.</p>
-          <div class="flex justify-between mt-3"><button class="gradient-bg text-white px-4 py-1.5 rounded-lg text-sm btn-glow">تحميل</button><span class="text-xs">v3.2</span></div>
-        </div>
-        <div class="ios-card p-5 hover:shadow-xl transition">
-          <h3 class="font-bold text-xl">Pet Sim X Mega</h3>
-          <p class="text-sm text-gray-500">Auto Hatch, Auto Farm, Dupe</p>
-          <div class="my-2 flex gap-1"><span class="px-2 py-0.5 bg-green-100 rounded-full text-xs">Auto Farm</span><span class="px-2 py-0.5 bg-pink-100 rounded-full text-xs">Hatch</span></div>
-          <p class="text-sm">فقس البيض تلقائي وزراعة عملات سريعة.</p>
-          <div class="flex justify-between mt-3"><button class="gradient-bg text-white px-4 py-1.5 rounded-lg text-sm btn-glow">تحميل</button><span class="text-xs">v9.1</span></div>
-        </div>
-      </div>
-    </div>
+    <!-- Loading Indicator -->
+    <div id="loading-indicator" class="text-center py-10 hidden"><div class="spinner mx-auto"></div><p class="mt-3">جاري التحميل...</p></div>
 
-    <!-- Section: Executors (هاكات) -->
-    <div id="executors-section" class="tab-section hidden">
-      <div class="text-center mb-6">
-        <h2 class="section-title font-bold"><span class="gradient-text">أفضل Executors</span> لتشغيل السكربتات</h2>
-        <p data-i18n="executors_desc" class="text-gray-600 dark:text-gray-300">أدوات حقن السكربت (Injectors) قوية وآمنة لـ Roblox</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div class="ios-card p-5"><div class="flex items-center gap-3"><i class="fab fa-windows text-3xl text-blue-600"></i><h3 class="font-bold text-xl">Synapse X</h3></div><p class="mt-2">أقوى Executor مع دعم كامل لسكربتات روبلوكس، ثبات عالي.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg w-full">تحميل (Windows)</button></div>
-        <div class="ios-card p-5"><div class="flex items-center gap-3"><i class="fas fa-bolt text-3xl text-yellow-500"></i><h3 class="font-bold text-xl">Krnl</h3></div><p class="mt-2">Executor مجاني ممتاز مع واجهة سهلة ودعم script hub.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg w-full">تحميل مجاني</button></div>
-        <div class="ios-card p-5"><div class="flex items-center gap-3"><i class="fab fa-android text-3xl text-green-500"></i><h3 class="font-bold text-xl">Arceus X</h3></div><p class="mt-2">Executor للأندرويد لتشغيل سكربتات Roblox على الموبايل.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg w-full">تحميل APK</button></div>
-        <div class="ios-card p-5"><div class="flex items-center gap-3"><i class="fas fa-terminal text-3xl text-purple-500"></i><h3>Script-Ware</h3></div><p>Executor قوي لمستخدمي Windows و Mac.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg">تحميل</button></div>
-      </div>
-    </div>
-
-    <!-- Section: Apps Apk (تطبيقات مهكرة) -->
-    <div id="apps-section" class="tab-section hidden">
-      <div class="text-center mb-6">
-        <h2 class="section-title font-bold"><span class="gradient-text">تطبيقات مهكرة</span> APK للأندرويد</h2>
-        <p data-i18n="apps_desc" class="text-gray-600 dark:text-gray-300">تطبيقات مدفوعة بشكل مجاني، mod apk، برامج تحرير وتعديل.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div class="ios-card p-5"><i class="fab fa-spotify text-3xl text-green-500"></i><h3 class="font-bold text-xl mt-2">Spotify Premium Mod</h3><p>نسخة مهكرة بدون إعلانات، استماع بدون حدود.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg w-full">تحميل APK</button></div>
-        <div class="ios-card p-5"><i class="fas fa-video text-3xl text-red-500"></i><h3 class="font-bold text-xl">CapCut Pro Mod</h3><p>فلاتر احترافية، إزالة العلامة المائية، كل المميزات مجانا.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg w-full">تحميل APK</button></div>
-        <div class="ios-card p-5"><i class="fas fa-gamepad text-3xl text-purple-500"></i><h3 class="font-bold text-xl">Minecraft Premium</h3><p>نسخة مهكرة من ماينكرافت مع skins مجانية.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg w-full">تحميل APK</button></div>
-        <div class="ios-card p-5"><i class="fab fa-whatsapp text-3xl text-green-600"></i><h3>WhatsApp Plus</h3><p>مزيد من الخصوصية والثيمات، نسخة معدلة.</p><button class="mt-3 gradient-bg text-white px-4 py-2 rounded-lg">تحميل APK</button></div>
-      </div>
-    </div>
+    <!-- Sections Containers -->
+    <div id="scripts-section" class="tab-section"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="scripts-container"></div></div>
+    <div id="executors-section" class="tab-section hidden"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="executors-container"></div></div>
+    <div id="apps-section" class="tab-section hidden"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="apps-container"></div></div>
   </main>
 
-  <!-- Footer -->
   <footer class="mt-12 pt-8 pb-4 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
     <div class="container mx-auto text-center">
       <div class="flex justify-center gap-6 mb-4">
@@ -235,14 +228,188 @@
         <a href="https://discord.gg/f9cJyhfS4H" target="_blank" class="text-white text-xl hover:text-indigo-400"><i class="fab fa-discord"></i> Discord</a>
       </div>
       <p class="text-gray-400 text-sm">© 2026 Xscripty.pro - أكبر مكتبة سكربتات وهاكات Roblox</p>
-      <p class="text-xs text-gray-500 mt-1">هذا الموقع غير تابع لشركة Roblox Corporation.</p>
     </div>
   </footer>
 
+  <!-- Admin Panel Modal -->
+  <div id="admin-modal" class="modal">
+    <div class="modal-content ios-card p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold gradient-text">لوحة التحكم</h2>
+        <button id="close-admin-modal" class="text-gray-500 text-2xl">&times;</button>
+      </div>
+      <div id="admin-login-form">
+        <input type="password" id="admin-password" placeholder="كلمة المرور" class="w-full p-3 rounded-xl border mb-3 dark:bg-gray-800">
+        <button id="admin-login-submit" class="gradient-bg text-white px-6 py-2 rounded-xl w-full">تسجيل الدخول</button>
+      </div>
+      <div id="admin-panel-content" class="hidden">
+        <div class="mb-4">
+          <select id="admin-section-select" class="w-full p-2 rounded-xl border dark:bg-gray-800">
+            <option value="scripts">السكربتات</option>
+            <option value="executors">Executor</option>
+            <option value="apps">تطبيقات مهكرة</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <input type="text" id="item-title" placeholder="العنوان" class="w-full p-2 rounded-xl border mb-2 dark:bg-gray-800">
+          <textarea id="item-description" placeholder="الوصف" rows="2" class="w-full p-2 rounded-xl border mb-2 dark:bg-gray-800"></textarea>
+          <input type="text" id="item-icon" placeholder="أيقونة (مثل: fab fa-discord أو fas fa-gamepad)" class="w-full p-2 rounded-xl border mb-2 dark:bg-gray-800">
+          <input type="text" id="item-tags" placeholder="علامات (مفصولة بفاصلة)" class="w-full p-2 rounded-xl border mb-2 dark:bg-gray-800">
+          <input type="text" id="item-version" placeholder="الإصدار (اختياري)" class="w-full p-2 rounded-xl border mb-2 dark:bg-gray-800">
+          <input type="text" id="item-download-url" placeholder="رابط التحميل" class="w-full p-2 rounded-xl border mb-2 dark:bg-gray-800">
+          <button id="add-item-btn" class="gradient-bg text-white px-4 py-2 rounded-xl w-full mb-2">إضافة محتوى جديد</button>
+        </div>
+        <div id="items-list" class="max-h-60 overflow-y-auto space-y-2"></div>
+        <button id="admin-logout" class="bg-red-500 text-white px-4 py-2 rounded-xl w-full mt-3">تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ---------- DARK / LIGHT MODE ----------
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoPJbx5v6EkOqxOJkbhzHqIJdAByh79Rg",
+      authDomain: "hhhhhh-d4fb8.firebaseapp.com",
+      projectId: "hhhhhh-d4fb8",
+      storageBucket: "hhhhhh-d4fb8.appspot.com",
+      messagingSenderId: "24512338206",
+      appId: "1:24512338206:web:dfe045db59bd3434a2110f",
+      measurementId: "G-HD4R7GNQ5H",
+      databaseURL: "https://hhhhhh-d4fb8-default-rtdb.firebaseio.com/"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+    
+    // Admin password (you can change this)
+    const ADMIN_PASSWORD = "admin123";
+    
+    // Current section
+    let currentSection = "scripts";
+    let isAdminLoggedIn = false;
+    
+    // DOM Elements
+    const scriptsContainer = document.getElementById("scripts-container");
+    const executorsContainer = document.getElementById("executors-container");
+    const appsContainer = document.getElementById("apps-container");
+    const loadingIndicator = document.getElementById("loading-indicator");
+    
+    // Load data from Firebase
+    function loadSectionData(section) {
+      const container = section === "scripts" ? scriptsContainer : (section === "executors" ? executorsContainer : appsContainer);
+      if (!container) return;
+      
+      loadingIndicator.classList.remove("hidden");
+      container.innerHTML = '<div class="col-span-full text-center py-10"><div class="spinner mx-auto"></div></div>';
+      
+      const itemsRef = database.ref(`content/${section}`);
+      itemsRef.once("value", (snapshot) => {
+        const items = snapshot.val() || {};
+        renderItems(section, items);
+        loadingIndicator.classList.add("hidden");
+      }).catch(error => {
+        console.error("Error loading data:", error);
+        container.innerHTML = '<div class="col-span-full text-center text-red-500 py-10">حدث خطأ في تحميل البيانات</div>';
+        loadingIndicator.classList.add("hidden");
+      });
+    }
+    
+    // Render items for a section
+    function renderItems(section, items) {
+      const container = section === "scripts" ? scriptsContainer : (section === "executors" ? executorsContainer : appsContainer);
+      if (!container) return;
+      
+      const itemsArray = Object.entries(items).map(([id, data]) => ({ id, ...data }));
+      if (itemsArray.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">لا توجد محتويات حالياً</div>';
+        return;
+      }
+      
+      container.innerHTML = itemsArray.map(item => `
+        <div class="ios-card p-5 relative" data-id="${item.id}">
+          ${isAdminLoggedIn ? `<button class="delete-item-btn absolute top-2 left-2 bg-red-500 text-white w-8 h-8 rounded-full text-sm hover:bg-red-600" data-id="${item.id}" data-section="${section}"><i class="fas fa-trash"></i></button>` : ''}
+          <div class="flex items-center gap-3 mb-2">
+            <i class="${item.icon || 'fas fa-cube'} text-3xl text-purple-500"></i>
+            <h3 class="font-bold text-xl">${escapeHtml(item.title)}</h3>
+            ${item.version ? `<span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full">${escapeHtml(item.version)}</span>` : ''}
+          </div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">${escapeHtml(item.description || '')}</p>
+          ${item.tags ? `<div class="my-2 flex flex-wrap gap-1">${item.tags.split(',').map(tag => `<span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">${escapeHtml(tag.trim())}</span>`).join('')}</div>` : ''}
+          <div class="flex justify-between items-center mt-3">
+            <a href="${escapeHtml(item.downloadUrl || '#')}" target="_blank" class="gradient-bg text-white px-4 py-1.5 rounded-lg text-sm btn-glow inline-block"><i class="fas fa-download ml-1"></i> تحميل</a>
+            <span class="text-xs text-gray-400">${item.dateAdded || new Date().toLocaleDateString('ar-EG')}</span>
+          </div>
+        </div>
+      `).join('');
+      
+      // Add delete event listeners if admin
+      if (isAdminLoggedIn) {
+        document.querySelectorAll('.delete-item-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            const section = btn.dataset.section;
+            if (confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
+              database.ref(`content/${section}/${id}`).remove().then(() => {
+                loadSectionData(section);
+              }).catch(err => alert('خطأ في الحذف: ' + err.message));
+            }
+          });
+        });
+      }
+    }
+    
+    // Add new item
+    function addItem(section, itemData) {
+      const newRef = database.ref(`content/${section}`).push();
+      const newItem = {
+        ...itemData,
+        dateAdded: new Date().toLocaleDateString('ar-EG'),
+        id: newRef.key
+      };
+      return newRef.set(newItem);
+    }
+    
+    // Escape HTML
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+    
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    function switchTab(tabId) {
+      currentSection = tabId;
+      document.getElementById('scripts-section').classList.add('hidden');
+      document.getElementById('executors-section').classList.add('hidden');
+      document.getElementById('apps-section').classList.add('hidden');
+      document.getElementById(`${tabId}-section`).classList.remove('hidden');
+      
+      tabBtns.forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+          btn.classList.add('tab-active');
+          btn.classList.remove('bg-white', 'dark:bg-gray-800', 'border');
+        } else {
+          btn.classList.remove('tab-active');
+          btn.classList.add('bg-white', 'dark:bg-gray-800', 'border', 'border-gray-300');
+        }
+      });
+      
+      loadSectionData(tabId);
+    }
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    
+    // Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
-    const htmlTag = document.documentElement;
     const body = document.body;
     function setTheme(theme) {
       if (theme === 'dark') {
@@ -256,52 +423,26 @@
       }
     }
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') setTheme('dark');
-    else setTheme('light');
+    setTheme(savedTheme === 'dark' ? 'dark' : 'light');
     themeToggle.addEventListener('click', () => {
-      if (body.classList.contains('light-mode')) setTheme('dark');
-      else setTheme('light');
+      setTheme(body.classList.contains('light-mode') ? 'dark' : 'light');
     });
-
-    // ---------- MULTI LANGUAGE (AR/EN) ----------
+    
+    // Language Toggle
     const translations = {
-      ar: {
-        scripts_tab: "السكربتات", executors_tab: "Executor (هاكات)", apps_tab: "تطبيقات مهكرة APK",
-        scripts_nav: "السكربتات", executors_nav: "Executor", apps_nav: "تطبيقات مهكرة",
-        menu: "القائمة", scripts_desc: "سكربتات مجانية محدثة لـ Blox Fruits, Pet Simulator, Da Hood والمزيد",
-        executors_desc: "أدوات حقن السكربت (Injectors) قوية وآمنة لـ Roblox",
-        apps_desc: "تطبيقات مدفوعة بشكل مجاني، mod apk، برامج تحرير وتعديل.",
-        script_desc1: "سكربت متكامل لـ Blox Fruits بأحدث التحديثات."
-      },
-      en: {
-        scripts_tab: "Scripts", executors_tab: "Executors (Hacks)", apps_tab: "Cracked Apps (APK)",
-        scripts_nav: "Scripts", executors_nav: "Executors", apps_nav: "Cracked Apps",
-        menu: "Menu", scripts_desc: "Free updated scripts for Blox Fruits, Pet Simulator, Da Hood and more.",
-        executors_desc: "Powerful and safe script injectors for Roblox.",
-        apps_desc: "Premium apps for free, mod apks, editing tools.",
-        script_desc1: "Complete script for Blox Fruits with latest updates."
-      }
+      ar: { scripts_tab: "السكربتات", executors_tab: "Executor", apps_tab: "تطبيقات مهكرة", menu: "القائمة", scripts_nav: "السكربتات", executors_nav: "Executor", apps_nav: "تطبيقات مهكرة" },
+      en: { scripts_tab: "Scripts", executors_tab: "Executors", apps_tab: "Cracked Apps", menu: "Menu", scripts_nav: "Scripts", executors_nav: "Executors", apps_nav: "Cracked Apps" }
     };
     let currentLang = localStorage.getItem('lang') || 'ar';
     function applyLanguage(lang) {
       currentLang = lang;
       localStorage.setItem('lang', lang);
-      htmlTag.setAttribute('lang', lang === 'ar' ? 'ar' : 'en');
-      htmlTag.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.setAttribute('lang', lang === 'ar' ? 'ar' : 'en');
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
+        const key = el.dataset.i18n;
         if (translations[lang][key]) el.innerText = translations[lang][key];
       });
-      // update any static text that not using data-i18n
-      const descScripts = document.querySelector('#scripts-section p.text-gray-600');
-      if (descScripts && !descScripts.hasAttribute('data-i18n')) descScripts.innerText = translations[lang].scripts_desc;
-      const descExec = document.querySelector('#executors-section p.text-gray-600');
-      if (descExec) descExec.innerText = translations[lang].executors_desc;
-      const descApps = document.querySelector('#apps-section p.text-gray-600');
-      if (descApps) descApps.innerText = translations[lang].apps_desc;
-      // script specific
-      const scriptDesc = document.querySelector('#scripts-section .ios-card p.text-sm.mt-2');
-      if (scriptDesc && scriptDesc.getAttribute('data-i18n') === 'script_desc1') scriptDesc.innerText = translations[lang].script_desc1;
     }
     const langToggle = document.getElementById('lang-toggle');
     langToggle.innerText = currentLang === 'ar' ? 'EN' : 'AR';
@@ -311,81 +452,151 @@
       applyLanguage(newLang);
       langToggle.innerText = newLang === 'ar' ? 'EN' : 'AR';
     });
-
-    // ---------- TABS: Scripts / Executors / Apps ----------
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const scriptsSection = document.getElementById('scripts-section');
-    const executorsSection = document.getElementById('executors-section');
-    const appsSection = document.getElementById('apps-section');
-    function switchTab(tabId) {
-      scriptsSection.classList.add('hidden');
-      executorsSection.classList.add('hidden');
-      appsSection.classList.add('hidden');
-      if (tabId === 'scripts') scriptsSection.classList.remove('hidden');
-      else if (tabId === 'executors') executorsSection.classList.remove('hidden');
-      else if (tabId === 'apps') appsSection.classList.remove('hidden');
-      tabBtns.forEach(btn => {
-        const btnTab = btn.getAttribute('data-tab');
-        if (btnTab === tabId) {
-          btn.classList.add('tab-active');
-          btn.classList.remove('bg-white', 'dark:bg-gray-800', 'border');
-        } else {
-          btn.classList.remove('tab-active');
-          btn.classList.add('bg-white', 'dark:bg-gray-800', 'border', 'border-gray-300', 'dark:border-gray-600');
-        }
-      });
-    }
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const tab = btn.getAttribute('data-tab');
-        switchTab(tab);
-      });
-    });
-    // default scripts tab active
-    switchTab('scripts');
-
-    // ---------- Mobile Menu ----------
+    
+    // Mobile Menu
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenuDiv = document.getElementById('mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
     const overlay = document.getElementById('menu-overlay');
     const closeMobile = document.getElementById('close-mobile-menu');
-    function openMenu() { mobileMenuDiv.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
-    function closeMenu() { mobileMenuDiv.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
-    mobileMenuBtn.addEventListener('click', openMenu);
-    closeMobile.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
+    function openMenu() { mobileMenu.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    function closeMenu() { mobileMenu.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+    mobileMenuBtn?.addEventListener('click', openMenu);
+    closeMobile?.addEventListener('click', closeMenu);
+    overlay?.addEventListener('click', closeMenu);
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        const section = link.getAttribute('data-section');
-        if (section === 'scripts') switchTab('scripts');
-        else if (section === 'executors') switchTab('executors');
-        else if (section === 'apps') switchTab('apps');
+        switchTab(link.dataset.section);
         closeMenu();
       });
     });
-
-    // simple search simulation (client side filter on scripts only)
-    const searchInput = document.querySelector('input[type="text"]');
-    const mobileSearch = document.getElementById('mobile-search');
-    function filterScripts(value) {
-      const scriptCards = document.querySelectorAll('#scripts-section .ios-card');
-      const term = value.toLowerCase().trim();
-      scriptCards.forEach(card => {
-        const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
-        const desc = card.innerText.toLowerCase();
-        if (term === '' || title.includes(term) || desc.includes(term)) card.style.display = '';
-        else card.style.display = 'none';
+    
+    // Admin Panel
+    const adminModal = document.getElementById('admin-modal');
+    const adminBtn = document.getElementById('admin-btn');
+    const adminLoginBtnMobile = document.getElementById('admin-login-btn-mobile');
+    const closeAdminModal = document.getElementById('close-admin-modal');
+    const adminLoginForm = document.getElementById('admin-login-form');
+    const adminPanelContent = document.getElementById('admin-panel-content');
+    const adminPasswordInput = document.getElementById('admin-password');
+    const adminLoginSubmit = document.getElementById('admin-login-submit');
+    const adminLogout = document.getElementById('admin-logout');
+    const adminSectionSelect = document.getElementById('admin-section-select');
+    const addItemBtn = document.getElementById('add-item-btn');
+    const itemsList = document.getElementById('items-list');
+    
+    function openAdminModal() { adminModal.classList.add('active'); if (!isAdminLoggedIn) { adminLoginForm.classList.remove('hidden'); adminPanelContent.classList.add('hidden'); } else { adminLoginForm.classList.add('hidden'); adminPanelContent.classList.remove('hidden'); loadItemsList(); } }
+    function closeAdminModalFunc() { adminModal.classList.remove('active'); }
+    
+    adminBtn?.addEventListener('click', openAdminModal);
+    adminLoginBtnMobile?.addEventListener('click', openAdminModal);
+    closeAdminModal?.addEventListener('click', closeAdminModalFunc);
+    adminModal?.addEventListener('click', (e) => { if (e.target === adminModal) closeAdminModalFunc(); });
+    
+    adminLoginSubmit?.addEventListener('click', () => {
+      const password = adminPasswordInput.value;
+      if (password === ADMIN_PASSWORD) {
+        isAdminLoggedIn = true;
+        adminLoginForm.classList.add('hidden');
+        adminPanelContent.classList.remove('hidden');
+        loadItemsList();
+        loadSectionData(currentSection);
+      } else {
+        alert('كلمة المرور غير صحيحة');
+      }
+    });
+    
+    adminLogout?.addEventListener('click', () => {
+      isAdminLoggedIn = false;
+      adminLoginForm.classList.remove('hidden');
+      adminPanelContent.classList.add('hidden');
+      adminPasswordInput.value = '';
+      loadSectionData(currentSection);
+    });
+    
+    function loadItemsList() {
+      const section = adminSectionSelect.value;
+      database.ref(`content/${section}`).once('value', (snapshot) => {
+        const items = snapshot.val() || {};
+        itemsList.innerHTML = Object.entries(items).map(([id, item]) => `
+          <div class="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-2 rounded-lg">
+            <span class="text-sm truncate flex-1">${escapeHtml(item.title)}</span>
+            <button class="delete-admin-item bg-red-500 text-white px-2 py-1 rounded text-xs" data-id="${id}" data-section="${section}">حذف</button>
+          </div>
+        `).join('');
+        
+        document.querySelectorAll('.delete-admin-item').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const section = btn.dataset.section;
+            if (confirm('حذف هذا العنصر؟')) {
+              database.ref(`content/${section}/${id}`).remove().then(() => {
+                loadItemsList();
+                loadSectionData(section);
+              });
+            }
+          });
+        });
       });
     }
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => filterScripts(e.target.value));
+    
+    adminSectionSelect?.addEventListener('change', () => loadItemsList());
+    
+    addItemBtn?.addEventListener('click', () => {
+      const section = adminSectionSelect.value;
+      const title = document.getElementById('item-title').value.trim();
+      const description = document.getElementById('item-description').value.trim();
+      const icon = document.getElementById('item-icon').value.trim() || 'fas fa-cube';
+      const tags = document.getElementById('item-tags').value.trim();
+      const version = document.getElementById('item-version').value.trim();
+      const downloadUrl = document.getElementById('item-download-url').value.trim();
+      
+      if (!title) {
+        alert('الرجاء إدخال العنوان');
+        return;
+      }
+      if (!downloadUrl) {
+        alert('الرجاء إدخال رابط التحميل');
+        return;
+      }
+      
+      addItem(section, { title, description, icon, tags, version, downloadUrl }).then(() => {
+        alert('تمت الإضافة بنجاح');
+        document.getElementById('item-title').value = '';
+        document.getElementById('item-description').value = '';
+        document.getElementById('item-icon').value = '';
+        document.getElementById('item-tags').value = '';
+        document.getElementById('item-version').value = '';
+        document.getElementById('item-download-url').value = '';
+        loadItemsList();
+        loadSectionData(section);
+      }).catch(err => alert('خطأ: ' + err.message));
+    });
+    
+    // Search functionality
+    function filterItems(searchTerm) {
+      const containers = [scriptsContainer, executorsContainer, appsContainer];
+      containers.forEach(container => {
+        if (!container) return;
+        const cards = container.querySelectorAll('.ios-card');
+        const term = searchTerm.toLowerCase().trim();
+        cards.forEach(card => {
+          const text = card.innerText.toLowerCase();
+          if (term === '' || text.includes(term)) card.style.display = '';
+          else card.style.display = 'none';
+        });
+      });
     }
-    if (mobileSearch) {
-      mobileSearch.addEventListener('input', (e) => filterScripts(e.target.value));
-    }
-
-    // back to top simple
+    
+    const searchInputs = document.querySelectorAll('input[type="text"]');
+    searchInputs.forEach(input => {
+      input.addEventListener('input', (e) => filterItems(e.target.value));
+    });
+    
+    // Initial load
+    loadSectionData('scripts');
+    
+    // Back to top button
     const backBtn = document.createElement('button');
     backBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
     backBtn.className = 'fixed bottom-4 left-4 w-10 h-10 gradient-bg text-white rounded-full shadow-lg hidden z-40';
@@ -395,13 +606,6 @@
       else backBtn.classList.add('hidden');
     });
     backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-    // responsive card touch effect
-    const cards = document.querySelectorAll('.ios-card');
-    cards.forEach(c => {
-      c.addEventListener('touchstart', () => c.style.transform = 'scale(0.98)');
-      c.addEventListener('touchend', () => c.style.transform = '');
-    });
   </script>
 </body>
 </html>
