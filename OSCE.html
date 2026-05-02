@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>OSCE Pro | محاكاة الامتحان - ورقة واحدة لكل دكتور</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
+            font-family: 'Segoe UI', 'Tajawal', system-ui, -apple-system, 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .exam-container {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(2px);
+            border-radius: 56px;
+            padding: 20px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 48px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.01);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 28px 20px 20px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        .doctor-badge {
+            background: #f9fafc;
+            border-radius: 60px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 25px;
+            margin: 20px auto 10px;
+            width: fit-content;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .doctor-icon {
+            background: #2a5298;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        #doctor {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1e2f4e;
+            margin: 0;
+            letter-spacing: -0.3px;
+        }
+
+        .procedure-card {
+            background: #f0f4fe;
+            margin: 20px 25px;
+            border-radius: 32px;
+            padding: 20px 12px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: inset 0 1px 3px #0001, 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .procedure-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #2a5298;
+            background: #ffffffaa;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(2px);
+        }
+
+        #procedure {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-top: 12px;
+            color: #0a2b44;
+            word-break: break-word;
+            background: white;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 60px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+        }
+
+        .timer-area {
+            background: #111c2f;
+            margin: 0 25px 20px 25px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            color: white;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .timer-icon {
+            background: #ff5e7e;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #timer {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: monospace;
+            letter-spacing: 3px;
+            background: #00000033;
+            padding: 5px 18px;
+            border-radius: 48px;
+            backdrop-filter: blur(2px);
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+            margin: 25px 25px 30px;
+        }
+
+        .btn {
+            border: none;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 12px 28px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(95deg, #2a5298, #1e3c72);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(95deg, #1e3c72, #0f2a4f);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger {
+            background: #f9735c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e2593f;
+            transform: translateY(-3px);
+        }
+
+        .score-info {
+            background: #eef2fa;
+            margin: 0 25px 25px;
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-weight: 600;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .badge-score {
+            background: white;
+            border-radius: 40px;
+            padding: 5px 18px;
+            box-shadow: 0 2px 5px #0001;
+            font-size: 1.2rem;
+        }
+
+        .penalty-warning {
+            font-size: 0.8rem;
+            color: #c23b22;
+            font-weight: 500;
+            background: #ffe6e0;
+            padding: 5px 12px;
+            border-radius: 28px;
+        }
+
+        .doctor-status {
+            font-size: 0.8rem;
+            background: #d4e0f0;
+            padding: 5px 12px;
+            border-radius: 28px;
+            color: #1e3c72;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 15px;
+            color: #2c3e66;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            #procedure {
+                font-size: 1.3rem;
+            }
+            .btn {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+            .timer-area {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .doctor-badge {
+                padding: 5px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-container">
+    <div class="card">
+        <div class="header">
+            <h1>📋 OSCE Simulator Pro</h1>
+            <p>محاكاة المحطات السريرية | ورقة واحدة لكل دكتور</p>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <div class="doctor-badge">
+                <div class="doctor-icon">👨‍⚕️</div>
+                <h2 id="doctor">الدكتور 1</h2>
+            </div>
+        </div>
+
+        <div class="procedure-card">
+            <div class="procedure-label">الإجراء المطلوب</div>
+            <div id="procedure">---</div>
+        </div>
+
+        <div class="timer-area">
+            <div class="timer-icon">⏱️ الوقت المتبقي</div>
+            <div id="timer">05:00</div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary" id="drawBtn">🎲 سحب الورقة</button>
+            <button class="btn btn-danger" id="changeBtn">🔄 تغيير (-3 درجات)</button>
+        </div>
+
+        <div class="score-info">
+            <span>⭐ النقاط: <span id="scoreDisplay">0</span></span>
+            <span>📋 حالة الدكتور: <span id="statusDisplay">لم يبدأ</span></span>
+            <div class="penalty-warning">⚠️ تغيير الإجراء يُنقص 3 نقاط</div>
+        </div>
+        <footer>
+            🔄 كل دكتور له ورقة واحدة فقط | بعد السحب ينتقل للدكتور التالي | التغيير لا يستهلك المحاولة
+        </footer>
+    </div>
+</div>
+
+<script>
+    // قائمة الإجراءات السريرية
+    const procedures = [
+        "💊 Solid (أدوية صلبة)",
+        "💧 Liquid (محاليل / شراب)",
+        "💉 SC (تحت الجلد)",
+        "💪 IM (عضلي)",
+        "🩹 ID (جلدي / داخل الأدمة)",
+        "🫁 O2 (علاج بالأكسجين)",
+        "💨 Nebuliser (بخاخات)",
+        "🩸 Blood glucose level (فحص سكر الدم)",
+        "🌬️ Breathing and coughing (تمارين تنفس)",
+        "🏋️ Isometric (تمارين متساوية القياس)",
+        "🧘 Range of motion (مدى الحركة)"
+    ];
+
+    // حالة اللعبة
+    let currentDoctor = 1;        // 1 أو 2
+    let doctorCompleted = [false, false];  // هل أنهى كل دكتور ورقته؟
+    let doctorScores = [0, 0];     // نقاط كل دكتور
+    
+    let currentProcedure = null;    // الإجراء الحالي المعروض
+    let hasDrawn = false;           // هل سحب الدكتور الحالي ورقته؟
+    
+    let timerInterval = null;
+    let timeLeft = 300;
+    let isTimerActive = false;
+    
+    // عناصر DOM
+    const doctorEl = document.getElementById("doctor");
+    const procedureEl = document.getElementById("procedure");
+    const timerEl = document.getElementById("timer");
+    const scoreDisplaySpan = document.getElementById("scoreDisplay");
+    const statusDisplaySpan = document.getElementById("statusDisplay");
+    const drawBtn = document.getElementById("drawBtn");
+    const changeBtn = document.getElementById("changeBtn");
+    
+    // تحديث واجهة المستخدم
+    function updateUI() {
+        const idx = currentDoctor - 1;
+        scoreDisplaySpan.innerText = doctorScores[idx];
+        
+        if (doctorCompleted[idx]) {
+            statusDisplaySpan.innerText = "✅ أنجز الورقة";
+            statusDisplaySpan.style.background = "#c8e6d9";
+            statusDisplaySpan.style.color = "#1e6f3f";
+        } else if (hasDrawn) {
+            statusDisplaySpan.innerText = "📄 الورقة مسحوبة (قيد التنفيذ)";
+            statusDisplaySpan.style.background = "#fff3cd";
+            statusDisplaySpan.style.color = "#856404";
+        } else {
+            statusDisplaySpan.innerText = "⏳ لم يسحب الورقة بعد";
+            statusDisplaySpan.style.background = "#d4e0f0";
+            statusDisplaySpan.style.color = "#1e3c72";
+        }
+    }
+    
+    // إيقاف المؤقت
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        isTimerActive = false;
+    }
+    
+    // تحديث عرض المؤقت
+    function updateTimerDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerEl.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // بدء المؤقت من 5 دقائق
+    function startTimer() {
+        stopTimer();
+        timeLeft = 300;
+        updateTimerDisplay();
+        isTimerActive = true;
+        
+        timerInterval = setInterval(() => {
+            if (!isTimerActive) return;
+            
+            if (timeLeft <= 0) {
+                // الوقت انتهى
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isTimerActive = false;
+                timerEl.innerText = "00:00";
+                alert(`⏰ انتهى الوقت للدكتور ${currentDoctor}! سيتم الانتقال للدكتور التالي.`);
+                
+                // إذا كان الدكتور الحالي لم ينهِ ورقته بعد، اعتبر أنه فشل في الإنجاز
+                const idx = currentDoctor - 1;
+                if (!doctorCompleted[idx]) {
+                    doctorCompleted[idx] = true;  // اعتبر أنه أكمل (بعد انتهاء الوقت)
+                    hasDrawn = false;
+                }
+                switchDoctor();
+            } else {
+                timeLeft--;
+                updateTimerDisplay();
+            }
+        }, 1000);
+    }
+    
+    // اختيار إجراء عشوائي
+    function getRandomProcedure() {
+        return procedures[Math.floor(Math.random() * procedures.length)];
+    }
+    
+    // سحب ورقة جديدة
+    function drawProcedure() {
+        const idx = currentDoctor - 1;
+        
+        // إذا كان الدكتور قد أنجز ورقته بالفعل
+        if (doctorCompleted[idx]) {
+            alert(`✅ الدكتور ${currentDoctor} قد أنجز ورقته بالفعل! لا يمكن سحب ورقة أخرى.`);
+            if (!(doctorCompleted[0] && doctorCompleted[1])) {
+                switchDoctor();
+            }
+            return;
+        }
+        
+        // إذا كان قد سحب ورقة بالفعل (ولكن لم ينجز؟ هذا خطأ منطقي، لكن للحماية)
+        if (hasDrawn) {
+            alert(`⚠️ الدكتور ${currentDoctor} لديه ورقة مسحوبة بالفعل. قم بالتبديل يدوياً أو انتظر الوقت.`);
+            return;
+        }
+        
+        // سحب ورقة جديدة
+        currentProcedure = getRandomProcedure();
+        procedureEl.innerText = currentProcedure;
+        hasDrawn = true;
+        
+        // بدء المؤقت
+        startTimer();
+        
+        // تحديث الواجهة
+        updateUI();
+    }
+    
+    // تغيير الإجراء (يخصم 3 نقاط بدون استهلاك المحاولة)
+    function changeProcedure() {
+        const idx = currentDoctor - 1;
+        
+        // إذا كان الدكتور قد أنجز ورقته
+        if (doctorCompleted[idx]) {
+            alert(`❌ الدكتور ${currentDoctor} أنجز ورقته بالفعل ولا يمكن تغيير الإجراء.`);
+            if (!(doctorCompleted[0] && doctorCompleted[1])) {
+                switchDoctor();
+            }
+            return;
+        }
+        
+        // خصم 3 نقاط
+        doctorScores[idx] -= 3;
+        
+        // اختيار إجراء جديد
+        currentProcedure = getRandomProcedure();
+        procedureEl.innerText = currentProcedure;
+        
+        // إعادة ضبط المؤقت (يبدأ من جديد)
+        startTimer();
+        
+        // hasDrawn يبقى true إذا كان قد سحب من قبل، أو يصبح true الآن
+        if (!hasDrawn) {
+            hasDrawn = true;
+        }
+        
+        // تنبيه للمستخدم
+        alert(`⚠️ تم تغيير الإجراء! تم خصم 3 نقاط. النقاط الحالية: ${doctorScores[idx]} نقطة.`);
+        
+        // تحديث الواجهة
+        updateUI();
+    }
+    
+    // التبديل بين الأطباء
+    function switchDoctor() {
+        const oldIdx = currentDoctor - 1;
+        
+        // إذا كان الدكتور الحالي قد سحب ورقته ولم ينجزها بعد، نعتبره أنجزها الآن
+        if (hasDrawn && !doctorCompleted[oldIdx]) {
+            doctorCompleted[oldIdx] = true;
+            const finalScore = doctorScores[oldIdx];
+            alert(`📝 الدكتور ${currentDoctor} أنهى ورقته! النقاط النهائية: ${finalScore} نقطة.`);
+        }
+        
+        // إيقاف المؤقت
+        stopTimer();
+        
+        // التبديل للدكتور الآخر
+        currentDoctor = currentDoctor === 1 ? 2 : 1;
+        
+        // إعادة ضبط حالة السحب للدكتور الجديد
+        hasDrawn = false;
+        currentProcedure = null;
+        procedureEl.innerText = "---";
+        
+        // تحديث عرض المؤقت إلى 05:00 (بدون بدء العد)
+        timeLeft = 300;
+        updateTimerDisplay();
+        
+        // تحديث اسم الدكتور
+        doctorEl.innerText = `الدكتور ${currentDoctor}`;
+        
+        // تحديث الواجهة
+        updateUI();
+        
+        // التحقق إذا كان كلا الدكتورين أنهيا
+        if (doctorCompleted[0] && doctorCompleted[1]) {
+            alert(`🎉🏆 انتهت المحاكاة بالكامل! 🏆🎉\n\nالدكتور 1: ${doctorScores[0]} نقطة\nالدكتور 2: ${doctorScores[1]} نقطة\n\nيمكنك تحديث الصفحة لبدء جولة جديدة.`);
+            // تعطيل الأزرار بعد الانتهاء
+            drawBtn.disabled = true;
+            changeBtn.disabled = true;
+            drawBtn.style.opacity = "0.5";
+            changeBtn.style.opacity = "0.5";
+            return;
+        }
+        
+        // رسالة ترحيب بالدكتور الجديد
+        const newIdx = currentDoctor - 1;
+        if (!doctorCompleted[newIdx]) {
+            setTimeout(() => {
+                alert(`🩺 الآن دور الدكتور ${currentDoctor}. اضغط على "سحب الورقة" لبدء الامتحان.`);
+            }, 50);
+        } else {
+            // إذا كان الدكتور الجديد قد أنجز بالفعل (لن يحدث إلا إذا حدث خطأ)، نبدل مرة أخرى
+            setTimeout(() => {
+                if (doctorCompleted[currentDoctor - 1] && !(doctorCompleted[0] && doctorCompleted[1])) {
+                    alert(`الدكتور ${currentDoctor} أنجز ورقته بالفعل، ننتقل للدكتور التالي.`);
+                    switchDoctor();
+                }
+            }, 100);
+        }
+    }
+    
+    // إعادة ضبط اللعبة بالكامل (للاستخدام اليدوي)
+    function resetGame() {
+        stopTimer();
+        currentDoctor = 1;
+        doctorCompleted = [false, false];
+        doctorScores = [0, 0];
+        hasDrawn = false;
+        currentProcedure = null;
+        procedureEl.innerText = "---";
+        timeLeft = 300;
+        updateTimerDisplay();
+        doctorEl.innerText = "الدكتور 1";
+        drawBtn.disabled = false;
+        changeBtn.disabled = false;
+        drawBtn.style.opacity = "1";
+        changeBtn.style.opacity = "1";
+        updateUI();
+    }
+    
+    // ربط الأزرار
+    drawBtn.onclick = drawProcedure;
+    changeBtn.onclick = changeProcedure;
+    
+    // بدء اللعبة
+    resetGame();
+</script>
+</body>
+</html>
